@@ -60,49 +60,6 @@ hook.Add("CreateMove", "ARC9_CreateMove", function(cmd)
         ARC9.DeferFakeToggleAtts = false
     end
 
-    if GetConVar("arc9_cruelty_reload"):GetBool() then
-        local buttons = cmd:GetButtons()
-
-        local shouldreload = false
-
-        // reload like in cruelty squad!
-
-        if bit.band(cmd:GetButtons(), IN_RELOAD) == IN_RELOAD then
-            local mouseY = cmd:GetMouseY()
-
-            if mouseY > 0 then
-                ARC9.ReloadAmount = ARC9.ReloadAmount + (mouseY / ScrH())
-            end
-
-            cmd:SetMouseY(0)
-            if lastviewangles then
-                cmd:SetViewAngles(lastviewangles)
-            end
-
-            buttons = bit.band(buttons, bit.bnot(IN_RELOAD))
-        else
-            lastviewangles = cmd:GetViewAngles()
-        end
-
-        if ARC9.ReloadAmount >= 1 then
-            shouldreload = true
-        end
-
-        // deny reload unless shouldreload is true
-
-        if shouldreload then
-            buttons = bit.bor(buttons, IN_RELOAD)
-        else
-            buttons = bit.band(buttons, bit.bnot(IN_RELOAD))
-
-            if bit.band(cmd:GetButtons(), IN_USE) == IN_USE then
-                buttons = bit.bor(buttons, ARC9.IN_INSPECT)
-            end
-        end
-
-        cmd:SetButtons(buttons)
-    end
-
     if cust then
         if nav_nextmeowpress < CurTime() then
 
@@ -164,36 +121,4 @@ hook.Add("CreateMove", "ARC9_CreateMove", function(cmd)
             end
         end
     end
-end)
-
-local performedAprilFoolsCheck = false
-
-hook.Add("Think", "ARC9_cruelty_think_client_reload", function()
-    if !performedAprilFoolsCheck then
-        -- is it april fools today
-        local date = os.date("*t")
-
-        local day = date.day
-        local month = date.month
-
-        if day == 1 and month == 4 then
-            if !GetConVar("arc9_cruelty_reload_april_fools"):GetBool() then
-                RunConsoleCommand("arc9_cruelty_reload_april_fools", "1")
-                RunConsoleCommand("arc9_cruelty_reload", "1")
-            end
-        else
-            if GetConVar("arc9_cruelty_reload_april_fools"):GetBool() then
-                RunConsoleCommand("arc9_cruelty_reload_april_fools", "0")
-                RunConsoleCommand("arc9_cruelty_reload", "0")
-            end
-        end
-
-        performedAprilFoolsCheck = true
-    end
-
-    if !GetConVar("arc9_cruelty_reload"):GetBool() then return end
-
-    ARC9.ReloadAmount = ARC9.ReloadAmount - (FrameTime() * 2)
-
-    ARC9.ReloadAmount = math.Clamp(ARC9.ReloadAmount, 0, 1.5)
 end)
