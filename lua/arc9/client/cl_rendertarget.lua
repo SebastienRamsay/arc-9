@@ -45,13 +45,16 @@ hook.Add("RenderScreenspaceEffects", "ARC9_PostDrawViewModels", function()
     local wpn = lp:GetActiveWeapon()
 
     if !wpn.ARC9 then return end
-    
-    if !ARC9.IntelGPUDetected and mat_dof:GetFloat("$c0_x") > 0.4 then -- thats prob cheaper than checking for all conditions, handled in cl_vm anyway
-        wpn:RenderDoF()
+
+    if !ARC9.IntelGPUDetected then -- thats prob cheaper than checking for all conditions, handled in cl_vm anyway
+        local idrk = mat_dof:GetFloat("$c0_x")
+        if idrk and idrk > 0.4 then
+            wpn:RenderDoF()
+        end
     end
 
     local atttbl = wpn:IsScoping()
-    
+
     if wpn.RTScope then wpn.RTScopeModel = wpn:GetVM() end
 
     wpn:DrawRTReticle(wpn.RTScopeModel, atttbl or {}, nil, wpn:IsCheapScope())
