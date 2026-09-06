@@ -51,6 +51,7 @@ ATT.DrawFunc = function(swep, model, wm) end
 ATT.ModelSkin = 0
 ATT.ModelBodygroups = ""
 ATT.ModelMaterial = ""
+
 ATT.NoDraw = false
 ATT.TranslucentPass = false -- if that model has $translucent 1 in vmt, will be drawn behind c_hands otherwise
 -- ATT.TranslucentPassExtraMat = Material( "models/" ) -- extra material to apply during translucent pass, use for vertexlit + refract
@@ -60,6 +61,10 @@ ATT.Material = "material/path"
 
 -- Use SubMaterial0 through SubMaterial31 to set submaterials
 ATT.SubMaterial0 = "material/path"
+
+-- For model submats
+ATT.EnableModelSubMaterial = true
+ATT.ModelSubMaterial0 = "material/path"
 
 ATT.InvAtt = "" -- Having this other attachment will grant access to this one.
 
@@ -170,24 +175,46 @@ ATT.FLIRHotFunc = function(swep, ent) end -- return true for hot and false for c
 
 ATT.RTScope = true
 ATT.RTScopeSubmatIndex = 1
--- ATT.RTScopeFOV = 2.5 -- Do not use this anymore!!! use RTScopeMagnification
 ATT.RTScopeReticle = Material("")
 ATT.RTScopeReticleScale = 1
-ATT.RTScopeShadowIntensity = 1.5
+ATT.RTScopeColorable = true -- Scope takes color from player settings
 ATT.RTCollimator = false -- Disables cheap scopes fov boost, disables sensivity adjustements
 ATT.RTScopeNoBlur = false -- By default, if arc9_fx_rtblur 1 then world behind gun wil be blurred. Enable if your "scope" is not so scope.
 ATT.RTScopeNoPP = false
-ATT.RTScopeNoShadow = false
-ATT.RTScopeBlackBox = false
-ATT.RTScopeBlackBoxShadow = true
-ATT.RTScopeColorable = true -- Scope takes color from player settings
--- Lets you draw more things on to the reticle
-ATT.RTScopeDrawFunc = function(swep, rtsize) end
+
+-- list of removed variables (but kept as legacy fallback)   DO NOT INCLUDE THEM!   REMOVE FROM EXISTING SCOPES!!!
+-- RTScopeNoShadow   RTScopeBlackBox   RTScopeBlackBoxShadow   RTScopeShadowIntensity    RTScopeFOV     ScopeScreenRatio
+
+ATT.RTScopeNew_ShadowScale = 1 -- overall scale of shadows -- reticle scale also affects shadow scale so you can use this to combat this
+ATT.RTScopeNew_ShadowIntensity = 1 -- do not set to zero
+ATT.RTScopeNew_FrontShadow = true -- shadow in front of scope
+ATT.RTScopeNew_FrontShadowScale = 1
+ATT.RTScopeNew_BackShadow = true -- shadow close to your eye, hides visible reticle when not aimed
+ATT.RTScopeNew_BackShadowScale = 1
+ATT.RTScopeNew_ReticleBlackBox = false -- blackbox
+ATT.RTScopeNew_DisableShader = false
+ATT.RTScopeNew_DisableShaderEyeOffset = false -- disable dynamic eyeoffset (vignette & chrom aberation) from shader if your scope is fucked up
+ATT.RTScopeNew_ChromaticAberrationMult = 1
+ATT.RTScopeNew_ShaderDistorsionMult = 1
+
+ATT.RTScopeNew_FPSLock = 30 -- digital scope thing -- for fpslock work properly, you need either pixelation either shader enabled. sory.
+ATT.RTScopeNew_Pixelation = 240 -- same, vertical resolution i think
+
+-- ATT.RTScopeNew_FixAngle = Angle(-0.034, 84.588, 4.109) -- If scope angle isn't 0, 0, 0, it might look ASS. Fix this by setting this to "print" first, aim & setang 0 0 0 in console, copying angle from console to this
+ATT.RTScopeNew_ForceExpensive = false -- highly specific
+ATT.RTScopeNew_ForceCheap = false -- highly specific
+ATT.RTScopeNew_OnlyInSights = false -- highly specific
+ATT.RTScopeNew_DisableRTVM = false -- if rendereing gun in this scopes renders it too much
+
+ATT.RTScopeDrawFunc = function(swep, rtsize, sight) end -- Square reticle-like 2d context, works good as regular reticle  (remove counterrotation thing if you had it!)
+ATT.RTScopeNew_DrawFunc3D = function(swep, scrh, sight, ang, pos) end -- Advanced drawfunc in 3d context
+ATT.RTScopeNew_DrawFunc2D = function(swep, scrw, scrh, sight) end -- Overlay drawfunc in 2d context, not moving unlike RTScopeDrawFunc. Also draws fullres
+
 -- Extra post processing like DrawMotionBlur() DrawSharpen() DrawBloom()
 ATT.RTScopeCustomPPFunc = function(swep) end
 
-ATT.ScopeScreenRatio = 0.5 -- Take a screenshot of full screen, select whole visible picture in it and divide by screen height (for example = 500/1080, you can just leave it like that here)
-ATT.RTScopeMagnification = 4 -- New zoom thing, 1 is 1x, 4 is 4x (crazy!)
+
+ATT.RTScopeMagnification = 4 -- New zoom thing, 1 is 1x, 4 is 4x (crazy!) Please use it.
 
 ATT.RTScopeNightVision = true
 ATT.RTScopeNightVisionMonochrome = true
@@ -200,7 +227,8 @@ ATT.RTScopeNightVisionCC = {
     ["$pp_colour_colour"] = 1,
     ["$pp_colour_mulr"] = 0,
     ["$pp_colour_mulg"] = 0,
-    ["$pp_colour_mulb"] = 0
+    ["$pp_colour_mulb"] = 0,
+    ["$pp_colour_inv"] = 0
 }
 ATT.RTScopeNightVisionFunc = function(swep) end
 
@@ -219,7 +247,8 @@ ATT.RTScopeFLIRCCHot = { -- Color correction drawn only on FLIR targets
     ["$pp_colour_colour"] = 1,
     ["$pp_colour_mulr"] = 0,
     ["$pp_colour_mulg"] = 0,
-    ["$pp_colour_mulb"] = 0
+    ["$pp_colour_mulb"] = 0,
+    ["$pp_colour_inv"] = 0,
 }
 ATT.RTScopeFLIRCCCold = { -- Color correction drawn only on FLIR targets
     ["$pp_colour_addr"] = 0,
@@ -230,7 +259,8 @@ ATT.RTScopeFLIRCCCold = { -- Color correction drawn only on FLIR targets
     ["$pp_colour_colour"] = 1,
     ["$pp_colour_mulr"] = 0,
     ["$pp_colour_mulg"] = 0,
-    ["$pp_colour_mulb"] = 0
+    ["$pp_colour_mulb"] = 0,
+    ["$pp_colour_inv"] = 0
 }
 ATT.RTScopeFLIRFunc = function(swep) end
 ATT.RTScopeFLIRHotOnlyFunc = function(swep) end -- same but only for hot targets (try `DrawSobel(0.05)` here!!))
@@ -277,7 +307,9 @@ ATT.IKAnimationAlsoPlayBase = false -- Also play the base animation
 
 ATT.IKGunMotionQCA = nil -- Make the gun move while in IK animation
 
-ATT.IKGunMotionMult = 1
+ATT.IKGunMotionMultReal = 1
+ATT.IKGunMotionAngleMultReal = 1
+ATT.IKGunMotionAnchor = Vector(0, 0, 0)
 
 ATT.IKCameraMotionQCA = nil
 ATT.IKCameraMotionQCA_Mult = nil

@@ -133,6 +133,7 @@ function ARC9:LoadLanguages()
     ARC9:LoadLanguage("sv-se")
     ARC9:LoadLanguage("uwu")
     ARC9:LoadLanguage("zh-cn")
+	ARC9:LoadLanguage("ko")
 end
 
 ARC9:LoadLanguages()

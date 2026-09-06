@@ -1,19 +1,40 @@
 local lodcvar = GetConVar("arc9_lod_distance")
 local drawprojlights = GetConVar("arc9_drawprojectedlights")
 
+local v0, a0 = Vector(0, 0, 0), Angle(0, 0, 0)
+local emptytab = {}
+local swepGetProcessedValue = SWEP.GetProcessedValue
+local renderRenderFlashlights = render.RenderFlashlights
+
+local function getscopebound(self, scopeent)
+    local vm = self:GetVM()
+    if !IsValid(scopeent) or !IsValid(vm) or !self:GetInSights() then return nil end
+    local owo, uwu = scopeent:GetModelBounds()
+    
+    local awoo, uwoo = scopeent:GetPos(), scopeent:GetAngles()
+    local scopelength = WorldToLocal(awoo, uwoo, vm:GetPos(), vm:GetAngles()).x + uwu.x
+    -- debugoverlay.BoxAngles(awoo, owo, uwu, uwoo, 2, color_white)
+    if scopelength < 5 or scopelength > 45 then return nil end
+    if ARC9.Dev(1) then print("ARC9: Calculated scope length of", string.match(scopeent:GetModel(), "([^/]+).mdl$"), scopelength) end
+    return scopelength
+end
+
+
 function SWEP:ShouldLOD()
     if self.IsStatue then return 0 end
+    local owner, lp = self:GetOwner(), LocalPlayer()
+
+    if lp == owner then return -1 end
 
     if self:GetIsStatue() then
         self.IsStatue = true
         return 0
     end
 
-    if (self.NextLODCheck or 0) > CurTime() then return self.LastLOD or 0 end
-    self.NextLODCheck = CurTime() + 0.5
+    local ct = CurTime()
+    if (self.NextLODCheck or 0) > ct then return self.LastLOD or 0 end
+    self.NextLODCheck = ct + 0.5
 
-    local owner, lp = self:GetOwner(), LocalPlayer()
-    if lp == owner then return 0 end
 
     local result = 0
 
@@ -30,32 +51,35 @@ function SWEP:ShouldLOD()
     return result
 end
 
-function SWEP:DrawCustomModel(wm, custompos, customang)
+function SWEP:DrawCustomModel(wm, custompos, customang, flags)
+    flags = flags or STUDIO_RENDER
+    local isDepthPass = ( bit.band( flags, STUDIO_SSAODEPTHTEXTURE ) != 0 || bit.band( flags, STUDIO_SHADOWDEPTHTEXTURE ) != 0 )
     local owner = self:GetOwner()
+    local validowner = IsValid(owner)
 
-    if !wm and !IsValid(owner) then return end
+    if !wm and !validowner then return end
     local lod = self:ShouldLOD()
     local isnpc = owner:IsNPC() or lod > 0
     if !wm and isnpc then return end
-    if wm and ARC9.RTScopeRender then return end
+    local inrt = ARC9.RTScopeRender
+    if wm and inrt then return end
     if custompos then wm = true end
+    if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
 
-    local mdl = self.VModel
+    local mdl = wm and (custompos and self.CModel or self.WModel) or self.VModel
 
     if wm then
-        if custompos then
-            mdl = self.CModel
-        else
-            mdl = self.WModel
+        if !custompos then
+            if !isDepthPass and lod == 0 and mdl and IsValid(mdl[1]) then
+                mdl[1]:SetMaterial(swepGetProcessedValue(self, "Material", true))
+                
+                if !self.VMMaterialAmount and mdl[1]:GetMaterials() then 
+                    self.VMMaterialAmount = util.GetModelInfo(mdl[1]:GetModel()).MaterialCount
+                end
 
-            if lod == 0 and mdl and mdl[1]:IsValid() then
-                mdl[1]:SetMaterial(self:GetProcessedValue("Material", true))
-
-                for ind = 0, 31 do
-                    local val = self:GetProcessedValue("SubMaterial" .. ind, true)
-                    if val then
-                        mdl[1]:SetSubMaterial(ind, val)
-                    end
+                for ind = 0, self.VMMaterialAmount or 31 do
+                    local val = swepGetProcessedValue(self, "SubMaterial" .. ind, true)
+                    if val then mdl[1]:SetSubMaterial(ind, val) end
                 end
             end
         end
@@ -69,61 +93,74 @@ function SWEP:DrawCustomModel(wm, custompos, customang)
     if !mdl then
         self:KillModel()
         self:SetupModel(wm, lod, !!custompos)
-
-        mdl = self.VModel
-
-        if wm then
-            mdl = self.WModel
-            if custompos then
-                mdl = self.CModel
-            end
-        end
+        mdl = wm and (custompos and self.CModel or self.WModel) or self.VModel
     end
 
-    if lod < 2 then
-        local onground = wm and !IsValid(owner)
-    
-        local hidebones = isnpc and {} or self:GetHiddenBones(wm)
+    if !mdl then return end
 
-        for _, model in ipairs(mdl or {}) do
+    if lod < 2 then
+        local onground = wm and !validowner
+    
+        local hidebones = isnpc and emptytab or self:GetHiddenBones(wm)
+
+        local customCamoTexture = swepGetProcessedValue(self, "CustomCamoTexture", true)
+        local customCamoScale, customBlendFactor
+        
+        if customCamoTexture then 
+            customCamoScale = swepGetProcessedValue(self, "CustomCamoScale", true)
+            customBlendFactor = swepGetProcessedValue(self, "CustomBlendFactor", true)
+        end
+
+        local activesightadress = self:GetActiveSightSlotTable().Address
+        local getpos = self:GetPos()
+        local presetcam = ARC9.PresetCam
+        local scopecondition = !presetcam and !inrt and !ARC9.OverDraw
+
+        for i = 1, #mdl do
+            local model = mdl[i]
             if model.IsAnimationProxy then continue end
+            if !IsValid(model) then self:KillModel() return end
+
             local slottbl = model.slottbl
             local atttbl = self:GetFinalAttTable(slottbl)
 
-            if !IsValid(model) then self:KillModel() return end
+            -- if isDepthPass and atttbl.StickerMaterial then continue end
 
-            if !onground or model.OptimizPrevWMPos != self:GetPos() then -- mega optimiz
-                model.OptimizPrevWMPos = onground and self:GetPos() or nil
 
-                if ARC9.RTScopeRender and atttbl.RTScope then continue end -- dont draw scope model while drawing vm from scope position
+            if !onground or model.OptimizPrevWMPos != getpos then -- mega optimiz
+                if onground then model.OptimizPrevWMPos = getpos else model.OptimizPrevWMPos = nil end
+
+                if inrt and atttbl.RTScope then continue end -- dont draw scope model while drawing vm from scope position
                 
                 model.hidden = false
 
                 if model.charmparent then
                     continue
                 else
-                    if hidebones[slottbl.Bone or -1] then
+                    if !isnpc and hidebones[slottbl.Bone or -1] then
                         model.hidden = true
                         continue
                     end
 
                     if model.Duplicate then
-                        local duplitbl = (slottbl.DuplicateModels or {})[model.Duplicate]
-
-                        if hidebones[(duplitbl or {}).Bone or -1] then
+                        local dupModels = slottbl.DuplicateModels
+                        local duplitbl = dupModels and dupModels[model.Duplicate]
+                        local dupBone = duplitbl and duplitbl.Bone or -1
+                        
+                        if !isnpc and hidebones[dupBone] then
                             model.hidden = true
                             continue
                         end
                     end
 
-                    local apos, aang = self:GetAttachmentPos(slottbl, wm, false, false, custompos, customang or angle_zero, model.Duplicate)
+                    local apos, aang = self:GetAttachmentPos(slottbl, wm, false, false, custompos, customang or a0, model.Duplicate)
                     model:SetPos(apos)
                     model:SetAngles(aang)
                     model:SetRenderOrigin(apos)
                     model:SetRenderAngles(aang)
                     model:SetupBones()
 
-                    if model.charmmdl then
+                    if model.charmmdl and lod < 1 and !inrt then
                         local bpos, bang
 
                         local bonename = atttbl.CharmBone
@@ -137,14 +174,12 @@ function SWEP:DrawCustomModel(wm, custompos, customang)
                             end
 
                             if bpos and bang then
-                                local coffset = atttbl.CharmOffset or Vector(0, 0, 0)
-                                local cangle = atttbl.CharmAngle or Angle(0, 0, 0)
-
-                                bpos = bpos + bang:Forward() * coffset.y
-                                bpos = bpos + bang:Up() * coffset.z
-                                bpos = bpos + bang:Right() * coffset.x
+                                local coffset = atttbl.CharmOffset or v0
+                                local cangle = atttbl.CharmAngle or a0
 
                                 local up, right, forward = bang:Up(), bang:Right(), bang:Forward()
+
+                                bpos = bpos + forward * coffset.y + up * coffset.z + right * coffset.x
 
                                 bang:RotateAroundAxis(up, cangle.p)
                                 bang:RotateAroundAxis(right, cangle.y)
@@ -159,48 +194,42 @@ function SWEP:DrawCustomModel(wm, custompos, customang)
                     end
                 end
 
-                -- if !wm and atttbl.HoloSight then
-                --     self:DoHolosight(model, atttbl)
-                -- end
-
-                if !ARC9.PresetCam and !ARC9.RTScopeRender then
-                    if !wm and atttbl.RTScope then
-                        local active = slottbl.Address == self:GetActiveSightSlotTable().Address
-                        self:DoRTScope(model, atttbl, active)
-                    elseif wm and atttbl.RTScope then
-                        self:DoRTScope(model, atttbl, false)
+                if scopecondition then
+                    if (!wm and atttbl.RTScope) or self.RTScope then
+                        if slottbl.Address == activesightadress then
+                            self.RTScopeModel = model
+                            if self.RTScope then atttbl.RTScopeNew_DisableShaderEyeOffset = true end
+                            self.RTScopeAtttbl = atttbl
+                            if atttbl.RTScopeNew_BlurTexture then
+                                model.RTScope_BlurTexture = atttbl.RTScopeNew_BlurTexture
+                            end
+                        end
+                    elseif !wm and atttbl.RTScopeNew_BlurTexture then
+                        model.RTScope_BlurTexture = atttbl.RTScopeNew_BlurTexture
+                        self.RTScope_ForceBlurModel = model
                     end
                 end
             end
 
-            model.CustomCamoTexture = self:GetProcessedValue("CustomCamoTexture", true)
-            model.CustomCamoScale = self:GetProcessedValue("CustomCamoScale", true)
-            model.CustomBlendFactor = self:GetProcessedValue("CustomBlendFactor", true)
+            model.CustomCamoTexture = customCamoTexture
+            model.CustomCamoScale = customCamoScale
+            model.CustomBlendFactor = customBlendFactor
 
-
-            if !model.NoDraw and !(model.istranslucent and !ARC9.PresetCam and !onground and !isnpc) then
-                -- if !wm then model:SetRenderOrigin(self.ViewModelPos or (IsValid(self:GetVM()) and self:GetVM():GetPos() or self:GetPos())) end
+            if !model.NoDraw and (!model.istranslucent or presetcam or onground or isnpc) then
                 model:DrawModel()
-                if drawprojlights:GetBool() or rttenabled == false then render.RenderFlashlights(function() model:DrawModel() end) end
+                
+                if !isDepthPass and (drawprojlights:GetBool() or rttenabled == false) then
+                    if !model.DrawModelFlashlightFunc then model.DrawModelFlashlightFunc = function() model:DrawModel() end end -- caching to prevent gc spike
+
+                    renderRenderFlashlights(model.DrawModelFlashlightFunc)
+                end
             end
 
-            if atttbl.DrawFunc then
+            if self.RTScopeModel == model and !model.RTScopeLength then model.RTScopeLength = getscopebound(self, model) end
+
+            if atttbl.DrawFunc and !isDepthPass then
                 atttbl.DrawFunc(self, model, wm)
             end
-
-        --     -- if model.Flare and !self:GetCustomize() then
-        --     --     if model.Flare.Attachment then
-        --     --         local attpos = model:GetAttachment(model.Flare.Attachment)
-
-        --     --         if attpos then
-        --     --             self:DrawLightFlare(attpos.Pos, -attpos.Ang:Right(), model.Flare.Color, model.Flare.Size, model.Flare.Focus)
-        --     --         else
-        --     --             self:DrawLightFlare(apos, aang:Forward(), model.Flare.Color, model.Flare.Size, model.Flare.Focus)
-        --     --         end
-        --     --     else
-        --     --         self:DrawLightFlare(apos, aang:Forward(), model.Flare.Color, model.Flare.Size, model.Flare.Focus)
-        --     --     end
-        --     -- end
         end
     end
 end
@@ -255,7 +284,7 @@ end
 
 -- SWEP.AdvancedCamoCache = {}
 
-local maxcamos = GetConVar("arc9_atts_maxcamos")
+-- local maxcamos = GetConVar("arc9_atts_maxcamos") -- was unused
 
 function SWEP:GetAdvancedCamo(att, address)
     if self.AdvancedCamoCache == false then return end -- disable this bitch if no super camo slots
@@ -263,7 +292,10 @@ function SWEP:GetAdvancedCamo(att, address)
     if address then att = address end
     if self.AdvancedCamoCache == nil then self.AdvancedCamoCache = {} end
 
-    if self.AdvancedCamoCache[att] then return self.AdvancedCamoCache[att] end
+    if self.AdvancedCamoCache[att] ~= nil then
+        if self.AdvancedCamoCache[att] == false then return nil end -- a "fix". this fucking cache was completely useless if the weapon had no camos, wonderful
+        return self.AdvancedCamoCache[att]
+    end
 
     local state = 1
 
@@ -301,9 +333,12 @@ function SWEP:GetAdvancedCamo(att, address)
             Factor = camoatt.CustomBlendFactor,
             PhongMult = camoatt.CustomCamoPhongMult,
         }
+    elseif hasadvcamoslots then
+        self.AdvancedCamoCache[att] = false
     end
 
     if !hasadvcamoslots then self.AdvancedCamoCache = false return end -- disable this bitch if no super camo slots
     
+    if self.AdvancedCamoCache[att] == false then return nil end
     return self.AdvancedCamoCache[att]
 end

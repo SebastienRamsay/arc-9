@@ -25,15 +25,7 @@ function SWEP:Deploy()
     self:SetCycleFinishTime(0)
     self:SetRequestReload(false)
     self:SetEmptyReload(false)
-    -- self:SetLeanState(0)
-
     owner:SetCanZoom(false)
-    -- self:SetTraversalSprint(false)
-    -- self:SetLastPressedWTime(0)
-
-    -- self:SetBlindFire(false)
-    -- self:SetBlindFireDirection(0)
-
     self:SetHolster_Entity(NULL)
     self:SetHolsterTime(0)
 
@@ -53,20 +45,14 @@ function SWEP:Deploy()
     self:SetLoadedRounds(self:Clip1())
     self:SetGrenadeRecovering(false)
     self:SetUBGL(false)
-    -- self:SetLeanAmount(0)
     
     self.StartedFixingJam = nil
 
     self:SetGrenadePrimed(false)
-
     self:SetBipod(false)
-
     self:SetTriggerDown(owner:KeyDown(IN_ATTACK))
-
     local holsteredtime = CurTime() - self:GetLastHolsterTime()
-
     self:ThinkHeat(holsteredtime)
-
     self:DoDeployAnimation()
 
     if self:GetValue("AnimDraw") then
@@ -89,7 +75,7 @@ function SWEP:Deploy()
         end
     end
 
-    self:SetShouldHoldType()
+    self:SetShouldHoldType(true)
 
     self:RunHook("Hook_Deploy")
 
@@ -119,6 +105,8 @@ function SWEP:ClientDeploy()
         if self:LookupPoseParameter("sights") != -1 then self.HasSightsPoseparam = true end
         if self:LookupPoseParameter("firemode") != -1 then self.HasFiremodePoseparam = true end
     end
+    
+    self:DoFSetParams(0)
 
     gui.EnableScreenClicker(false)
 
@@ -138,7 +126,7 @@ function SWEP:InitialDefaultClip()
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, ammmmmo)
         else
-            self:GetOwner():GiveAmmo(self:GetValue("ClipSize") * GetConVar("arc9_mult_defaultammo"):GetInt(), ammmmmo)
+            self:GetOwner():GiveAmmo(math.Round(self:GetValue("ClipSize")) * GetConVar("arc9_mult_defaultammo"):GetInt(), ammmmmo)
         end
     end
 end
@@ -200,9 +188,7 @@ function SWEP:Holster(wep)
         if SERVER and self:GetProcessedValue("Disposable", true) and self:Clip1() == 0 and self:Ammo1() == 0 and !IsValid(self:GetDetonatorEntity()) then
             self:Remove()
         end
-
         self:SetLastHolsterTime(CurTime())
-        -- self:DoPlayerModelLean(true)
 
         return true 
     end
@@ -241,8 +227,6 @@ function SWEP:Holster(wep)
 
         self:SetLastHolsterTime(CurTime())
 
-        -- self:DoPlayerModelLean(true)
-
         return true
     else
         -- Prepare the holster and set up the timer
@@ -250,18 +234,16 @@ function SWEP:Holster(wep)
         self:SetHolster_Entity(wep)
         if self.QuickSwapTo and wep.SetDoAFastDraw then wep:SetDoAFastDraw(true) end
         if wep.QuickSwapTo then self:SetDoAFastDraw(true) end
-        local fdraw = self:GetDoAFastDraw()
-        local specialholsterlogic = self:RunHook( "Hook_SpecialHolsterLogic" )
+        
+        local fastdraw = self:GetDoAFastDraw()
+        local specialholsterlogic = self:RunHook("Hook_SpecialHolsterLogic")
         if !specialholsterlogic then
-            local hasqh = self:HasAnimation("holster_quick")
-            local selectholsteranimation = self:RunHook( "Hook_SelectHolsterAnimation" ) or (wep.QuickSwapTo and hasqh and "holster_quick") or "holster"
-            if self:HasAnimation(selectholsteranimation) then
-                local unsatmult = (fdraw and ((hasqh and 1) or (!hasqh and 0.5)) or 1)
-                local animation = self:PlayAnimation(selectholsteranimation, self:GetProcessedValue("DeployTime", true, 1) * unsatmult, true, false, nil, nil, true) or 0
-                local aentry = self:GetAnimationEntry(self:TranslateAnimation(selectholsteranimation))
-                local alength = aentry.MinProgress or animation
-                alength = alength * (aentry.Mult or 1)
-                self:SetHolsterTime(CurTime() + alength * unsatmult)
+            local has_quickholster = self:HasAnimation("holster_quick")
+            local holster_animation = self:RunHook("Hook_SelectHolsterAnimation") or (wep.QuickSwapTo and has_quickholster and "holster_quick") or "holster"
+            if self:HasAnimation(holster_animation) then
+                local holster_mult = fastdraw and !has_quickholster and self.QuickHolsterMult or 1
+                local t, minprogress = self:PlayAnimation(holster_animation, self:GetProcessedValue("DeployTime", true, 1) * holster_mult, true, true)
+                self:SetHolsterTime(CurTime() + t * minprogress)
             else
                 self:SetHolsterTime(CurTime() + (self:GetProcessedValue("DeployTime", true, 1)))
             end
@@ -273,7 +255,6 @@ function SWEP:Holster(wep)
             self:DoPlayerAnimationEvent(animdrwa)
         end
 
-        -- self:ToggleBlindFire(false)
         self:SetInSights(false)
         self:ToggleUBGL(false)
         self:SetCycleFinishTime(0)
@@ -314,23 +295,26 @@ function SWEP:DoDeployAnimation()
         owner.ARC9LastSelectedGrenade = self:GetClass()
     end
 
-    if !arc9_never_ready:GetBool() and (arc9_dev_always_ready:GetBool() or !self:GetReady()) and self:HasAnimation("ready") then
+    if !arc9_never_ready:GetBool() and ((arc9_dev_always_ready:GetBool() and self:Clip1() > 0) or !self:GetReady()) and self:HasAnimation("ready") then
         local t, min = self:PlayAnimation("ready", self:GetProcessedValue("DeployTime", true, 1), true)
 
         self:SetReadyTime(CurTime() + (t * min))
         self:SetReady(true)
     else
         if self:GetDoAFastDraw() then
-            if self:HasAnimation("draw_quick") then
-                self:PlayAnimation("draw_quick", self:GetProcessedValue("DeployTime", true, 1), true)
-            else
-                self:PlayAnimation("draw", self:GetProcessedValue("DeployTime", true, 1) * 0.65, true, true) -- + delayedidle
-            end
+            local has_fastdraw = self:HasAnimation("draw_quick")
+            local draw_anim = has_fastdraw and "draw_quick" or "draw"
+            local draw_mult = has_fastdraw and 1 or self.QuickDrawMult
+            self:PlayAnimation(draw_anim, self:GetProcessedValue("DeployTime", true, 1) * draw_mult, true)
         else
             self:PlayAnimation("draw", self:GetProcessedValue("DeployTime", true, 1), true)
         end
         self:SetDoAFastDraw(false)
         self:SetReady(true)
+    end
+    
+    if game.SinglePlayer() then
+        self:CallOnClient("ClientDeploy")
     end
 end
 

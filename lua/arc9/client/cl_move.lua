@@ -1,7 +1,6 @@
--- local arc9_lean_direction = nil
 
 local arc9_autoreload = GetConVar("arc9_autoreload")
--- local arc9_autolean = GetConVar("arc9_autolean")
+local arc9_cruelty_reload = GetConVar("arc9_cruelty_reload")
 
 ARC9.ReloadAmount = 0
 

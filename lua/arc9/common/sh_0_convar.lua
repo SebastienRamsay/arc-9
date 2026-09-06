@@ -276,14 +276,6 @@ local conVars = {
         default = "0"
     },
     {
-        name = "npc_blacklist",
-        default = ""
-    },
-    {
-        name = "npc_whitelist",
-        default = ""
-    },
-    {
         name = "npc_give_weapons",
         default = "0"
     },
@@ -312,6 +304,11 @@ local conVars = {
     },
     {
         name = "mod_overheat",
+        default = "1",
+        replicated = true
+    },
+    {
+        name = "mod_nearwall",
         default = "1",
         replicated = true
     },
@@ -377,6 +374,11 @@ local conVars = {
     {
         name = "breath_slowmo",
         default = "1",
+        replicated = true
+    },
+    {
+        name = "breath_infinite",
+        default = "0",
         replicated = true
     },
     {
@@ -538,8 +540,13 @@ local conVars = {
         client = true
     },
     {
-        name = "tpik_framerate",
+        name = "tpik_framerate_local",
         default = "60",
+        client = true
+    },
+    {
+        name = "tpik_framerate_others",
+        default = "20",
         client = true
     },
     {
@@ -624,11 +631,11 @@ local conVars = {
         default = "0",
         client = true
     },
-    {
-        name = "fx_adsblur",
-        default = "1",
-        client = true
-    },
+    -- {
+    --     name = "fx_adsblur",
+    --     default = "1",
+    --     client = true
+    -- },
     {
         name = "fx_reloadblur",
         default = "0",
@@ -649,22 +656,6 @@ local conVars = {
         client = true,
         userinfo = true
     },
-    -- {
-    --     name = "autolean",
-    --     default = "1",
-    --     client = true,
-    -- },
-    -- {
-    --     name = "lean",
-    --     default = "1",
-    --     replicated = true
-    -- },
-    -- {
-    --     name = "togglelean",
-    --     default = "0",
-    --     client = true,
-    --     userinfo = true
-    -- },
     {
         name = "togglepeek",
         default = "0",
@@ -802,6 +793,10 @@ local conVars = {
     },
     {
         name = "recoilshake",
+        default = "1",
+    },
+    {
+        name = "recoilcamshake",
         default = "1",
     },
     {
@@ -972,16 +967,47 @@ local conVars = {
         replicated = true
     },
     {
-        name = "vm_adsstyle",
-        default = "0",
-        client = true
-    },
-    {
         name = "drawprojectedlights",
         default = "1",
         client = true
     },
+    {
+        name = "fx_rt_shader",
+        default = "1",
+        client = true
+    },
+    {
+        name = "fx_rt_alwaysdraw",
+        default = "0",
+        client = true
+    },
+    {
+        name = "fx_rt_fxaa",
+        default = "1",
+        client = true
+    },
+    {
+        name = "fx_adsblur_new",
+        default = "1",
+        client = true
+    },
+    {
+        name = "fx_adsblur_always",
+        default = "0",
+        client = true
+    },
+    {
+        name = "fx_adsblur_bleeding",
+        default = "1",
+        client = true
+    },
+    {
+        name = "fx_adsblur_bleeding_amount",
+        default = "7",
+        client = true
+    },
 }
+
 ARC9.ConVarData = {}
 
 local prefix = "arc9_"
@@ -1361,7 +1387,6 @@ c1 = {
     ["BulletGuidanceAmount"] = true,
     ["ExplosionDamage"] = true,
     ["ExplosionRadius"] = true,
-    -- ["CanLean"] = true,
     ["HoldBreathTime"] = true,
     ["RestoreBreathTime"] = true,
     ["SlamFire"] = true,
@@ -1490,7 +1515,7 @@ local function menu_server_modifiers(panel)
         panel:ControlHelp( ARC9.GetPhrase and ARC9:GetPhrase("spawnmenu.supermod.examples") )
     else
         panel:ControlHelp( "Examples:" )
-        panel:ControlHelp( "∟ Overheat | true - Disables overheating" )
+        panel:ControlHelp( "∟ Overheat | false - Disables overheating" )
         panel:ControlHelp( "∟ BottomlessClip | true - Enables Bottomless Clip" )
         panel:ControlHelp( "∟ RecoilMultCrouch | 0.1 - Lowers recoil to 10% when crouching" )
         panel:ControlHelp( "∟ RPMMultOddShot | 0.5 - Every other shot shoots at half RPM" )

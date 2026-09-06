@@ -154,6 +154,13 @@ ARC9.AutoStatsMains = {
     ["ImpactForce"] = {false, false},
     ["RicochetSeeking"] = {false, true},
     ["RicochetSeekingAngle"] = {false, false},
+    -- ["RTScopeMagnification"] = {"×", false},
+    -- ["RTScopeMagnificationMin"] = {"×", false},
+    -- ["RTScopeMagnificationMax"] = {"×", false},
+    ["RTScopeNew_FPSLock"] = {" FPS", true},
+    ["RTScopeNew_Pixelation"] = {"px", true},
+    ["EFTErgo"] = {false, false},
+    ["EFTWeight"] = {"kg", true, nil, function(value) return value > 0.1 end},
 }
 
 ARC9.AutoStatsOperations = {
@@ -250,7 +257,6 @@ ARC9.AutoStatsConditions = {
     ["Shooting"] = "While Shooting",
     ["Recoil"] = "With Each Shot",
     ["Move"] = "While Moving",
-    ["BlindFire"] = "While Blind Firing",
     ["UBGL"] = "In UBGL",
     ["Bipod"] = "On Bipod",
     ["Sprint"] = "when Sprinting",
@@ -282,6 +288,7 @@ function ARC9.GetProsAndCons(atttbl, weapon)
                 negisgood = tbl[2]
                 asmain = main
                 canautostat = true
+                if tbl[4] then canautostat = tbl[4](value) end
                 maxlen = string.len(main)
             end
         end
@@ -342,6 +349,37 @@ function ARC9.GetProsAndCons(atttbl, weapon)
             table.insert(consname, autostat)
             table.insert(consnum, autostatnum)
         end
+    end
+
+    if atttbl.RTScope and !atttbl.RTCollimator and atttbl.Sights then
+        local minx, maxx, hastrue, magniftext = 999, -1, false, "?"
+
+        for _, b in ipairs(atttbl.Sights) do
+            if b.RTScopeMagnification then
+                minx = math.min(b.RTScopeMagnification, minx)
+                maxx = math.max(b.RTScopeMagnification, maxx)
+                hastrue = true
+            end
+        end
+
+        if atttbl.RTScopeMagnificationMin and atttbl.RTScopeMagnificationMax then
+            minx = math.min(atttbl.RTScopeMagnificationMin, minx)
+            maxx = math.max(atttbl.RTScopeMagnificationMax, maxx)
+        elseif !hastrue and atttbl.RTScopeMagnification then
+            minx = math.min(atttbl.RTScopeMagnification, minx)
+            maxx = math.max(atttbl.RTScopeMagnification, maxx)
+        end
+        
+        if maxx == -1 then
+            magniftext = "Outdated :("
+        elseif maxx > minx then
+            magniftext = minx .. "× - " .. maxx .. "×"
+        else
+            magniftext = maxx .. "×"
+        end
+
+        table.insert(prosname, ARC9:GetPhrase("autostat." .. string.lower("RTScopeMagnification")))
+        table.insert(prosnum, magniftext)
     end
 
     -- custom stats

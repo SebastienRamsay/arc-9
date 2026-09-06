@@ -32,7 +32,8 @@ function SWEP:GenerateAutoSight(sight, slottbl)
         ShadowPos = sight.ShadowPos,
         Reticle = sight.Reticle,
         RTScopeFOV = sight.RTScopeFOV,
-        RTScopeMagnification = sight.RTScopeMagnification
+        RTScopeMagnification = sight.RTScopeMagnification,
+        Scale = scale
     }
 end
 
@@ -54,6 +55,7 @@ end
 local arc9_cheapscopes = GetConVar("arc9_cheapscopes")
 local arc9_compensate_sens = GetConVar("arc9_compensate_sens")
 local fov_desired = GetConVar("fov_desired")
+local arc9_fx_rtvm = GetConVar("arc9_fx_rtvm")
 
 function SWEP:GetRealZoom(sight)
     local atttbl
@@ -71,29 +73,50 @@ function SWEP:GetRealZoom(sight)
         return atttbl.RTScopeMagnificationMin and Lerp(sight.SmoothScrollLevel, atttbl.RTScopeMagnificationMax, atttbl.RTScopeMagnificationMin) or (sight.ViewModelFOV or 54) / Lerp(sight.SmoothScrollLevel, atttbl.RTScopeFOVMax, atttbl.RTScopeFOVMin)
     else
         -- pseudo fake zoom if no real new thing defined
-        return sight.RTScopeMagnification or atttbl.RTScopeMagnification or (sight.ViewModelFOV or 54) / (sight.RTScopeFOV or atttbl.RTScopeFOV)
+        return sight.RTScopeMagnification or atttbl.RTScopeMagnification or (sight.ViewModelFOV or 54) / (sight.RTScopeFOV or atttbl.RTScopeFOV or 1)
     end
 end
+
+local rtcheapmat = Material("effects/arc9/rt_cheap")
 
 function SWEP:GetMagnification()
     local sight = self:GetSight()
 
     local target = sight.Magnification or 1
+    local target2 = target
 
-    if arc9_cheapscopes:GetBool() and !sight.Disassociate then
+    local realzoomzoom = self:GetRealZoom(sight)
+
+    if self:IsCheapScope(sight) and !sight.Disassociate then
         local atttbl = sight.atttbl
 
         if sight.BaseSight then
             atttbl = self:GetTable()
         end
 
-        if atttbl and atttbl.RTScope and !atttbl.RTCollimator then
-            target = math.max(target * self:GetRealZoom(sight), 1)
+        if atttbl and atttbl.RTScope then
+            local cheapscale = math.max(1 / realzoomzoom, 0.85)
+            target2 = math.max(target2 * realzoomzoom, 1.0) * cheapscale -- 0.85 cuz scale in vmt
+            rtcheapmat:SetFloat("$scale1", cheapscale)
         end
     end
 
-    return target
+    return target2, target
 end
+
+function SWEP:IsCheapScope(sight)
+    if self:GetSightAmount() == 0 and !self:GetCustomize() then return true end
+
+    sight = sight or self:GetSight()
+    local at = sight.atttbl or {}
+    if at.RTScopeNew_ForceExpensive or self.RTScopeNew_ForceExpensive then return false end
+    if at.RTScopeNew_ForceCheap or self.RTScopeNew_ForceCheap then return true end
+
+    if arc9_cheapscopes:GetBool() then return true end
+
+    return (at and at.RTCollimator) or !arc9_fx_rtvm:GetBool() and self:GetRealZoom(sight) <= 1.05
+end
+
 
 local aa = GetConVar("arc9_aimassist")
 local aac = GetConVar("arc9_aimassist_cl")
@@ -111,6 +134,8 @@ function SWEP:AdjustMouseSensitivity()
 
 	local gsa = self:GetSightAmount()
 	
+    local rtmagnif = gsa > 0.01 and self:GetRTScopeMagnification() or 1
+
     if !self:GetInSights() then 
 	-- if gsa <= 0.01 then -- Active if "Sight amount" is over 1%. Experimental.
 		local amt = 1
@@ -122,7 +147,6 @@ function SWEP:AdjustMouseSensitivity()
 
 		local magdef = self.IronSights.Magnification
 		local mag = self:GetMagnification()
-		local fov = fov_desired:GetFloat()
 
 		local sight = self:GetSight()
 		local atttbl = sight.atttbl
@@ -132,7 +156,7 @@ function SWEP:AdjustMouseSensitivity()
 		end
 
 		if atttbl and atttbl.RTScope and !sight.Disassociate and !sight.NoSensAdjustment and !atttbl.RTCollimator then
-			mag = mag + (fov / (self:GetRTScopeFOV() or 90))
+			mag = mag + (rtmagnif - 1) * 5
 		end
 
 		if self.Peeking and !self.PeekingIsSight then
@@ -140,7 +164,7 @@ function SWEP:AdjustMouseSensitivity()
 		end
 
 		if mag > 0 then
-			local amt = 1 / (1 - (self:GetSightAmount() * (1 - mag)))
+			local amt = 1 / (1 - (gsa * (1 - mag)))
 
 			amt = math.sqrt(amt)
 			
@@ -152,4 +176,5 @@ function SWEP:AdjustMouseSensitivity()
 		end
 	end
 
+    rtcheapmat:SetFloat("$scale2", math.Clamp(gsa*10, rtmagnif > 3 and 1 or 0.5, 1))
 end

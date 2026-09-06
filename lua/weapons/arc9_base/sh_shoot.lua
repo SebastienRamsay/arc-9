@@ -2,6 +2,7 @@ local cancelmults = ARC9.CancelMultipliers[engine.ActiveGamemode()] or ARC9.Canc
 
 local swepGetProcessedValue = SWEP.GetProcessedValue
 local swepGetValue = SWEP.GetValue
+local infbreathconvar = GetConVar("arc9_breath_infinite")
 
 local sp = game.SinglePlayer()
 
@@ -385,11 +386,9 @@ function SWEP:DoPrimaryAttack()
         end
     end
 
-    if !swepGetProcessedValue(self,"CanFireUnderwater", true) then
-        if bit.band(util.PointContents(self:GetShootPos()), CONTENTS_WATER) == CONTENTS_WATER then
-            self:DryFire()
-            return
-        end
+    if !swepGetProcessedValue(self,"CanFireUnderwater", true) and bit.band(util.PointContents(self:GetShootPos()), CONTENTS_WATER) == CONTENTS_WATER then
+        self:DryFire()
+        return
     end
 
     self:SetBaseSettings()
@@ -432,7 +431,7 @@ function SWEP:DoPrimaryAttack()
             end
         end
 
-        self:PlayAnimation(banim, 1, false, true)
+        self:PlayAnimation(banim, 1, false)
     end
 
     local clip1 = self:Clip1()
@@ -476,7 +475,7 @@ function SWEP:DoPrimaryAttack()
     self:DoEffects()
 
 
-    if self:HoldingBreath() then
+    if self:HoldingBreath() and !infbreathconvar:GetBool() then
         local d = 100 / math.max(1, swepGetProcessedValue(self, "HoldBreathTime", true))
         local breathtake = math.Clamp(delay * d * 3, 1, 10)
         if manualaction then
@@ -515,13 +514,13 @@ function SWEP:DoPrimaryAttack()
 
     spread = math.Max(spread, 0)
 
-    local sp, sa = self:GetShootPos()
+    local shopos, shoang = self:GetShootPos()
 
     if IsValid(self:GetLockOnTarget()) and self:GetLockedOn() and swepGetProcessedValue(self,"LockOnAutoaim", true) then
-        sa = (self:GetLockOnTarget():EyePos() - sp):Angle()
+        sa = (self:GetLockOnTarget():EyePos() - shopos):Angle()
     end
 
-    self:DoProjectileAttack(sp, sa, spread)
+    self:DoProjectileAttack(shopos, shoang, spread)
 
     self:ApplyRecoil()
     self:DoVisualRecoil()
@@ -591,6 +590,18 @@ if CLIENT then
     end
 end
 
+local function CalcSpreadDir(seed, ang, spread)
+    local ang2 = Angle(ang)
+
+    local a = util.SharedRandom("arc9_physbullet", 0, 360, seed)
+    local angleRand = Angle(math.sin(a), math.cos(a), 0)
+    angleRand:Mul(spread * util.SharedRandom("arc9_physbullet2", 0, 45, seed) * 1.4142135623730)
+
+    ang2:Add(angleRand)
+
+    return ang2:Forward()
+end
+
 local bulletPhysics = GetConVar("arc9_bullet_physics")
 local bulletPhysicsshotguns = GetConVar("arc9_bullet_physics_shotguns")
 local fireBullets = {}
@@ -611,17 +622,7 @@ function SWEP:ShootPhysBulletBinding(pos, ang, spread, bullettbl, numm)
         end
 
         for i = 1, numm do
-            local ang2 = ang
-
-            -- trig stuff to ensure the spread is a circle of the right size
-            local seed = i + self:EntIndex() + engine.TickCount()
-            local a = util.SharedRandom("arc9_physbullet", 0, 360, seed)
-            local angleRand = Angle(math.sin(a), math.cos(a), 0)
-            angleRand:Mul(spread * util.SharedRandom("arc9_physbullet2", 0, 45, seed) * 1.4142135623730)
-
-            ang2:Add(angleRand)
-
-            local vec = ang2:Forward()
+            local vec = CalcSpreadDir(i + self:EntIndex() + engine.TickCount(), ang, spread)
             vec:Mul(swepGetProcessedValue(self, "PhysBulletMuzzleVelocity", true))
 
             ARC9:ShootPhysBullet(self, pos, vec, bullettbl, true)
@@ -653,9 +654,10 @@ function SWEP:DoProjectileAttack(pos, ang, spread)
         local numm = swepGetProcessedValue(self, "Num")
         if numm > 0 then
             local owner = self:GetOwner()
+            local ownernpc = IsValid(owner) and owner:IsNPC() -- no physbullets for npcs they dont deserve that
 
             local alwayphys = swepGetProcessedValue(self, "AlwaysPhysBullet", true)
-            local shouldphys = (alwayphys or bulletPhysics:GetBool()) and !(self:IsNPC() or swepGetProcessedValue(self, "NeverPhysBullet", true) or (numm > 2 and !bulletPhysicsshotguns:GetBool()))
+            local shouldphys = (alwayphys or (bulletPhysics:GetBool() and !ownernpc)) and !(swepGetProcessedValue(self, "NeverPhysBullet", true) or (numm > 2 and !bulletPhysicsshotguns:GetBool()))
 
             if alwayphys then
                 self:ShootPhysBulletBinding(pos, ang, spread, bullettbl, numm)
@@ -691,32 +693,45 @@ function SWEP:DoProjectileAttack(pos, ang, spread)
                 fireBullets.Force = swepGetProcessedValue(self, "ImpactForce", true) / numm
                 fireBullets.Tracer = tr
                 fireBullets.TracerName = swepGetProcessedValue(self, "TracerEffect", true)
-                fireBullets.Num = numm
-                fireBullets.Dir = ang:Forward()
+                fireBullets.Num = 1 -- fuck this bitch source engine loops they SUCK
+                -- fireBullets.Dir = ang:Forward()
                 fireBullets.Src = pos
-                fireBullets.Spread = Vector(spread, spread, spread)
+                -- fireBullets.Spread = Vector(spread, spread, spread)
+                fireBullets.Spread = Vector()
                 fireBullets.HullSize = swepGetProcessedValue(self, "HullSize", true)
                 fireBullets.IgnoreEntity = veh
                 fireBullets.Distance = distance
+
+                -- local amount = 0
+                -- print("\nNEW ONE\n ")
+
                 fireBullets.Callback = function(att, btr, dmg)
                     rangecheck = true -- callback only called if bullet hits something
                     local range = distance * btr.Fraction
 
-                    dmg:SetDamage(swepGetProcessedValue(self, "DamageMax"))
+                    local dmgnumbr = swepGetProcessedValue(self, "DamageMax", true)
+                    dmg:SetDamage(dmgnumbr)
 
                     self.Penned = 0
                     self:AfterShotFunction(btr, dmg, range, swepGetProcessedValue(self, "Penetration", true), {})
-
+                    
                     -- if ARC9.Dev(2) then
                     --     if SERVER then
-                    --         debugoverlay.Cross(btr.HitPos, 4, 5, Color(255, 0, 0), false)
+                    --         amount = amount + 1
+                    --         debugoverlay.Cross(btr.HitPos, 1, 5, Color(255, 0, 0), false)
+                    --         debugoverlay.Text(btr.HitPos, "#" .. amount, 4, false)
+                    --         print("#" .. amount, dmgnumbr/numm)
                     --     else
                     --         debugoverlay.Cross(btr.HitPos, 4, 5, Color(255, 255, 255), false)
                     --     end
                     -- end
                 end
 
-                owner:FireBullets(fireBullets)
+                for i = 1, numm do
+                    fireBullets.Dir = CalcSpreadDir(i + self:EntIndex() + engine.TickCount(), ang, spread)
+
+                    owner:FireBullets(fireBullets)
+                end
 
                 if owner:IsPlayer() then
                     owner:LagCompensation(false)
@@ -1030,22 +1045,9 @@ function SWEP:GetShootPos()
     end
 
     local pos = owner:EyePos()
-
     local ang = self:GetShootDir()
-    local height = ang:Up()
-
-    height:Mul(swepGetProcessedValue(self, "HeightOverBore", true))
-    pos:Add(height)
-
-    --pos = pos + (owner:EyeAngles():Right() * self:GetLeanOffset())
-
     local rightVec = owner:EyeAngles():Right()
-    -- rightVec:Mul(self:GetLeanOffset())
-
-    pos:Add(rightVec)
-
     local shootposoffset = swepGetProcessedValue(self, "ShootPosOffset", true)
-
     local angRight = ang:Right()
     local angForward = ang:Forward()
     local angUp = ang:Up()
@@ -1062,6 +1064,16 @@ function SWEP:GetShootPos()
 
     return pos, ang
 end
+
+function SWEP:GetShootPositionVFIRE()
+        local muzz_qca = self:GetQCAMuzzle()
+        local ent = self:GetVM() -- Default to viewmodel
+        if self:GetOwner():ShouldDrawLocalPlayer() or !CLIENT then
+            ent = self -- Use worldmodel for others/server
+        end
+        local ft_qca = ent:GetAttachment(muzz_qca)
+        return ft_qca and ft_qca.Pos or self:GetShootPos()
+    end
 
 function SWEP:GetShootDir(quick)
     local owner = self:GetOwner()
@@ -1088,17 +1100,32 @@ function SWEP:ShootRocket()
     if CLIENT then return end
 
     local owner = self:GetOwner()
-
     local src = self:GetShootPos()
     local dir = self:GetShootDir(true)
-
     local num = swepGetProcessedValue(self, "Num")
     local ent = swepGetProcessedValue(self, "ShootEnt", true)
-
     local spread
 
+    if ent == "vfire_ball" and vFireInstalled then
+        local life = math.Rand(4, 8) * (swepGetProcessedValue(self, "ShootLife") or 2.15)
+        local forward = dir:Forward()
+        local vel = forward * math.Rand(900, 1000)
+        local feedCarry = math.Rand(3, 8) * (swepGetProcessedValue(self, "ShootFeed") or 1)
+        local forwardBoost = math.Rand(20, 40)
+        local tr = owner:GetEyeTrace()
+        if tr.Fraction < 0.001245 then
+            forwardBoost = 1
+        end
+        local spawnPos = src + (forward * forwardBoost)
+        CreateVFireBall(life, feedCarry, spawnPos, vel, owner)
+        -- Return here so the standard entity spawner does not run
+        return
+    end
+
     if owner:IsNPC() then
-        spread = self:GetNPCBulletSpread()
+        -- spread = self:GetNPCBulletSpread()
+        -- spread = self:GetNPCSpread()
+        spread = 0.03
     else
         spread = swepGetProcessedValue(self, "Spread")
     end

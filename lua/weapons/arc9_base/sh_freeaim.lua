@@ -85,8 +85,8 @@ function SWEP:GetInertiaSwayAngles()
 
     local eyee = self:GetOwner():EyeAngles()
 
-    self.InertiaDiff = LerpAngle(FrameTime() * 4, self.InertiaDiff, eyee - self:GetLastAimAngle())
-    self.InertiaSideMoveSmooth = Lerp(FrameTime() * 2, self.InertiaSideMoveSmooth, self.InertiaSideMoveRaw * 0.003)
+    self.InertiaDiff = LerpAngle(FrameTime() * 8, self.InertiaDiff, eyee - self:GetLastAimAngle())
+    self.InertiaSideMoveSmooth = Lerp(FrameTime() * 3, self.InertiaSideMoveSmooth, self.InertiaSideMoveRaw * 0.002)
 
     self:SetLastAimAngle(eyee)
 

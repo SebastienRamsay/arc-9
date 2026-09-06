@@ -299,6 +299,9 @@ L["autostat.visualrecoilpunch"] = "Visual Recoil Punch"
 L["autostat.visualrecoilroll"] = "Visual Recoil Roll"
 L["autostat.visualrecoilside"] = "Horizontal Visual Recoil"
 L["autostat.visualrecoilup"] = "Vertical Visual Recoil"
+L["autostat.rtscopemagnification"] = "Scope Magnification"
+L["autostat.rtscopenew_fpslock"] = "Display Framerate"
+L["autostat.rtscopenew_pixelation"] = "Display Resolution"
 
 --[[
 Secondary autostats are now controlled by string.format.
@@ -340,6 +343,20 @@ L["blacklist.all"] = "ALL"
 L["blacklist.id"] = "ID"
 L["blacklist.name"] = "NAME"
 L["blacklist.filter"] = "FILTER"
+L["blacklist.npc.title"] = "ARC9 Weapon Replacer Manager"
+L["blacklist.npc.deselect"] = "DESELECT ALL"
+L["blacklist.npc.select"] = "SELECT ALL"
+L["blacklist.npc.reset"] = "RESET"
+L["blacklist.npc.notfornpc"] = " (not for NPC)"
+L["blacklist.npc.pistol"] = "Pistol"
+L["blacklist.npc.smg"] = "SMG"
+L["blacklist.npc.ar"] = "Assault Rifle"
+L["blacklist.npc.shotgun"] = "Shotgun"
+L["blacklist.npc.sniper"] = "Sniper"
+L["blacklist.npc.rpg"] = "Explosive"
+L["blacklist.npc.frag"] = "Grenade"
+L["blacklist.npc.melee"] = "Melee"
+L["blacklist.npc.misc"] = "Misc"
 
 ////////////////////// Incompatible addons
 L["incompatible.title"] = "ARC9: INCOMPATIBLE ADDONS"
@@ -604,7 +621,7 @@ L["settings.tabname.visuals"] = "Visuals"
 
 ////////// TPIK
 L["settings.tabname.tpik"] = "TPIK - Third Person Inverse Kinematics"
-L["settings.tabname.tpik.desc"] = "\"Third Person Inverse Kinematics\" is a system that allows most weapons to be displayed in third person using their first person animations and positions."
+L["settings.tabname.tpik.desc"] = "\"Third Person Inverse Kinematics\" is a system that allows most weapons to be displayed in third person using their first person animations and positions.\n\nOriginal code by AWholeCream, improved by uzelezz123, optimizations & smoothing by Onge.org."
 
 L["settings.tpik.title"] = "Enable TPIK"
 L["settings.tpik.desc"] = "Enables TPIK (Third Person Inverse Kinematics).\n\nImpacts performance."
@@ -612,8 +629,11 @@ L["settings.tpik.desc"] = "Enables TPIK (Third Person Inverse Kinematics).\n\nIm
 L["settings.tpik_others.title"] = "Other Players' TPIK"
 L["settings.tpik_others.desc"] = "Show other players' TPIK.\n\nImpacts performance."
 
-L["settings.tpik_framerate.title"] = "TPIK Frame Rate"
-L["settings.tpik_framerate.desc"] = "At which frame rate the TPIK runs at.\n\nSet to 0 for unlimited.\n\nUnlimited or higher values impact performance."
+L["settings.tpik_framerate.title"] = "Other Players' TPIK Frame Rate"
+L["settings.tpik_framerate.desc"] = "At which frame rate the TPIK calculations runs at anybody else on server.\n\nHigher values impact performance."
+
+L["settings.tpik_framerate_local.title"] = "Local player TPIK Frame Rate"
+L["settings.tpik_framerate_local.desc"] = "At which frame rate the TPIK calculations runs at for you specifically.\n\nHigher values impact performance."
 
 ////////// Blur
 L["settings.tabname.blur"] = "Blur"
@@ -634,8 +654,18 @@ L["settings.blur.fx_inspectblur.desc"] = "Blurs the background when inspecting a
 L["settings.blur.fx_rtblur.title"] = "Blur world when aiming RT scopes"
 L["settings.blur.fx_rtblur.desc"] = "Blurs the background when aiming with any RT scope."
 
-L["settings.blur.fx_adsblur.title"] = "Blur weapon when aiming"
-L["settings.blur.fx_adsblur.desc"] = "Applies a blur effect on the bottom of your screen when aiming.\n\nNot all weapons support this."
+L["settings.blur.fx_adsblur.title"] = "Weapon DoF effect when aiming"
+L["settings.blur.fx_adsblur.desc"] = "Applies a Depth of Field effect on top of viewmodel, blurring rear sights and scopes.\n\nUses Poisson disk blur from github.com/spite/Wagner, as well as luluco250's LightDoF shader.\n\nCauses crashes on modern Intel ARC/Iris GPUs."
+L["settings.blur.fx_adsblur.intel"] = "(Unavailable on Intel GPU) Weapon DoF"
+
+L["settings.blur.fx_adsblur_always.title"] = "Weapon DoF always"
+L["settings.blur.fx_adsblur_always.desc"] = "Same as option above, but outside of ADS too, making back of weapon look like its out of focus."
+
+L["settings.blur.fx_adsblur_bleeding.title"] = "DoF Background Bleeding"
+L["settings.blur.fx_adsblur_bleeding.desc"] = "More advanced Depth of Field shader that softly blends background and the weapon for a more realistic effect.\n\nMay or may not impact performance."
+
+L["settings.blur.fx_adsblur_bleeding_amount.title"] = "Background Bleeding Amount"
+L["settings.blur.fx_adsblur_bleeding_amount.desc"] = "Controls how strong the background bleeding effect is."
 
 ////////// Effects
 L["settings.tabname.effects"] = "Effects"
@@ -750,11 +780,11 @@ L["settings.tabname.optics.desc"] = "Adjust settings related to optics and their
 L["settings.gameplay.toggleads.title"] = "Toggle ADS"
 L["settings.gameplay.toggleads.desc"] = "Pressing your aiming button toggles aiming."
 
-L["settings.gameplay.cheapscopes.title"] = "Cheap Scopes"
-L["settings.gameplay.cheapscopes.desc"] = "Cheap RT scope implementation that zooms your whole view when aiming rather than rendering the world through the scope.\n\nCan improve performance depending on map size.\n\nNot compatible with \"Render Weapon Through RT\"."
+L["settings.gameplay.cheapscopes.title"] = "Performance RT Scopes"
+L["settings.gameplay.cheapscopes.desc"] = "Performance-friendly RT scope implementation that zooms your whole view when aiming rather than rendering the world through the scope.\n\nCan improve performance depending on map size.\n\nNot compatible with \"Render Weapon Through RT\"."
 
 L["settings.gameplay.fx_rtvm.title"] = "Render Weapon Through RT"
-L["settings.gameplay.fx_rtvm.desc"] = "! EXPERIMENTAL !\n\nRenders the weapon, and its attachments, through RT scopes.\n\nGreatly impacts performance.\n\nNot compatible with \"Cheap Scopes\"."
+L["settings.gameplay.fx_rtvm.desc"] = "! EXPERIMENTAL !\n\nRenders the weapon, and its attachments, through RT scopes.\n\nGreatly impacts performance.\n\nNot compatible with \"Performance RT Scopes\"."
 
 L["settings.gameplay.compensate_sens.title"] = "Dynamic ADS Sensitivity"
 L["settings.gameplay.compensate_sens.desc"] = "Dynamically adjusts the aiming sensitivity depending on weapon zoom and magnification."
@@ -770,6 +800,15 @@ L["settings.gameplay.color.reflex.desc"] = "Which color the reticle used on refl
 
 L["settings.gameplay.color.scope.title"] = "Scope Reticle Color"
 L["settings.gameplay.color.scope.desc"] = "Which color the reticle used on RT scopes should be.\n\nNot all optics support this."
+
+L["settings.gameplay.fx_rt_alwaysdraw.title"] = "Render RT Scope Preview"
+L["settings.gameplay.fx_rt_alwaysdraw.desc"] = "Scope will draw preview image with reticle when it's directed to the center of screen, outside of ADS.\n\nDoesn't affect performance much, uses Cheap Scopes internally."
+
+L["settings.gameplay.fx_rt_shader.title"] = "Fancy Shader in RT Scopes"
+L["settings.gameplay.fx_rt_shader.desc"] = "Draws cool chromatic aberration, lens distortion, and complex parallax effects inside RT scopes.\n\nNo idea if this actually affects performance, as it's a simple GPU shader.\n\nBased on shadertoy.com/view/WX2cRd by science6uru2."
+
+L["settings.gameplay.fx_rt_fxaa.title"] = "FXAA in RT Scopes"
+L["settings.gameplay.fx_rt_fxaa.desc"] = "A simple Fast approximate anti-aliasing (FXAA) shader, to make scope view a bit softer, due to Source Engine's MSAA not working on Render Target views.\n\nPorted by Evgeny Akabenko, used with permission."
 
 ////////////////////// Gameplay
 L["settings.tabname.gameplay"] = "Gameplay"
@@ -787,6 +826,9 @@ L["settings.gameplay.autoreload.desc"] = "Automatically reloads your weapon when
 L["settings.server.gameplay.recoilshake.title"] = "Enable Recoil FOV Shake"
 L["settings.server.gameplay.recoilshake.desc"] = "Snaps the field of view when shooting."
 
+L["settings.server.gameplay.recoilcamshake.title"] = "Enable Recoil Camera Shake"
+L["settings.server.gameplay.recoilcamshake.desc"] = "Shakes camera roll angle when shooting."
+
 ////////// Functionality
 L["settings.tabname.features"] = "Features"
 L["settings.tabname.features.desc"] = "Adjust settings related to various ARC9 features."
@@ -796,6 +838,9 @@ L["settings.server.gameplay.mod_sway.desc"] = "Enable weapon sway (if the weapon
 
 L["settings.server.gameplay.breath_slowmo.title"] = "Enable Slow-Mo when Holding Breath (Singleplayer)"
 L["settings.server.gameplay.breath_slowmo.desc"] = "! Singleplayer Only !\nHolding your breath slows down time."
+
+L["settings.server.gameplay.breath_infinite.title"] = "Infinite Hold Breath"
+L["settings.server.gameplay.breath_infinite.desc"] = "Holding your breath does not drain the breath meter."
 
 L["settings.gameplay.togglebreath.title"] = "Toggle Holding Breath"
 L["settings.gameplay.togglebreath.desc"] = "Pressing your sprint button toggles holding breath."
@@ -951,6 +996,9 @@ L["settings.server.custmenu.atts_generateentities.desc"] = "Generate entities th
 L["settings.tabname.npc"] = "NPC Settings"
 L["settings.tabname.npc.desc"] = "Adjust settings for interaction with NPC's."
 
+L["settings.server.npc.blacklist.title"] = "Weapon Replacer Manager"
+L["settings.server.npc.blacklist.desc"] = "Opens a menu that allows excluding or including specific weapons from replacement pools for each HL2 weapon individually."
+
 L["settings.server.npc.npc_autoreplace.title"] = "Replace NPC Weapons"
 L["settings.server.npc.npc_autoreplace.desc"] = "NPC's that spawn with HL2 weapons will have them be replaced with ARC9 weapons."
 
@@ -1025,6 +1073,9 @@ L["settings.server.quickstat.mod_malfunction.desc"] = "Multiply how likely it is
 
 L["settings.server.gameplay.mod_overheat.title"] = "Enable Overheating"
 L["settings.server.gameplay.mod_overheat.desc"] = "If the weapon supports it, it can overheat when firing too often, which could lead to a malfunction."
+
+L["settings.server.gameplay.mod_nearwall.title"] = "Enable Nearwalling"
+L["settings.server.gameplay.mod_nearwall.desc"] = "Enable Nearwalling"
 
 L["settings.server.gameplay.supermod.title"] = "Super Modifiers"
 L["settings.server.gameplay.supermod.desc"] = "Open a separate menu that allows you to apply any modifier on all weapons.\n\nWarning: Could cause weapons to no longer function if done incorrectly."
@@ -1208,8 +1259,8 @@ Price: <color=100,255,100>$5</color>
 Acquire ARC9 Premium for <color=255,106,0>1 Month</color>.
 ]]
 
-L["premium.payment.6mon.title"] = "ARC9 Premium (3 Months)"
-L["premium.payment.6mon.desc"] = [[
+L["premium.payment.3mon.title"] = "ARC9 Premium (3 Months)"
+L["premium.payment.3mon.desc"] = [[
 Price: <color=100,255,100>$15</color>
 
 Acquire ARC9 Premium for <color=255,106,0>3 Months</color>.

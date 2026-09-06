@@ -2,45 +2,43 @@ SWEP.SmoothedMagnification = 1
 SWEP.FOV = 90
 
 
--- local arc9_cheapscopes = GetConVar("arc9_cheapscopes")
 local arc9_vm_cambob = GetConVar("arc9_vm_cambob")
 local arc9_vm_cambobwalk = GetConVar("arc9_vm_cambobwalk")
 local arc9_vm_cambobintensity = GetConVar("arc9_vm_cambobintensity")
 local arc9_vm_camrollstrength = GetConVar("arc9_vm_camrollstrength")
 local arc9_vm_camstrength = GetConVar("arc9_vm_camstrength")
+local recoilshake = GetConVar("arc9_recoilcamshake")
 
 local SmoothRecoilAmount = 0
+
+local swepGetProcessedValue = SWEP.GetProcessedValue
 
 function SWEP:CalcView(ply, pos, ang, fov)
     if self:GetOwner():ShouldDrawLocalPlayer() then return end
 
-    local rec = (self:GetLastRecoilTime() + 0.25) - CurTime()
+    local swepDt = self.dt
+    if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
+
+    local rec = (swepDt.LastRecoilTime + 0.25) - CurTime()
 
     local reckick = self:GetProcessedValue("RecoilKick")
     rec = rec * 3 * reckick
 
-    if rec > 0 then
-        ang.r = ang.r + (math.sin(CurTime() * self:GetProcessedValue("RecoilKickDamping", true)) * rec)
+    if rec > 0 and recoilshake:GetBool() then
+        ang.r = ang.r + (math.sin(CurTime() * self:GetProcessedValue("RecoilKickDamping", true)) * rec) * (self:GetProcessedValue("RecoilKickRoll", true) or 1)
     end
 
     if self.RecoilKickAffectPitch then
         if !self:IsUsingRTScope() then
-            local recam = math.min(self:GetRecoilAmount(), 15)
+            local recam = math.min(swepDt.RecoilAmount, 15)
             SmoothRecoilAmount = Lerp(FrameTime() * 3, SmoothRecoilAmount, recam)
-            local thing = SmoothRecoilAmount * reckick * self:GetProcessedValue("Recoil")
+            local thing = SmoothRecoilAmount * (reckick * self:GetProcessedValue("RecoilKickPitchMult", true)) * self:GetProcessedValue("Recoil")
             ang.p = ang.p - 0.6 * thing
             self.VMZOffsetForCamera = -0.25 * thing
         end
     end
 
-    local sightamount = self:GetSightAmount()
-
-    -- does anybody knows what this part of code for? seems to be useless and breaks lean mods 
-    -- if self:IsScoping() and arc9_cheapscopes:GetBool() then
-    --     local shootang = self:GetShootDir()
-
-    --     ang = LerpAngle(sightamount, ang, shootang)
-    -- end
+    local sightamount = swepDt.SightAmount
 
     fov = fov / self:GetSmoothedFOVMag()
 
@@ -49,14 +47,12 @@ function SWEP:CalcView(ply, pos, ang, fov)
     ang = ang + (self.StoredVMAngles or angle_zero)
 
     if arc9_vm_cambob:GetBool() then
-        local sprintmult = arc9_vm_cambobwalk:GetBool() and 1 or Lerp(self:GetSprintAmount(), 0, 1)
+        local sprintmult = arc9_vm_cambobwalk:GetBool() and 1 or Lerp(swepDt.SprintAmount, 0, 1)
         local totalmult = math.ease.InQuad(math.Clamp(self.ViewModelBobVelocity / 350, 0, 1) * Lerp(sightamount, 1, 0.65)) * sprintmult * arc9_vm_cambobintensity:GetFloat()
         ang:RotateAroundAxis(ang:Right(),   math.cos(self.BobCT * 6)    * totalmult * -0.5)
         ang:RotateAroundAxis(ang:Up(),      math.cos(self.BobCT * 3.3)  * totalmult * -0.5)
         ang:RotateAroundAxis(ang:Forward(), math.sin(self.BobCT * 6)    * totalmult * -0.36)
     end
-
-    -- pos, ang = self:DoCameraLean(pos, ang)
 
     return pos, ang, fov
 end
@@ -68,34 +64,44 @@ function SWEP:GetSmoothedFOVMag()
     local speed = 1
 
     if self:GetInSights() then
-        local target = self:GetMagnification()
-        local sightdelta = self:GetSightAmount()
+        local swepDt = self.dt
+
+        local target, target2 = self:GetMagnification()
+        local sightdelta_old = swepDt.SightAmount
+        local sightdelta = sightdelta_old
 		local curTime = UnPredictedCurTime()
-		local fuckingreloadprocess = math.Clamp(1 - (self:GetReloadFinishTime() - curTime) / (self.ReloadTime * self:GetAnimationTime("reload")), 0, 1)
-		local reloadanim = self:GetAnimationEntry(self:TranslateAnimation("reload"))
+		local progress = math.Clamp(1 - (swepDt.ReloadFinishTime - curTime) / (self.ReloadTime * self:GetAnimationTime("reload")), 0, 1)
+		local anim = self:TranslateAnimation("reload")
+		local time = self:GetAnimationTime(anim)
+		local entry = self:GetAnimationEntry(anim)
 		local shotgun = self:GetShouldShotgunReload()
 
-        if self:GetInSights() then
-            sightdelta = math.ease.OutQuart(sightdelta)
-        else
-            sightdelta = math.ease.InQuart(sightdelta)
-        end
+        sightdelta = math.ease.OutQuart(sightdelta)
         sightdelta = math.ease.InOutQuad(sightdelta)
 
         if self.Peeking and !self.PeekingIsSight then
             target = self.IronSights.Magnification * 0.95
         end
 
-		if !shotgun and fuckingreloadprocess < (reloadanim.PeekProgress or reloadanim.MinProgress or 0.9) then target = target * 0.95 end
-			
-		if shotgun and self:GetReloading() then target = target * 0.95 end
-		
-        mag = Lerp(sightdelta, 1, target)
+        -- Duplicated code for MinProgressTime :P
+        local minprogress
+        local mp_t = entry.MinProgressTime
+        if mp_t then
+            minprogress = mp_t / time
+        else
+            minprogress = entry.MinProgress
+        end
 
-        -- mag = target
-        speed = Lerp(self:GetSightAmount(), speed, 10)
+		if !shotgun and progress < (entry.PeekProgress or minprogress or 0.9) then target = target * 0.95 end
+
+		if shotgun and swepDt.Reloading then target = target * 0.95 end
+
+        local sightdelta2 = math.ease.InCirc(sightdelta_old)
+        mag = Lerp(sightdelta, 1, Lerp(sightdelta2, target2, target))
+
+        speed = Lerp(sightdelta2, speed, (target > 2 and sightdelta2 < 1) and 50 or 10)
 	else
-		speed = Lerp(self:GetSightAmount(), 15, 10)
+		speed = Lerp(self:GetSightAmount(), 25, 10)
     end
 
     local diff = math.abs(self.SmoothedMagnification - mag)
@@ -111,11 +117,15 @@ SWEP.ProceduralViewOffset = Angle(0, 0, 0)
 SWEP.ProceduralSpeedLimit = 5
 
 function SWEP:GetCameraControl(wm)
-    local seqprox = self:GetSequenceProxy()
-	
-	if self:GetCustomize() then return end
+    local swepDt = self.dt
+    if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
+
+    local seqprox = swepDt.SequenceProxy
+
+	if swepDt.Customize then return end
 
     local camstrength, rollstrength = 1, 1
+
     if !wm then
         camstrength = arc9_vm_camstrength:GetFloat()
 
@@ -123,6 +133,7 @@ function SWEP:GetCameraControl(wm)
 
         rollstrength = arc9_vm_camrollstrength:GetFloat()
     end
+
     if seqprox != 0 then
         local slottbl = self:LocateSlotFromAddress(seqprox)
         local atttbl = self:GetFinalAttTable(slottbl)
@@ -136,8 +147,8 @@ function SWEP:GetCameraControl(wm)
         mdl:SetPos(vector_origin)
         mdl:SetAngles(angle_zero)
 
-        mdl:SetSequence(self:GetSequenceIndex())
-        mdl:SetCycle(self:GetSequenceCycle())
+        mdl:SetSequence(swepDt.SequenceIndex)
+        mdl:SetCycle(swepDt.SequenceCycle)
 
         local ang = (mdl:GetAttachment(camqca) or {}).Ang
 
@@ -148,16 +159,16 @@ function SWEP:GetCameraControl(wm)
         ang.p = ang.p * camstrength
         ang.y = ang.y * camstrength
         ang.r = ang.r * camstrength * rollstrength
-        ang:Mul(self:GetProcessedValue("IKCameraMotionQCA_Mult", true) or self:GetProcessedValue("CamQCA_Mult", true) or 1)
+        ang:Mul(swepGetProcessedValue(self, "IKCameraMotionQCA_Mult", true) or swepGetProcessedValue(self, "CamQCA_Mult", true) or 1)
 
         return ang
     else
-        local camqca = self:GetProcessedValue("CamQCA", true)
+        local camqca = swepGetProcessedValue(self, "CamQCA", true)
 
         if !camqca then return end
 
         local vm = self:GetVM()
-        
+
         if !IsValid(vm) then return end
 
         local ang = (vm:GetAttachment(camqca) or {}).Ang
@@ -167,11 +178,11 @@ function SWEP:GetCameraControl(wm)
         ang = vm:WorldToLocalAngles(ang)
         ang:Sub(self.CamOffsetAng)
 
-        if self:GetProcessedValue("CamCoolView", true) then
+        if swepGetProcessedValue(self, "CamCoolView", true) then
             local ft = FrameTime()
 
             self.ProceduralViewOffset:Normalize()
-            
+
             ang:Normalize()
             local delta = self.LastMuzzleAngle - ang
             delta:Normalize()
@@ -181,9 +192,9 @@ function SWEP:GetCameraControl(wm)
             target = math.min(target, 1 - math.pow( vm:GetCycle(), 2 ) )
             local progress = Lerp(ft * 15, progress or 0, target)
 
-            local mult = self:GetProcessedValue("CamQCA_Mult", true) or 1
+            local mult = swepGetProcessedValue(self, "CamQCA_Mult", true) or 1
 
-            if self:GetAnimLockTime() < CurTime() and !self:GetInMeleeAttack() then
+            if swepDt.AnimLockTime < CurTime() and !swepDt.InMeleeAttack then
                 mult = 0
             end
 
@@ -209,8 +220,8 @@ function SWEP:GetCameraControl(wm)
 
             return self.ProceduralViewOffset
         else
-            ang:Mul(self:GetProcessedValue("CamQCA_Mult", true) or 1)
-            ang:Mul(1 - self:GetSightAmount() * (1 - (self:GetProcessedValue("CamQCA_Mult_ADS", true) or 0.5)))
+            ang:Mul(swepGetProcessedValue(self, "CamQCA_Mult", true) or 1)
+            ang:Mul(1 - swepDt.SightAmount * (1 - (swepGetProcessedValue(self, "CamQCA_Mult_ADS", true) or 0.5)))
 			ang.p = ang.p * camstrength
 			ang.y = ang.y * camstrength
             ang.r = ang.r * camstrength * rollstrength

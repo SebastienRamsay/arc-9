@@ -119,6 +119,7 @@ L["customize.stats.sprinttofire"] = "Spwint to fiwe time"
 L["customize.stats.supplylimit"] = "Suwuply wimit owo"
 L["customize.stats.sway"] = "Swaway"
 L["customize.stats.triggerdelay"] = "Twiwger delay"
+-- L["customize.stats.fusetimer"] = "Fuse Timer"
 
 L["customize.hint.attach"] = "Atwaach uwu"
 L["customize.hint.controller"] = "Cowntwowwew Modwe is on >w<"
@@ -171,13 +172,21 @@ L["customize.stats.explain.noise"] = "howo loud de gun's gunshots awe"
 L["customize.stats.explain.sway"] = "amount of sway applied to de gun"
 L["customize.stats.explain.freeaim"] = "maximum fwee aim angle, Lowew is bettew"
 L["customize.stats.explain.supplylimit"] = "amount of ammowo that de gun can weceive fwom AWC9 ammo souwces"
+-- L["customize.stats.explain.fusetimer"] = "Time delay before the projectile detonates. The timer may start from pin pull or from release depending on the throwable."
 
 L["customize.bench.dummy"] = "BAWWIWTICS DUM TEWST uwu"
 L["customize.bench.effect"] = "EWWEKT AT WANGE"
 L["customize.bench.ballistics"] = "TEWMINAL BAWWIWTICS PERAWROWMANCE EWAwALUAWION"
 L["customize.bench.precision"] = "MECHANICAL PWECIWWION TEWT"
 
--- L["customize.camoslot"] = "Camo (%s)"
+ -- not many space for those strings, be careful
+-- L["customize.bench.ttk"] = "TTK: " -- TTK, Time to kill
+-- L["customize.bench.ttk.instant"] = "Instant"
+-- L["customize.bench.ttk.shots"] = "Shots TK: " -- STK, Shots to kill, you can use just shots in your language
+-- L["customize.bench.ttk.withoneheadshot"] = "W/ 1 head:" -- TTK With One Headshot
+
+-- L["customize.camoslot"] = "Camo Slot %s"
+-- L["customize.camoslot.none"] = "No Camo"
 -- L["customize.camoslot.canpaint"] = "\n\nThis attachment can be <color=255,224,86>individually camouflaged</color>."
 -- L["customize.camoslot.nosupport"] = "\n\nThis attachment can be <color=255,224,86>individually camouflaged</color>, but the weapon <color=255,106,0>lacks support for it</color>."
 -- L["customize.camoslot.eftextra"] = "\nUse the <color=114,255,86>Camo Support</color> attachment from <color=255,106,0>EFT Extras</color> to apply individual camouflages."
@@ -290,6 +299,9 @@ L["autostat.visualrecoilpunch"] = "Wisual Wecoil Puwnch"
 L["autostat.visualrecoilroll"] = "Wisual Wecoil wwroll"
 L["autostat.visualrecoilside"] = "H-Howisontawal Wisual Wecoil"
 L["autostat.visualrecoilup"] = "W-wertical wisual Wecoil"
+-- L["autostat.rtscopemagnification"] = "Scope Magnification"
+-- L["autostat.rtscopenew_fpslock"] = "Display Framerate"
+-- L["autostat.rtscopenew_pixelation"] = "Display Resolution"
 
 --[[
 Secondary autostats are now controlled by string.format.
@@ -428,6 +440,7 @@ L["tips.presets"] = "Shawe yuw fowowite pwesews with yuww furwiends by expowting
 L["tips.settings"] = "You can tuwn dese tips off and much mowe in de AWC9 settings owo c-click de button in de top left cownew"
 L["tips.tips"] = "Tips hawwe a fixed owdew. Kewep weading and yuw ewwentuawy see dem all"
 L["tips.tolerance"] = "Aww weapon basews wowk fine togeww thewes no need fow fowowoitiswm"
+-- L["tips.togglehold"] = "If you have lots of lasers and flashlights, hold the toggle key to open a menu to adjust them all easily."
 
 ////////////////////// Other
 L["atts.favourites"] = "Fowowites"
@@ -594,7 +607,7 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 
 ////////// TPIK
 -- L["settings.tabname.tpik"] = "TPIK - Third Person Inverse Kinematics"
--- L["settings.tabname.tpik.desc"] = "\"Third Person Inverse Kinematics\" is a system that allows most weapons to be displayed in third person using their first person animations and positions."
+-- L["settings.tabname.tpik.desc"] = "\"Third Person Inverse Kinematics\" is a system that allows most weapons to be displayed in third person using their first person animations and positions.\n\nOriginal code by AWholeCream, improved by uzelezz123, optimizations & smoothing by Onge.org."
 
 -- L["settings.tpik.title"] = "Enable TPIK"
 -- L["settings.tpik.desc"] = "Enables TPIK (Third Person Inverse Kinematics).\n\nImpacts performance."
@@ -602,8 +615,11 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 -- L["settings.tpik_others.title"] = "Other Players' TPIK"
 -- L["settings.tpik_others.desc"] = "Show other players' TPIK.\n\nImpacts performance."
 
--- L["settings.tpik_framerate.title"] = "TPIK Frame Rate"
--- L["settings.tpik_framerate.desc"] = "At which frame rate the TPIK runs at.\n\nSet to 0 for unlimited.\n\nUnlimited or higher values impact performance."
+-- L["settings.tpik_framerate.title"] = "Other Players' TPIK Frame Rate"
+-- L["settings.tpik_framerate.desc"] = "At which frame rate the TPIK calculations runs at anybody else on server.\n\nHigher values impact performance."
+
+-- L["settings.tpik_framerate_local.title"] = "Local player TPIK Frame Rate"
+-- L["settings.tpik_framerate_local.desc"] = "At which frame rate the TPIK calculations runs at for you specifically.\n\nHigher values impact performance."
 
 ////////// Blur
 -- L["settings.tabname.blur"] = "Blur"
@@ -624,8 +640,11 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 -- L["settings.blur.fx_rtblur.title"] = "Blur world when aiming RT scopes"
 -- L["settings.blur.fx_rtblur.desc"] = "Blurs the background when aiming with any RT scope."
 
--- L["settings.blur.fx_adsblur.title"] = "Blur weapon when aiming"
--- L["settings.blur.fx_adsblur.desc"] = "Applies a blur effect on the bottom of your screen when aiming.\n\nNot all weapons support this."
+-- L["settings.blur.fx_adsblur.title"] = "Weapon DoF effect when aiming"
+-- L["settings.blur.fx_adsblur.desc"] = "Applies a Depth of Field effect on top of viewmodel, blurring rear sights and scopes.\n\nUses Poisson disk blur from github.com/spite/Wagner, as well as luluco250's LightDoF shader."
+
+-- L["settings.blur.fx_adsblur_always.title"] = "Weapon DoF always"
+-- L["settings.blur.fx_adsblur_always.desc"] = "Same as option above, but outside of ADS too, making back of weapon look like its out of focus."
 
 ////////// Effects
 -- L["settings.tabname.effects"] = "Effects"
@@ -651,6 +670,9 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 
 -- L["settings.effects.indoorsound.title"] = "Indoor Sound Quality"
 -- L["settings.effects.indoorsound.desc"] = "How detailed the indoor sound check should be.\n\nLower quality improves performance, but may cause indoor sounds to be inaccurate."
+
+-- L["settings.effects.drawprojectedlights.title"] = "Draw Projected Lights on Viewmodel"
+-- L["settings.effects.drawprojectedlights.desc"] = "! EXPERIMENTAL !\n\nDraws projected lights/flashlights/cascade shadows on attachments and viewmodel.\n\nMay impact performance.\n\nAuto enabled with \"Real CSM\" mod."
 
 ////////// Viewmodel Settings
 -- L["settings.tabname.vm"] = "Viewmodel Settings"
@@ -737,11 +759,11 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 -- L["settings.gameplay.toggleads.title"] = "Toggle ADS"
 -- L["settings.gameplay.toggleads.desc"] = "Pressing your aiming button toggles aiming."
 
--- L["settings.gameplay.cheapscopes.title"] = "Cheap Scopes"
--- L["settings.gameplay.cheapscopes.desc"] = "Cheap RT scope implementation that zooms your whole view when aiming rather than rendering the world through the scope.\n\nCan improve performance depending on map size.\n\nNot compatible with \"Render Weapon Through RT\"."
+-- L["settings.gameplay.cheapscopes.title"] = "Performance RT Scopes"
+-- L["settings.gameplay.cheapscopes.desc"] = "Performance-friendly RT scope implementation that zooms your whole view when aiming rather than rendering the world through the scope.\n\nCan improve performance depending on map size.\n\nNot compatible with \"Render Weapon Through RT\"."
 
 -- L["settings.gameplay.fx_rtvm.title"] = "Render Weapon Through RT"
--- L["settings.gameplay.fx_rtvm.desc"] = "! EXPERIMENTAL !\n\nRenders the weapon, and its attachments, through RT scopes.\n\nGreatly impacts performance.\n\nNot compatible with \"Cheap Scopes\"."
+-- L["settings.gameplay.fx_rtvm.desc"] = "! EXPERIMENTAL !\n\nRenders the weapon, and its attachments, through RT scopes.\n\nGreatly impacts performance.\n\nNot compatible with \"Performance RT Scopes\"."
 
 -- L["settings.gameplay.compensate_sens.title"] = "Dynamic ADS Sensitivity"
 -- L["settings.gameplay.compensate_sens.desc"] = "Dynamically adjusts the aiming sensitivity depending on weapon zoom and magnification."
@@ -757,6 +779,15 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 
 -- L["settings.gameplay.color.scope.title"] = "Scope Reticle Color"
 -- L["settings.gameplay.color.scope.desc"] = "Which color the reticle used on RT scopes should be.\n\nNot all optics support this."
+
+-- L["settings.gameplay.fx_rt_alwaysdraw.title"] = "Render RT Scope Preview"
+-- L["settings.gameplay.fx_rt_alwaysdraw.desc"] = "Scope will draw preview image with reticle when it's directed to the center of screen, outside of ADS.\n\nDoesn't affect performance much, uses Cheap Scopes internally."
+
+-- L["settings.gameplay.fx_rt_shader.title"] = "Fancy Shader in RT Scopes"
+-- L["settings.gameplay.fx_rt_shader.desc"] = "Draws cool chromatic aberration, lens distortion, and complex parallax effects inside RT scopes.\n\nNo idea if this actually affects performance, as it's a simple GPU shader.\n\nBased on shadertoy.com/view/WX2cRd by science6uru2."
+
+-- L["settings.gameplay.fx_rt_fxaa.title"] = "FXAA in RT Scopes"
+-- L["settings.gameplay.fx_rt_fxaa.desc"] = "A simple Fast approximate anti-aliasing (FXAA) shader, to make scope view a bit softer, due to Source Engine's MSAA not working on Render Target views.\n\nPorted by Evgeny Akabenko, used with permission."
 
 ////////////////////// Gameplay
 -- L["settings.tabname.gameplay"] = "Gameplay"
@@ -977,6 +1008,9 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 -- L["settings.server.bulletphysics.bullet_lifetime.title"] = "Bullet Life Time"
 -- L["settings.server.bulletphysics.bullet_lifetime.desc"] = "How long, in seconds, it takes for a physical bullet to be removed from existence."
 
+-- L["settings.server.bulletphysics.bullet_physics_shotguns.title"] = "Physical bullets for Shotguns"
+-- L["settings.server.bulletphysics.bullet_physics_shotguns.desc"] = "Use physical bullets for shotguns too, otherwise they will use hitscan."
+
 -- L["settings.server.bulletphysics.ricochet.title"] = "Enable Bullet Ricochet"
 -- L["settings.server.bulletphysics.ricochet.desc"] = "Allows bullets to bounce off of hard surfaces, potentially striking unsuspecting foes.\n\nEffectiveness depends on the weapon."
 
@@ -996,6 +1030,7 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 
 -- L["settings.server.quickstat.mod_damage.desc"] = "Multiply how much damage weapons deal."
 -- L["settings.server.quickstat.mod_spread.desc"] = "Multiply how much spread the weapons have."
+-- L["settings.server.quickstat.mod_dispersionspread.desc"] = "Multiply how much dispersion spread the shotguns have."
 -- L["settings.server.quickstat.mod_recoil.desc"] = "Multiply how much recoil the weapon has."
 -- L["settings.server.quickstat.mod_visualrecoil.desc"] = "Multiply how much visual recoil the weapon has."
 -- L["settings.server.quickstat.mod_adstime.desc"] = "Multiply how quickly the weapon goes in and out of ADS."
@@ -1049,26 +1084,29 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 -- L["settings.server.developer.reload"] = "RELOAD"
 -- L["settings.server.developer.clear"] = "CLEAR"
 
+-- L["settings.developer.ignore_dx.title"] = "Ignore DirectX warning"
+-- L["settings.developer.ignore_dx.desc"] = "Ignore the warning about current DirectX warning not being 9, useful on linux or something."
+
 ////////// Asset Caching
 -- L["settings.tabname.assetcache"] = "Asset Caching"
 -- L["settings.tabname.assetcache.desc"] = "Caching certain assets can prevent stutters for more comfortable gameplay.\n\nIf running on an HDD, or with a lot of addons, these options will improve initial loading times."
 
--- L["settings.server.assetcache.precache_sounds_onfirsttake.title"] = "On Weapon Equip: Cache Sounds"
+-- L["settings.server.assetcache.precache_sounds_onfirsttake.title"] = "On Weapon Equip: Pre-Cache Sounds"
 -- L["settings.server.assetcache.precache_sounds_onfirsttake.desc"] = "Caches the firing sounds for the ARC9 weapon you equip.\n\nCan cause a small game freeze when equipping weapons for the first time."
 
--- L["settings.server.assetcache.precache_attsmodels_onfirsttake.title"] = "On Weapon Equip: Cache Attachments"
+-- L["settings.server.assetcache.precache_attsmodels_onfirsttake.title"] = "On Weapon Equip: Pre-Cache Attachments"
 -- L["settings.server.assetcache.precache_attsmodels_onfirsttake.desc"] = "Caches all ARC9 attachment models when any ARC9 weapon is equipped.\n\nCan cause a long game freeze, depending on how many ARC9 weapons you have."
 
--- L["settings.server.assetcache.precache_wepmodels_onfirsttake.title"] = "On Weapon Equip: Cache Weapon Models"
+-- L["settings.server.assetcache.precache_wepmodels_onfirsttake.title"] = "On Weapon Equip: Pre-Cache Weapon Models"
 -- L["settings.server.assetcache.precache_wepmodels_onfirsttake.desc"] = "Caches all ARC9 viewmodels when any ARC9 weapon is equipped.\n\nCan cause a very long game freeze, depending on how many ARC9 weapons you have."
 
--- L["settings.server.assetcache.precache_allsounds_onstartup.title"] = "On Game Start: Cache Sounds"
+-- L["settings.server.assetcache.precache_allsounds_onstartup.title"] = "On Game Start: Pre-Cache Sounds"
 -- L["settings.server.assetcache.precache_allsounds_onstartup.desc"] = "Caches all firing sounds for all ARC9 weapons when the server starts up.\n\nCan cause a temporary game freeze."
 
--- L["settings.server.assetcache.precache_attsmodels_onstartup.title"] = "On Game Start: Cache Attachments"
+-- L["settings.server.assetcache.precache_attsmodels_onstartup.title"] = "On Game Start: Pre-Cache Attachments"
 -- L["settings.server.assetcache.precache_attsmodels_onstartup.desc"] = "Caches all ARC9 attachment models when the server starts up.\n\nCan cause a long game freeze, depending on how many ARC9 weapons you have."
 
--- L["settings.server.assetcache.precache_wepmodels_onstartup.title"] = "On Game Start: Cache Weapon Models"
+-- L["settings.server.assetcache.precache_wepmodels_onstartup.title"] = "On Game Start: Pre-Cache Weapon Models"
 -- L["settings.server.assetcache.precache_wepmodels_onstartup.desc"] = "Caches all ARC9 viewmodels when the server starts up.\n\nCan cause a very long game freeze, depending on how many ARC9 weapons you have."
 
 -- L["settings.server.assetcache.precache_allsounds.title"] = "Cache All Sounds"
@@ -1112,3 +1150,93 @@ L["settings.convar_client"] = "Cwient wawiabwe"
 -- L["settings.server.printconsole.dev_getjson.desc"] = "Prints a JSON entry for the weapon."
 
 -- L["settings.server.printconsole"] = "PRINT"
+
+////////////////////// ARC9 Premium
+-- L["premium.title"] = "ARC9 Premium"
+-- L["premium.desc"] = "ARC9 Premium allows additional customization as a major thanks for supporting the addon financially."
+
+-- L["premium.requires"] = "Requires <color=255,106,0>ARC9 Premium</color>."
+-- L["premium.acquire"] = "Subscribe to <color=255,106,0>ARC9 Premium</color>"
+
+-- L["premium.ownedno"] = "<color=255,106,0>ARC9 Premium</color>: <color=255,100,100>Not owned</color>"
+-- L["premium.owned"] = "<color=255,106,0>ARC9 Premium</color>: <color=255,100,100>Owned</color>"
+
+-- L["premium.help"] = "What is ARC9 Premium?"
+-- L["premium.help.header"] = "Guide to ARC9 Premium"
+-- L["premium.help.desc"] = "Creating addons takes time and resources. ARC9 has always been available for free, and it will remain that way. However, if you wish to support the base financially, you may do so, and get rewarded for it!"
+
+-- L["premium.help.ownedbutnoaccess"] = "Have you recently purchased ARC9 Premium, but do not have automatic access to it? Contact us on the Doves International Discord Server for assistance.\nEnsure you can provide proof of purchase before contacting. Simply saying \"I buy, now give\" is not good enough."
+
+-- L["premium.content"] = "Included in <color=255,106,0>ARC9 Premium</color>:"
+-- L["premium.content.list"] = [[
+-- - Unlimited Customization Slots (Increased from 32)
+-- - Unlimited Preset Slots (Increased from 10 per weapon)
+-- - Access to Supermodifier settings*
+-- - Access to an exclusive RGB UI mode
+-- - Exclusive camos made available through the base
+-- - Exclusive support channel on Discord**
+-- - New, improved and exclusive Spawnmenu design**
+-- - Improved TPIK performance and appearance**
+
+-- *Requires administrator if on a server
+-- **Not available with the <color=255,106,0>Free Trial</color>
+-- ]]
+
+-- L["premium.purchased"] = "<color=255,106,0>ARC9 Premium</color> Purchased!"
+-- L["premium.purchased.desc"] = [[
+-- Thank you for purchasing ARC9 Premium! You made the bird a very happy one!
+
+-- A receipt will be sent to your connected Email.
+
+-- If you have not immediately acquired access to the ARC9 Premium bonuses, please rejoin the server, or restart your game.
+
+-- If you are still having problems with it, or if you still have not been granted Premium, then do visit the Doves International Discord server and provide valid proof of purchase, and we will have it fixed for you.
+-- ]]
+
+-- L["premium.freetrial"] = "You've been gifted <color=255,106,0>ARC9 Premium (Free Trial)</color>!"
+-- L["premium.freetrial.desc"] = [[
+-- Thank you for supporting ARC9! You've made the bird a very happy bird!
+
+-- As a token of our appreciation, you've been gifted ARC9 Premium for <color=255,106,0>3 Days</color>!
+
+-- If you have not immediately acquired access to the ARC9 Premium bonuses, please rejoin the server, or restart your game.
+
+-- If you are still having problems with it, or if you still have not been granted Premium, then do visit the Doves International Discord server and provide valid proof of purchase, and we will have it fixed for you.
+-- ]]
+
+-- L["premium.payment.info"] = [[
+-- Purchasing ARC9 Premium grants immediate access to all the contents listed previously for the time purchased.
+-- Time can be extended by purchasing any of the options once more, and the time will refresh automatically once the original time has expired.
+-- Once the time has passed, and no additional payment has been made, access to ARC9 Premium will be removed.
+
+-- All customization options, including attachment slots, presets and coloured reticles made with ARC9 Premium will remain available, but you will not alter them or add any additional ones.
+-- ]]
+
+-- L["premium.payment.free.title"] = "ARC9 Premium (Free Trial)"
+-- L["premium.payment.free.desc"] = [[
+-- Price: <color=100,255,100>FREE</color>
+
+-- Acquire ARC9 Premium for <color=255,106,0>3 Days</color>.
+-- ]]
+
+-- L["premium.payment.month.title"] = "ARC9 Premium (1 Month)"
+-- L["premium.payment.month.desc"] = [[
+-- Price: <color=100,255,100>$5</color>
+
+-- Acquire ARC9 Premium for <color=255,106,0>1 Month</color>.
+-- ]]
+
+-- L["premium.payment.3mon.title"] = "ARC9 Premium (3 Months)"
+-- L["premium.payment.3mon.desc"] = [[
+-- Price: <color=100,255,100>$15</color>
+
+-- Acquire ARC9 Premium for <color=255,106,0>3 Months</color>.
+-- ]]
+
+-- L["premium.payment.6mon.title"] = "ARC9 Premium (6 + 1 Months)"
+-- L["premium.payment.6mon.desc"] = [[
+-- Price: <color=100,255,100>$30</color> [ HOT! ]
+
+-- Acquire ARC9 Premium for <color=255,106,0>6 Months</color>.
+-- Includes <color=100,255,100>one free month</color>!
+-- ]]

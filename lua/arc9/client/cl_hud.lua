@@ -7,8 +7,6 @@ local hide = {
 }
 
 hook.Add("HUDShouldDraw", "ARC9_HideHUD", function(name)
-    if !IsValid(LocalPlayer()) then return end
-
     if ARC9.ShouldDrawHUD() then
         if hide[name] then return false end
     end
@@ -58,10 +56,13 @@ local arc9_hud_force_disable = GetConVar("arc9_hud_force_disable")
 local infammo = GetConVar("arc9_infinite_ammo")
 
 function ARC9.ShouldDrawHUD()
+    local lp = LocalPlayer()
+    if !IsValid(lp) then return end
+
     if !cl_drawhud:GetBool() then return end
     -- if arc9_hud_force_disable:GetBool() then return end
 
-    local wpn = LocalPlayer():GetActiveWeapon()
+    local wpn = lp:GetActiveWeapon()
     local a9 = wpn.ARC9 and !wpn.NotAWeapon
     local incust = a9 and wpn:GetCustomize()
     -- local hud = arc9_hud_arc9:GetBool()
@@ -302,22 +303,16 @@ local automatics = {
     ["weapon_egon"] = true
 }
 
--- local arc9_lean = GetConVar("arc9_lean")
-
 local function GetWeaponCapabilities(wpn)
     cap = {
         UBGL = tobool(!wpn:GetInSights() and wpn:GetValue("UBGL")),
         Bash = tobool(!wpn:GetInSights() and wpn:GetValue("Bash")),
         SwitchSights = tobool(wpn:GetInSights() and #wpn.MultiSightTable > 1),
         Inspect = !wpn:GetInSights() and !wpn.NoInspect and tobool(wpn:HasAnimation("enter_inspect") or wpn:HasAnimation("inspect")),
-        -- Blindfire = tobool(!wpn:GetInSights() and wpn:GetValue("CanBlindFire")),
-        -- BlindfireLeft = tobool(!wpn:GetInSights() and wpn:GetValue("CanBlindFire") and wpn:GetValue("BlindFireLeft")),
-        -- BlindfireRight = tobool(!wpn:GetInSights() and wpn:GetValue("CanBlindFire") and wpn:GetValue("BlindFireRight")),
         Firemode = tobool(!wpn:GetUBGL() and #wpn:GetValue("Firemodes") > 1),
         HoldBreath = tobool(wpn:GetInSights() and wpn:GetValue("HoldBreathTime") > 0),
         VariableZoom = tobool(wpn:GetInSights() and (wpn:GetSight().atttbl or {}).RTScopeAdjustable),
         ManualCycle = tobool(wpn:GetNeedsCycle() and wpn:ShouldManualCycle()),
-        -- Lean = tobool(wpn:GetProcessedValue("CanLean", true) and arc9_lean:GetBool()),
     }
 
     return cap
@@ -466,14 +461,6 @@ local function GetHintsTable(capabilities)
             action = ARC9:GetPhrase("customize.hint.nextmode") .. "/" .. ARC9:GetPhrase("customize.hint.lastmode")
         })
     end
-
-    -- if capabilities.Lean and input.LookupBinding("+alt1") and input.LookupBinding("+alt2") then
-    --     table.insert(hints, {
-    --         glyph = ARC9.GetBindKey("+alt1"),
-    --         glyph2 = ARC9.GetBindKey("+alt2"),
-    --         action = ARC9:GetPhrase("hud.hint.lean")
-    --     })
-    -- end
 
     local owner = weapon:GetOwner()
     local quicknade = owner.ARC9LastSelectedGrenade

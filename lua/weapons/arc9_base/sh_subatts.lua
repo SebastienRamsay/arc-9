@@ -42,11 +42,16 @@ function SWEP:AttTreeToList(tree)
 end
 
 function SWEP:GetSubSlotList()
+    if (self.CacheLastInvalidation or 0) + 3 < CurTime() and self.GetSubSlotListCache then return self.GetSubSlotListCache end
+
+    if !self.Attachments then return {} end
     local atts = {}
 
     for _, i in ipairs(self.Attachments or {}) do
         table.Add(atts, self:AttTreeToList(i))
     end
+
+    self.GetSubSlotListCache = atts
 
     return atts
 end
@@ -110,6 +115,7 @@ function SWEP:BuildSubAttachmentTree(tbl, parenttbl)
             subatts[i].Bone = parenttbl.Bone
             local att_pos = parenttbl.Pos or Vector()
             local att_ang = parenttbl.Ang or Angle()
+            local scale = parenttbl.Scale or 1
 
             local og_addr = parenttbl.OriginalAddress
 
@@ -124,11 +130,11 @@ function SWEP:BuildSubAttachmentTree(tbl, parenttbl)
                     if mods[og_addr] then
                         att_pos = mods[og_addr].Pos or att_pos
                         att_ang = mods[og_addr].Ang or att_ang
+                        scale = mods[og_addr].Scale or scale
                     end
                 end
             end
 
-            local scale =  parenttbl.Scale or 1
 
             subatts[i].Scale = (subatts[i].Scale or 1) * scale
 

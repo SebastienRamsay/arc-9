@@ -1,6 +1,7 @@
 local ENTITY = FindMetaTable("Entity")
 local entityGetOwner = ENTITY.GetOwner
 local entityIsPlayerHolding = ENTITY.IsPlayerHolding
+local entityIsNPC = ENTITY.IsNPC
 
 local PLAYER = FindMetaTable("Player")
 local playerKeyReleased = PLAYER.KeyReleased
@@ -29,7 +30,6 @@ local swepThinkGrenade = SWEP.ThinkGrenade
 local swepThinkRecoil = SWEP.ThinkRecoil
 local swepThinkHoldBreath = SWEP.ThinkHoldBreath
 local swepThinkLockOn = SWEP.ThinkLockOn
--- local swepThinkLean = SWEP.ThinkLean
 local swepThinkFiremodes = SWEP.ThinkFiremodes
 local swepThinkInspect = SWEP.ThinkInspect
 local swepThinkSprint = SWEP.ThinkSprint
@@ -54,15 +54,10 @@ local cvarGetBool = FindMetaTable("ConVar").GetBool
 function SWEP:Think()
     local owner = entityGetOwner(self)
 
-    if not IsValid(owner) then return end
-    if owner:IsNPC() then return end
+    if !IsValid(owner) or entityIsNPC(owner) then return end
 
     local swepDt = self.dt
     local now = CurTime()
-
-    if swepDt.NextIdle < now then
-        swepIdle(self)
-    end
 
     local shouldRunPredicted = not self:PredictionFilter()
 
@@ -152,9 +147,9 @@ function SWEP:Think()
         -- Will remove these comments later
 
         if shouldRunPredicted then
+            swepThinkReload(self)
             swepThinkCycle(self)
             swepThinkHeat(self)
-            swepThinkReload(self)
             -- Done (no GetVM)
             swepThinkBipod(self)
             swepThinkSights(self)
@@ -169,14 +164,16 @@ function SWEP:Think()
         self:ThinkLockOn()
     end
 
+    if swepDt.NextIdle != 0 and swepDt.NextIdle <= now then
+        swepIdle(self)
+    end
+
     if shouldRunPredicted then
-        -- swepThinkLean(self)
         swepThinkFiremodes(self)
         swepThinkInspect(self)
     end
 
     swepThinkSprint(self)
-    -- Done
     swepThinkNearWall(self)
     swepThinkFreeAim(self)
     swepThinkLoopingSound(self)

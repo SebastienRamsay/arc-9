@@ -26,8 +26,6 @@ local vmAddZ = GetConVar("arc9_vm_addz")
 local arc9DevBenchGun = GetConVar("arc9_dev_benchgun")
 local isSingleplayer = game.SinglePlayer()
 
-local newadsstyle = GetConVar("arc9_vm_adsstyle")
-
 local Lerp = function(a, v1, v2)
     local d = v2 - v1
 
@@ -37,18 +35,7 @@ end
 local LerpVector = function(a, v1, v2)
     local d = v2 - v1
 
-    if !newadsstyle:GetBool() then
-        return v1 + (a * d)
-    else
-        local funkymidoffset1 = math.sin(3.1415926 * math.ease.OutSine(a))
-        local funkymidoffset2 = math.sin(3.1415926 * math.ease.InExpo(a))
-
-        local a1 = (math.ease.InOutExpo(a) + math.ease.InBack(a)) / 2 + 0.2 * funkymidoffset1
-        local a2 = math.ease.InQuart(a) - 0.25 * funkymidoffset2
-        local a3 = math.ease.OutQuart(a) - 0.9 * funkymidoffset1
-
-        return Vector(v1[1] + (a1 * d[1]), v1[2] + (a2 * d[2]), v1[3] + (a3 * d[3])) --v1 + (a * d)
-    end
+    return v1 + (a * d)
 end
 
 local LerpVectorEdit = function(a, v1, v2)
@@ -58,8 +45,6 @@ local LerpVectorEdit = function(a, v1, v2)
     v1[2] = Lerp(a, v12, v22)
     v1[3] = Lerp(a, v13, v23)
 end
-
-local funnyangle = Angle(1, 2, -3)
 
 local LerpAngle = function(a, v1, v2)
     -- angle aware lerp with Angles()
@@ -73,20 +58,58 @@ local LerpAngle = function(a, v1, v2)
     local d2 = math.AngleDifference(v22, v12)
     local d3 = math.AngleDifference(v23, v13)
     
-    if !newadsstyle:GetBool() then
-        return Angle(v11 + (a * d1), v12 + (a * d2), v13 + (a * d3))
-    else
-        local a1 = a
-        local a2 = math.ease.InBack(a)
-        local a3 = a
+    return Angle(v11 + (a * d1), v12 + (a * d2), v13 + (a * d3))
+end
 
-        local v3 = Angle(v11 + (a1 * d1), v12 + (a2 * d2), v13 + (a3 * d3))
 
-        local funkymidoffset = math.sin(3.1415926 * math.ease.InSine(a))
-        v3:Add(funnyangle * funkymidoffset)
+local math_ease = math.ease
 
-        return v3
-    end
+local funnyvectorIn = Vector(-1.9, 2, 1.95) * 1
+local funnyvectorOut = Vector(1, 1, -0.8) * 1
+
+local LerpVectorFunny = function(a, v1, v2, mode)
+    local d = v2 - v1
+
+    local a1 = mode and math_ease.OutExpo(a) or math_ease.InQuad(a)
+    local a2 = mode and math_ease.InOutBack(a) or math_ease.InSine(a)
+    local a3 = mode and math_ease.OutQuad(a) or math_ease.InSine(a)
+    
+    local funkymidoffset = math.sin(3.1415926 * (mode and math_ease.OutSine(a) or math_ease.InOutQuad(a)))
+    local funkymidoffset2 = math.sin(3.1415926 * (mode and math_ease.OutCubic(a * a) or math_ease.InSine(a)))
+
+    local yay = LerpVector((mode and a or 0) * a, funnyvectorOut, funnyvectorIn)
+
+    local vv1 = v1[1] + yay[1] * funkymidoffset
+    local vv2 = v1[2] + yay[2] * funkymidoffset
+    local vv3 = v1[3] + yay[3] * funkymidoffset2
+
+    return Vector(vv1 + (a1 * d[1]), vv2 + (a2 * d[2]), vv3 + (a3 * d[3]))
+end
+
+local funnyangleIn = Angle(-3, -2, 8) * 0.85
+local funnyangleOut = Angle(1.75, -2, -7) * 0.85
+
+local LerpAngleFunny = function(a, v1, v2, mode)
+    local v11 = v1[1]
+    local v12 = v1[2]
+    local v13 = v1[3]
+    local v21 = v2[1]
+    local v22 = v2[2]
+    local v23 = v2[3]
+    local d1 = math.AngleDifference(v21, v11)
+    local d2 = math.AngleDifference(v22, v12)
+    local d3 = math.AngleDifference(v23, v13)
+    
+    local a1 = a
+    local a2 = a
+    local a3 = a
+
+    local v3 = Angle(v11 + (a1 * d1), v12 + (a2 * d2), v13 + (a3 * d3))
+    
+    local funkymidoffset = math.sin(3.1415926 * (mode and math_ease.OutSine(a) or math_ease.InOutQuad(a)))
+    v3:Add(LerpAngle((mode and 1 or 0), funnyangleOut, funnyangleIn) * funkymidoffset)
+
+    return v3
 end
 
 local LerpAngleEdit = function(a, v1, v2)
@@ -141,35 +164,36 @@ local function GoodAngleLerp(from, to, t)
     return from + shortestAngle * t
 end
 
+local swepGetProcessedValue = SWEP.GetProcessedValue
+
 function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
     if !IsValid(owner) then return end
     -- if owner != LocalPlayer() then return end
     if CLIENT and owner ~= LocalPlayer() then return end
 
+    if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
+
     local curTime = UnPredictedCurTime()
 
-    -- pos, ang = self:DoCameraLean(pos, ang)
     oldpos:Set(pos)
     oldang:Set(ang)
-    -- pos = Vector(0, 0, 0)
-    -- ang = Angle(0, 0, 0)
     local cor_val = self:GetCorVal()
     extra_offsetpos:Zero()
     extra_offsetang:Zero()
     -- print(extra_offsetang)
-    offsetpos:Set(self:GetProcessedValue("ActivePos", true))
-    offsetang:Set(self:GetProcessedValue("ActiveAng", true))
+    offsetpos:Set(swepGetProcessedValue(self, "ActivePos", true))
+    offsetang:Set(swepGetProcessedValue(self, "ActiveAng", true))
     local maxspd, vel = owner:GetWalkSpeed() or 250, owner:OnGround() and owner:GetAbsVelocity():Length() or 0
     local movingpv = math.Clamp(math.Remap(vel, 0, maxspd, 0, 1), 0, 1)
     -- local movingpv = self.PV_Move
-    local mvpos = self:GetProcessedValue("MovingPos", true)
-    local mvang = self:GetProcessedValue("MovingAng", true)
+    local mvpos = swepGetProcessedValue(self, "MovingPos", true)
+    local mvang = swepGetProcessedValue(self, "MovingAng", true)
 
     if (mvpos or mvang) and movingpv > 0.125 then
         -- local ts_movingpv = 0 -- self:GetTraversalSprintAmount()
-        movingpv = math.ease.InOutQuad(movingpv)
-        -- ts_movingpv = math.ease.InOutSine(ts_movingpv)
+        movingpv = math_ease.InOutQuad(movingpv)
+        -- ts_movingpv = math_ease.InOutSine(ts_movingpv)
         -- movingpv = math.max(movingpv, ts_movingpv)
         if mvpos then
             offsetpos:Add(mvpos * movingpv)
@@ -177,7 +201,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         if mvang then
             offsetang:Add(mvang * movingpv)
         end
-        local wim = self:GetProcessedValue("MovingMidPoint", true)
+        local wim = swepGetProcessedValue(self, "MovingMidPoint", true)
         local mv_midpoint = movingpv * math.cos(movingpv * halfPi)
         local mv_joffset = (wim and wim.Pos or vector_origin) * mv_midpoint
         local mv_jaffset = (wim and wim.Ang or angle_zero) * mv_midpoint
@@ -186,20 +210,20 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     -- if self.PV_Move > 0.2 and self:GetSprintDelta() == 0 then
-    --     offsetpos:Set(self:GetProcessedValue("MovingPos"))
-    --     offsetang:Set(self:GetProcessedValue("MovingAng"))
+    --     offsetpos:Set(swepGetProcessedValue(self, "MovingPos"))
+    --     offsetang:Set(swepGetProcessedValue(self, "MovingAng"))
     -- end
     local getbipod = self:GetBipod()
     local reloading = self:GetReloading()
 
     if getbipod then
         local bipodamount = self:GetBipodAmount()
-        bipodamount = math.ease.InOutQuad(bipodamount)
+        bipodamount = math_ease.InOutQuad(bipodamount)
         local sightpos, sightang = self:GetSightPositions()
-        local bipodpos, bipodang = self:GetProcessedValue("BipodPos", true), self:GetProcessedValue("BipodAng", true)
+        local bipodpos, bipodang = swepGetProcessedValue(self, "BipodPos", true), swepGetProcessedValue(self, "BipodAng", true)
 
         if bipodpos and bipodang then
-            if !self:ShouldTPIK() then LerpVectorEdit(math.Clamp(bipodamount - self:GetSightAmount(), 0, 1), pos, self:GetBipodPos()) end
+            LerpVectorEdit(math.Clamp(bipodamount - self:GetSightAmount(), 0, 1), pos, self:GetBipodPos())
             LerpVectorEdit(bipodamount, offsetpos, bipodpos)
             LerpAngleEdit(bipodamount, offsetang, bipodang)
         else
@@ -207,10 +231,10 @@ function SWEP:GetViewModelPosition(pos, ang)
             offsetang:Add(sightang * bipodamount)
         end
     else
-        local crouchpos = self:GetProcessedValue("CrouchPos", true)
-        local crouchang = self:GetProcessedValue("CrouchAng", true)
+        local crouchpos = swepGetProcessedValue(self, "CrouchPos", true)
+        local crouchang = swepGetProcessedValue(self, "CrouchAng", true)
         local viewOffsetZ = owner:GetViewOffset().z
-        local crouchdelta = math.Clamp(math.ease.InOutSine((viewOffsetZ - owner:GetCurrentViewOffset().z) / (viewOffsetZ - owner:GetViewOffsetDucked().z)), 0, 1)
+        local crouchdelta = math.Clamp(math_ease.InOutSine((viewOffsetZ - owner:GetCurrentViewOffset().z) / (viewOffsetZ - owner:GetViewOffsetDucked().z)), 0, 1)
 
         if crouchpos then
             offsetpos:Add(crouchpos * crouchdelta)
@@ -230,32 +254,17 @@ function SWEP:GetViewModelPosition(pos, ang)
         offsetang:Add(self.VManipOffsetAng * vmanipmult)
     end
 
-    -- local blindfiredelta = self:GetBlindFireAmount()
-    -- local blindfirecornerdelta = self:GetBlindFireCornerAmount()
-    -- local curvedblindfiredelta = self:Curve(blindfiredelta)
-    -- local curvedblindfirecornerdelta = self:Curve(math.abs(blindfirecornerdelta))
-    -- if blindfiredelta > 0 then
-    --     offsetpos = LerpVector(curvedblindfiredelta, offsetpos, self:GetValue("BlindFirePos"))
-    --     offsetang = LerpAngle(curvedblindfiredelta, offsetang, self:GetValue("BlindFireAng"))
-    --     if blindfirecornerdelta > 0 then
-    --         offsetpos = LerpVector(curvedblindfirecornerdelta, offsetpos, self:GetValue("BlindFireRightPos"))
-    --         offsetang = LerpAngle(curvedblindfirecornerdelta, offsetang, self:GetValue("BlindFireRightAng"))
-    --     elseif blindfirecornerdelta < 0 then
-    --         offsetpos = LerpVector(curvedblindfirecornerdelta, offsetpos, self:GetValue("BlindFireLeftPos"))
-    --         offsetang = LerpAngle(curvedblindfirecornerdelta, offsetang, self:GetValue("BlindFireLeftAng"))
-    --     end
-    -- end
     if reloading then
-        local reloadpos = self:GetProcessedValue("ReloadPos", true)
-        local reloadang = self:GetProcessedValue("ReloadAng", true)
-        local fuckingreloadprocessinfluence = self:GetReloadingProgress()
+        local reloadpos = swepGetProcessedValue(self, "ReloadPos", true)
+        local reloadang = swepGetProcessedValue(self, "ReloadAng", true)
+        local progress = self:GetReloadingProgress()
 
         if reloadpos then
-            offsetpos:Sub(reloadpos * fuckingreloadprocessinfluence)
+            offsetpos:Sub(reloadpos * progress)
         end
 
         if reloadang then
-            offsetang:Sub(reloadang * fuckingreloadprocessinfluence)
+            offsetang:Sub(reloadang * progress)
         end
     end
 
@@ -271,40 +280,52 @@ function SWEP:GetViewModelPosition(pos, ang)
         offsetpos:Add(offsetangUp)
     end
 
-    local sightdelta = self:GetSightDelta()
+    local sightdelta_original = self:GetSightDelta()
+    local sightdelta = sightdelta_original
     -- cor_val = Lerp(sightdelta, cor_val, 1)
     self.SwayScale = 0
 
     if sightdelta > 0 then
-        if self:GetInSights() then
-            sightdelta = math.ease.OutQuart(sightdelta)
+        local insifgts = self:GetInSights()
+        if insifgts then
+            sightdelta = Lerp(0.25, math_ease.OutBack(sightdelta), math_ease.InOutSine(sightdelta))
         else
-            sightdelta = math.ease.InQuart(sightdelta)
+            sightdelta = Lerp(0.7, math_ease.InOutQuad(sightdelta), math_ease.InQuad(sightdelta))
         end
 
-        -- sightdelta = math.ease.InOutQuad(sightdelta)
         local sightpos, sightang = self:GetSightPositions()
         local sight = self:GetSight()
         local eepos, eeang = self:GetExtraSightPositions()
 		local peekp, peeka = "PeekPos", "PeekAng"
-		local fuckingreloadprocess = math.Clamp(1 - (self:GetReloadFinishTime() - curTime) / (self.ReloadTime * self:GetAnimationTime("reload")), 0, 1)
-		local reloadanim = self:GetAnimationEntry(self:TranslateAnimation("reload"))
+		local progress = math.Clamp(1 - (self:GetReloadFinishTime() - curTime) / (self.ReloadTime * self:GetAnimationTime("reload")), 0, 1)
+		local anim = self:TranslateAnimation("reload")
+		local time = self:GetAnimationTime(anim)
+		local entry = self:GetAnimationEntry(anim)
 		local shotgun = self:GetShouldShotgunReload()
+
+        -- Duplicated code for MinProgressTime :P
+        local minprogress
+        local mp_t = entry.MinProgressTime
+        if mp_t then
+            minprogress = mp_t / time
+        else
+            minprogress = entry.MinProgress
+        end
 		
-		if (!shotgun and fuckingreloadprocess < (reloadanim.PeekProgress or reloadanim.MinProgress or 0.9)) or (shotgun and self:GetReloading()) then
+		if (!shotgun and progress < (entry.PeekProgress or minprogress or 0.9)) or (shotgun and self:GetReloading()) then
 			if self.PeekPosReloading then peekp = "PeekPosReloading" end
 			if self.PeekAngReloading then peeka = "PeekAngReloading" end
 		end
 
         -- if input.IsKeyDown(input.GetKeyCode(input.LookupBinding("menu_context"))) then
         if self.Peeking then
-            eepos = eepos + self:GetProcessedValue(peekp, true)
-            eeang = eeang + self:GetProcessedValue(peeka, true)
+            eepos = eepos + swepGetProcessedValue(self, peekp, true)
+            eeang = eeang + swepGetProcessedValue(self, peeka, true)
         end
 
         if sight.GeneratedSight then
-            local t_sightpos = LerpVector(sightdelta, vector_origin, sightpos)
-            local t_sightang = LerpAngle(sightdelta, angle_zero, sightang)
+            local t_sightpos = LerpVectorFunny(sightdelta_original, vector_origin, sightpos, insifgts)
+            local t_sightang = LerpAngleFunny(sightdelta, angle_zero, sightang, insifgts)
             ang:RotateAroundAxis(oldang:Up(), t_sightang[1])
             ang:RotateAroundAxis(oldang:Right(), t_sightang[2])
             ang:RotateAroundAxis(oldang:Forward(), t_sightang[3])
@@ -320,17 +341,17 @@ function SWEP:GetViewModelPosition(pos, ang)
             LerpVectorEdit(sightdelta, offsetpos, vector_origin)
             LerpAngleEdit(sightdelta, offsetang, angle_zero)
         else
-            offsetpos = LerpVector(sightdelta, offsetpos or vector_origin, sightpos or vector_origin)
-            offsetang = LerpAngle(sightdelta, offsetang or angle_zero, sightang or angle_zero)
+            offsetpos = LerpVectorFunny(sightdelta_original, offsetpos or vector_origin, sightpos or vector_origin, insifgts)
+            offsetang = LerpAngleFunny(sightdelta, offsetang or angle_zero, sightang or angle_zero, insifgts)
         end
 
         -- local eepos, eeang = Vector(0, 0, 0), Angle(0, 0, 0)
-        local im = self:GetProcessedValue("SightMidPoint", true)
-        local midpoint = sightdelta * math.cos(sightdelta * halfPi)
-        local joffset = (im and im.Pos or vector_origin) * midpoint
-        local jaffset = (im and im.Ang or angle_zero) * midpoint
-        LerpVectorEdit(sightdelta, extra_offsetpos, eepos + joffset)
-        LerpAngleEdit(sightdelta, extra_offsetang, eeang + jaffset)
+        -- local im = swepGetProcessedValue(self, "SightMidPoint", true)
+        -- local midpoint = sightdelta * math.cos(sightdelta * halfPi)
+        -- local joffset = (im and im.Pos or vector_origin) * midpoint
+        -- local jaffset = (im and im.Ang or angle_zero) * midpoint
+        LerpVectorEdit(sightdelta, extra_offsetpos, eepos) -- + joffset) -- midpoint removed
+        LerpAngleEdit(sightdelta, extra_offsetang, eeang) -- + jaffset)
         -- self.BobScale = 0
         -- self.SwayScale = Lerp(sightdelta, 1, 0.1)
     end
@@ -345,10 +366,10 @@ function SWEP:GetViewModelPosition(pos, ang)
             inertiaanchor = self.InertiaCustomAnchor 
         else
             inertiaanchor = Vector(self.CustomizeRotateAnchor)
-            inertiaanchor.x = inertiaanchor.x * ((self.RenderingHolosight or self.RenderingRTScope) and 0.75 or 0.4)
+            -- inertiaanchor.x = inertiaanchor.x * ((self.RenderingHolosight or self.RenderingRTScope) and 0.75 or 0.4)
         end
 
-        local rap_pos, rap_ang = self:RotateAroundPoint2(pos, ang, inertiaanchor, vector_origin, fswayang * -0.5)
+        local rap_pos, rap_ang = self:RotateAroundPoint2(pos, ang, inertiaanchor, vector_origin, fswayang * -1.0)
         pos:Set(rap_pos)
         ang:Set(rap_ang)
     else
@@ -370,17 +391,17 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     if sprintdelta > 0 then
         -- local ts_sprintdelta = 0 -- self:GetTraversalSprintAmount()
-        sprintdelta = math.ease.InOutQuad(sprintdelta) - curvedcustomizedelta
-        -- ts_sprintdelta = math.ease.InOutSine(ts_sprintdelta)
+        sprintdelta = math_ease.InOutQuad(sprintdelta) - curvedcustomizedelta
+        -- ts_sprintdelta = math_ease.InOutSine(ts_sprintdelta)
         -- sprintdelta = math.max(sprintdelta, ts_sprintdelta)
-        local sprpos = self:GetProcessedValue("SprintPos", true) or self:GetProcessedValue("RestPos", true)
-        local sprang = self:GetProcessedValue("SprintAng", true) or self:GetProcessedValue("RestAng", true)
-        -- sprpos = LerpVector(ts_sprintdelta, sprpos, self:GetProcessedValue("TraversalSprintPos"))
-        -- sprang = LerpAngle(ts_sprintdelta, sprang, self:GetProcessedValue("TraversalSprintAng"))
+        local sprpos = swepGetProcessedValue(self, "SprintPos", true) or swepGetProcessedValue(self, "RestPos", true)
+        local sprang = swepGetProcessedValue(self, "SprintAng", true) or swepGetProcessedValue(self, "RestAng", true)
+        -- sprpos = LerpVector(ts_sprintdelta, sprpos, swepGetProcessedValue(self, "TraversalSprintPos"))
+        -- sprang = LerpAngle(ts_sprintdelta, sprang, swepGetProcessedValue(self, "TraversalSprintAng"))
         LerpVectorEdit(sprintdelta, offsetpos, sprpos)
         LerpAngleEdit(sprintdelta, offsetang, sprang)
         LerpAngleEdit(sprintdelta, extra_offsetang, angle_zero)
-        local sim = self:GetProcessedValue("SprintMidPoint", true)
+        local sim = swepGetProcessedValue(self, "SprintMidPoint", true)
         local spr_midpoint = sprintdelta * math.cos(sprintdelta * halfPi)
         local spr_joffset = (sim and sim.Pos or vector_origin) * spr_midpoint
         local spr_jaffset = (sim and sim.Ang or angle_zero) * spr_midpoint
@@ -391,20 +412,20 @@ function SWEP:GetViewModelPosition(pos, ang)
     local nearwalldelta = self:GetNearWallAmount()
 
     if nearwalldelta > 0 then
-        nearwalldelta = math.ease.InOutQuad(nearwalldelta) - curvedcustomizedelta
+        nearwalldelta = math_ease.InOutQuad(nearwalldelta) - curvedcustomizedelta
         -- sprintdelta = math.max(sprintdelta, ts_sprintdelta)
-        local sprpos = self:GetProcessedValue("NearWallPos", true) or self:GetProcessedValue("SprintPos", true) or self:GetProcessedValue("RestPos", true)
-        local sprang = self:GetProcessedValue("NearWallAng", true) or self:GetProcessedValue("SprintAng", true) or self:GetProcessedValue("RestAng", true)
-        -- sprpos = LerpVector(ts_sprintdelta, sprpos, self:GetProcessedValue("TraversalSprintPos"))
-        -- sprang = LerpAngle(ts_sprintdelta, sprang, self:GetProcessedValue("TraversalSprintAng"))
+        local sprpos = swepGetProcessedValue(self, "NearWallPos", true) or swepGetProcessedValue(self, "SprintPos", true) or swepGetProcessedValue(self, "RestPos", true)
+        local sprang = swepGetProcessedValue(self, "NearWallAng", true) or swepGetProcessedValue(self, "SprintAng", true) or swepGetProcessedValue(self, "RestAng", true)
+        -- sprpos = LerpVector(ts_sprintdelta, sprpos, swepGetProcessedValue(self, "TraversalSprintPos"))
+        -- sprang = LerpAngle(ts_sprintdelta, sprang, swepGetProcessedValue(self, "TraversalSprintAng"))
         LerpVectorEdit(nearwalldelta, offsetpos, sprpos)
         LerpAngleEdit(nearwalldelta, offsetang, sprang)
         LerpAngleEdit(nearwalldelta, extra_offsetang, angle_zero)
     end
 
     if curvedcustomizedelta > 0 then
-        local cpos = Vector(self:GetProcessedValue("CustomizePos", true))
-        local cang = self:GetProcessedValue("CustomizeAng", true)
+        local cpos = Vector(swepGetProcessedValue(self, "CustomizePos", true))
+        local cang = swepGetProcessedValue(self, "CustomizeAng", true)
         LerpVectorEdit(curvedcustomizedelta, extra_offsetpos, vector_origin)
         LerpAngleEdit(curvedcustomizedelta, extra_offsetang, angle_zero)
 
@@ -431,7 +452,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local hdelta = 1 - ((ht - curTime) / (ht - sht))
 
         if hdelta > 0 then
-            hdelta = math.ease.InOutQuad(hdelta)
+            hdelta = math_ease.InOutQuad(hdelta)
             LerpVectorEdit(hdelta, offsetpos, self:GetValue("HolsterPos"))
             LerpAngleEdit(hdelta, offsetang, self:GetValue("HolsterAng"))
         end
@@ -477,7 +498,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     pos, ang = self:GetViewModelRecoil(pos, ang, cor_val)
 
-    if !self:GetProcessedValue("NoViewBob", true) then
+    if !swepGetProcessedValue(self, "NoViewBob", true) then
         pos, ang = self:GetViewModelBob(pos, ang)
         pos, ang = self:GetMidAirBob(pos, ang)
     end
@@ -515,7 +536,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             rotateAroundAngle[3] = self.CustomizeYawSmooth
             rotateAroundAngle[1] = self.CustomizeRollSmooth
             
-            local rap_pos, rap_ang = self:RotateAroundPoint2(pos, ang, self:GetProcessedValue("CustomizeRotateAnchor", true), vector_origin, rotateAroundAngle)
+            local rap_pos, rap_ang = self:RotateAroundPoint2(pos, ang, swepGetProcessedValue(self, "CustomizeRotateAnchor", true), vector_origin, rotateAroundAngle)
             pos:Set(rap_pos)
             ang:Set(rap_ang)
         end
@@ -562,12 +583,11 @@ function SWEP:GetViewModelFOV()
     if !IsValid(owner) then return end
     local ownerfov = owner:GetFOV()
     local convarfov = arc9Fov:GetInt()
-    -- local curTime = UnPredictedCurTime()
-    -- local target = owner:GetFOV() + convarfov
-    local target = (self:GetProcessedValue("ViewModelFOVBase", true) or ownerfov) + (self:GetCustomize() and 0 or convarfov)
+
+    local target_start = (self:GetProcessedValue("ViewModelFOVBase", true) or ownerfov) + (self:GetCustomize() and 0 or convarfov)
+    local target = target_start
 
 	local vmfov = (self.IronSights.ViewModelFOV or (self:GetProcessedValue("ViewModelFOVBase", true) or 70))
-	local mag = self:GetMagnification()
 
     if self:GetInSights() then
 		target = self:GetSight().ViewModelFOV or (75 + convarfov)
@@ -584,11 +604,15 @@ function SWEP:GetViewModelFOV()
 
     self.SmoothedViewModelFOV = self.SmoothedViewModelFOV or target
     local diff = math.abs(target - self.SmoothedViewModelFOV)
-    self.SmoothedViewModelFOV = math.Approach(self.SmoothedViewModelFOV, target, math.max(diff / self:GetProcessedValue("AimDownSightsTime"), diff, 1) * FrameTime())
-    -- note, setting adstime modifier to 0 results in nan and inf for obvious reasons, happened before and not fixing it for this
-    -- return 60 * self:GetSmoothedFOVMag()
-    -- return 150
-    -- return owner:GetFOV() * (self:GetProcessedValue("DesiredViewModelFOV") / 90) * math.pow(self:GetSmoothedFOVMag(), 1/4)
+    self.SmoothedViewModelFOV = math.Approach(self.SmoothedViewModelFOV, target, math.max(diff / self:GetProcessedValue("AimDownSightsTime"), diff, 1) * FrameTime()* 2)
 
-    return self.SmoothedViewModelFOV
+    
+    local sightdelta = self:GetSightDelta()
+    if self:GetInSights() then
+        sightdelta = Lerp(0.21, math_ease.OutBack(sightdelta), math_ease.InOutSine(sightdelta))
+    else
+        sightdelta = Lerp(0.65, math_ease.InOutSine(sightdelta), math_ease.InOutBack(sightdelta))
+    end
+
+    return Lerp(sightdelta, target_start, self.SmoothedViewModelFOV)
 end

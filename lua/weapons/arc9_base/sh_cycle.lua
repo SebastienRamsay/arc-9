@@ -1,38 +1,48 @@
+local swepGetProcessedValue = SWEP.GetProcessedValue
+
 function SWEP:ThinkCycle()
-    if self:GetNeedsCycle() and self:GetCycleFinishTime() != 0 and self:GetCycleFinishTime() <= CurTime() then
+    if !swepGetProcessedValue(self, "ManualAction", true) or self:StillWaiting() then return end
+
+    local swepDt = self.dt
+
+    local ct = CurTime()
+
+    if swepDt.NeedsCycle and swepDt.CycleFinishTime != 0 and swepDt.CycleFinishTime <= ct then
         self:SetNeedsCycle(false)
         self:SetCycleFinishTime(0)
     end
-    if self:StillWaiting() then return end
+
     local owner = self:GetOwner()
 
-    local manual = self:ShouldManualCycle()
+    -- local manual = self:ShouldManualCycle()
+    local manual = owner:GetInfoNum("arc9_manualbolt", 0) >= 1
 
-    local cycling = !owner:KeyDown(IN_ATTACK)
+    local cycling
 
-    if manual then
+    if !manual then
+        cycling = !owner:KeyDown(IN_ATTACK) 
+    else
         cycling = owner:KeyDown(IN_RELOAD)
     end
 
-    if self:GetNeedsCycle() and (cycling or self:GetProcessedValue("SlamFire", true)) then
 
-        if self.MalfunctionCycle and (IsFirstTimePredicted() and self:RollJam()) then return end
+    if swepDt.NeedsCycle and (cycling or swepGetProcessedValue(self, "SlamFire", true)) then
+        local iftp = IsFirstTimePredicted()
 
-        local ejectdelay = self:GetProcessedValue("EjectDelay", true)
+        if self.MalfunctionCycle and (iftp and self:RollJam()) then return end
 
-        local t = self:PlayAnimation("cycle", self:GetProcessedValue("CycleTime", true), false)
+        local ejectdelay = swepGetProcessedValue(self, "EjectDelay", true)
 
-        t = t * ((self:GetAnimationEntry(self:TranslateAnimation("cycle")) or {}).MinProgress or 1)
+        local t, minprogress = self:PlayAnimation("cycle", swepGetProcessedValue(self, "CycleTime", true), false)
+        t = t * minprogress
 
-        self:SetCycleFinishTime(CurTime() + t)
+        self:SetCycleFinishTime(ct + t)
 
-        if IsFirstTimePredicted() and !self:GetProcessedValue("NoShellEjectManualAction", true) then
+        if iftp and !swepGetProcessedValue(self, "NoShellEjectManualAction", true) then
             if ejectdelay == 0 then
                 self:DoEject()
             else
-                self:SetTimer(ejectdelay, function()
-                    self:DoEject()
-                end)
+                self:SetTimer(ejectdelay, function() self:DoEject() end)
             end
         end
     end

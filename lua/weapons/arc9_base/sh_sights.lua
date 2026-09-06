@@ -6,7 +6,7 @@ function SWEP:EnterSights()
     if self:GetSprintAmount() > 0.5 then return end
     if !self:GetProcessedValue("HasSights", true) then return end
     if self:GetCustomize() then return end
-    if !self:GetProcessedValue("ReloadInSights", true) and self:GetReloading() then return end
+    if !self:GetProcessedValue("ReloadInSights", true) and self:GetReloading() and self:GetAnimLockTime() > CurTime() then return end
     if self:GetHolsterTime() > 0 then return end
     if self:GetProcessedValue("UBGLInsteadOfSights", true) then return end
     if self:GetSafe() then return end
@@ -18,7 +18,6 @@ function SWEP:EnterSights()
         if self.SetNextAiming > CurTime() then return end
     end
 
-    -- self:ToggleBlindFire(false)
     self:SetInSights(true)
     if IsFirstTimePredicted() then
         local soundtab1 = {
@@ -290,7 +289,6 @@ do
     local cvarGetBool = FindMetaTable("ConVar").GetBool
 
     function SWEP:ThinkSights()
-        -- if self:GetSafe() then return end
         local swepDt = self.dt
 
         local sighted = swepDt.InSights
@@ -299,9 +297,12 @@ do
         end
 
         local oldamt = swepDt.SightAmount
-        local amt = math.Approach(
-            oldamt, sighted and 1 or 0, FrameTime() / self:GetProcessedValue("AimDownSightsTime"))
+        local amt = 0
 
+        if !(!sighted and oldamt == 0) and !(sighted and oldamt == 1) then
+            amt = math.Approach(oldamt, sighted and 1 or 0, FrameTime() / self:GetProcessedValue("AimDownSightsTime"))
+        elseif sighted and oldamt == 1 then amt = 1 end
+        
         if oldamt ~= amt then
             self:SetSightAmount(amt)
         end
@@ -314,7 +315,7 @@ do
         if toggle then
             if sighted and pratt then
                 swepExitSights(self)
-            elseif not sighted and (inatt and self:GetSprintAmount() > 0 or pratt) then
+            elseif not sighted and (inatt and swepDt.SprintAmount > 0 or pratt) then
                 self:EnterSights()
             end
 
@@ -383,10 +384,20 @@ function SWEP:GetRTScopeFOV()
 
     local ratio = ((sights.atttbl and sights.atttbl.ScopeScreenRatio or self.ScopeScreenRatio) or 0.5) - (!self.ExtraSightDistanceNoRT and sights.ExtraSightDistance or 0) * 0.045
     if self.PeekingIsSight and self.Peeking then ratio = ratio + 0.2 end
-    local vmfovratio = arc9_cheapscopes:GetBool() and sights.Magnification or self:GetSmoothedFOVMag() -- sights.Magnification
+    local vmfovratio = self:IsCheapScope(sights) and sights.Magnification or self:GetSmoothedFOVMag() -- sights.Magnification
     local funnyfov = self:ScaleFOVByWidthRatio(self:GetOwner():GetFOV(), 1 / vmfovratio * ratio / 1.5 / realzoom)
 
-    return funnyfov
+    return ARC9_ENABLE_NEWSCOPES_MEOW and realzoom or funnyfov
+end
+
+function SWEP:GetRTScopeMagnification()
+    local sights = self:GetSight()
+
+    if !sights then return 2 end
+
+    local realzoom = self:GetRealZoom(sights)
+
+    return realzoom or 2
 end
 
 SWEP.ScrollLevels = {}
@@ -426,7 +437,7 @@ end
 
 function SWEP:IsScoping()
     local sight = self:GetSight()
-
+    
     local atttbl
 
     if sight.BaseSight then
@@ -440,5 +451,6 @@ function SWEP:IsScoping()
         table.Merge(atttbl, sight.ExtraSightData)
     end
 
-    return self:GetSightAmount() > 0 and atttbl.RTScope and atttbl
+    -- return self:GetSightAmount() > 0 and atttbl.RTScope and atttbl
+    return atttbl.RTScope and atttbl
 end

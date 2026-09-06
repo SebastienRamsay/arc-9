@@ -29,7 +29,8 @@ ARC9.LanguagesTable = {
 {"2Русский", "ru"},
 {"2Svenska", "sv-se"},
 {"2中文", "zh-cn"},
-
+{"2한국어", "ko"},
+{"2Українська", "uk"},
 {"9UwU :3", "uwu"},
 }
 
@@ -181,12 +182,21 @@ ARC9.SettingsTable = {
         { type = "bool", text = "settings.gameplay.toggleads.title", desc = "settings.gameplay.toggleads.desc", convar = "toggleads" },
         { type = "bool", text = "settings.gameplay.cheapscopes.title", desc = "settings.gameplay.cheapscopes.desc", convar = "cheapscopes" },
         { type = "bool", text = "settings.gameplay.fx_rtvm.title", desc = "settings.gameplay.fx_rtvm.desc", convar = "fx_rtvm", parentconvar = "cheapscopes", parentinvert = true },
+        { type = "bool", text = "settings.gameplay.fx_rt_fxaa.title", desc = "settings.gameplay.fx_rt_fxaa.desc", convar = "fx_rt_fxaa", parentconvar = "cheapscopes", parentinvert = true },
+        { type = "bool", text = "settings.gameplay.fx_rt_shader.title", desc = "settings.gameplay.fx_rt_shader.desc", convar = "fx_rt_shader" },
+        { type = "bool", text = "settings.gameplay.fx_rt_alwaysdraw.title", desc = "settings.gameplay.fx_rt_alwaysdraw.desc", convar = "fx_rt_alwaysdraw" },
         { type = "bool", text = "settings.gameplay.compensate_sens.title", desc = "settings.gameplay.compensate_sens.desc", convar = "compensate_sens" },
         { type = "slider", text = "settings.gameplay.sensmult.title", desc = "settings.gameplay.sensmult.desc", convar = "mult_sens", parentconvar = "compensate_sens", min = 0.10, max = 1, decimals = 2 },
         { type = "bool", text = "settings.gameplay.gradualsens.title", desc = "settings.gameplay.gradualsens.desc", convar = "gradual_sens", parentconvar = "compensate_sens" },
 
         { type = "color", text = "settings.gameplay.color.reflex.title", desc = "settings.gameplay.color.reflex.desc", convar = "reflex" },
         { type = "color", text = "settings.gameplay.color.scope.title", desc = "settings.gameplay.color.scope.desc", convar = "scope" },
+        
+        { type = "bool", text = "settings.blur.fx_rtblur.title", desc = "settings.blur.fx_rtblur.desc", convar = "fx_rtblur" },
+        { type = "bool", text = "settings.blur.fx_adsblur.title", desc = "settings.blur.fx_adsblur.desc", convar = "fx_adsblur_new" },
+        { type = "bool", text = "settings.blur.fx_adsblur_bleeding.title", desc = "settings.blur.fx_adsblur_bleeding.desc", convar = "fx_adsblur_bleeding", parentconvar = "fx_adsblur_new" },
+        { type = "slider", text = "settings.blur.fx_adsblur_bleeding_amount.title", desc = "settings.blur.fx_adsblur_bleeding_amount.desc", convar = "fx_adsblur_bleeding_amount", parentconvar = "fx_adsblur_new+fx_adsblur_bleeding", min = 1, max = 60 },
+        { type = "bool", text = "settings.blur.fx_adsblur_always.title", desc = "settings.blur.fx_adsblur_always.desc", convar = "fx_adsblur_always", parentconvar = "fx_adsblur_new" },
 
     },
     {
@@ -195,7 +205,8 @@ ARC9.SettingsTable = {
         { type = "label", text = "settings.tabname.tpik", desc = "settings.tabname.tpik.desc" },
         { type = "bool", text = "settings.tpik.title", desc = "settings.tpik.desc", convar = "tpik" },
         { type = "bool", text = "settings.tpik_others.title", desc = "settings.tpik_others.desc", convar = "tpik_others", parentconvar = "tpik" },
-        { type = "slider", text = "settings.tpik_framerate.title", desc = "settings.tpik_framerate.desc", convar = "tpik_others", parentconvar = "tpik", min = 0, max = 200 },
+        { type = "slider", text = "settings.tpik_framerate_local.title", desc = "settings.tpik_framerate_local.desc", convar = "tpik_framerate_local", parentconvar = "tpik", min = 10, max = 150 },
+        { type = "slider", text = "settings.tpik_framerate.title", desc = "settings.tpik_framerate.desc", convar = "tpik_framerate_others", parentconvar = "tpik", min = 5, max = 150 },
 
         { type = "label", text = "settings.tabname.blur", desc = "settings.tabname.blur.desc" },
         { type = "bool", text = "settings.blur.cust_blur.title", desc = "settings.blur.cust_blur.desc", convar = "cust_blur" },
@@ -203,7 +214,10 @@ ARC9.SettingsTable = {
         { type = "bool", text = "settings.blur.fx_animblur.title", desc = "settings.blur.fx_animblur.desc", convar = "fx_animblur", parentconvar = "fx_reloadblur" },
         { type = "bool", text = "settings.blur.fx_inspectblur.title", desc = "settings.blur.fx_inspectblur.desc", convar = "fx_inspectblur", parentconvar = "fx_reloadblur" },
         { type = "bool", text = "settings.blur.fx_rtblur.title", desc = "settings.blur.fx_rtblur.desc", convar = "fx_rtblur" },
-        { type = "bool", text = "settings.blur.fx_adsblur.title", desc = "settings.blur.fx_adsblur.desc", convar = "fx_adsblur", parentconvar = "fx_rtblur" },
+        { type = "bool", text = "settings.blur.fx_adsblur.title", desc = "settings.blur.fx_adsblur.desc", convar = "fx_adsblur_new" },
+        { type = "bool", text = "settings.blur.fx_adsblur_bleeding.title", desc = "settings.blur.fx_adsblur_bleeding.desc", convar = "fx_adsblur_bleeding", parentconvar = "fx_adsblur_new" },
+        { type = "slider", text = "settings.blur.fx_adsblur_bleeding_amount.title", desc = "settings.blur.fx_adsblur_bleeding_amount.desc", convar = "fx_adsblur_bleeding_amount", parentconvar = "fx_adsblur_new+fx_adsblur_bleeding", min = 1, max = 60 },
+        { type = "bool", text = "settings.blur.fx_adsblur_always.title", desc = "settings.blur.fx_adsblur_always.desc", convar = "fx_adsblur_always", parentconvar = "fx_adsblur_new" },
 
         { type = "label", text = "settings.tabname.effects", desc = "settings.tabname.effects.desc" },
         { type = "bool", text = "settings.effects.eject_fx.title", desc = "settings.effects.eject_fx.desc", convar = "eject_fx" },
@@ -243,10 +257,12 @@ ARC9.SettingsTable = {
         { type = "bool", text = "settings.gameplay.dtap_sights.title", desc = "settings.gameplay.dtap_sights.desc", convar = "dtap_sights" },
         { type = "bool", text = "settings.gameplay.autoreload.title", desc = "settings.gameplay.autoreload.desc", convar = "autoreload" },
         { sv = true, type = "bool", text = "settings.server.gameplay.recoilshake.title", desc = "settings.server.gameplay.recoilshake.desc", convar = "recoilshake" },
+        { sv = true, type = "bool", text = "settings.server.gameplay.recoilcamshake.title", desc = "settings.server.gameplay.recoilcamshake.desc", convar = "recoilcamshake" },
 
         { type = "label", text = "settings.tabname.features", desc = "settings.tabname.features.desc" },
         { sv = true, type = "bool", text = "settings.server.gameplay.mod_sway.title", desc = "settings.server.gameplay.mod_sway.desc", convar = "mod_sway" },
         { sv = true, type = "bool", text = "settings.server.gameplay.breath_slowmo.title", desc = "settings.server.gameplay.breath_slowmo.desc", convar = "breath_slowmo" },
+        { sv = true, type = "bool", text = "settings.server.gameplay.breath_infinite.title", desc = "settings.server.gameplay.breath_infinite.desc", convar = "breath_infinite" },
         { type = "bool", text = "settings.gameplay.togglebreath.title", desc = "settings.gameplay.togglebreath.desc", convar = "togglebreath" },
         { type = "bool", text = "settings.centerhint.breath_hud.title", desc = "settings.centerhint.breath_hud.desc", convar = "breath_hud" },
         { type = "bool", text = "settings.centerhint.breath_pp.title", desc = "settings.centerhint.breath_pp.desc", convar = "breath_pp" },
@@ -254,6 +270,7 @@ ARC9.SettingsTable = {
         { sv = true, type = "bool", text = "settings.server.gameplay.mod_peek.title", desc = "settings.server.gameplay.mod_peek.desc", convar = "mod_peek" },
         { type = "bool", text = "settings.gameplay.togglepeek.title", desc = "settings.gameplay.togglepeek.desc", convar = "togglepeek", parentconvar = "mod_peek" },
         { type = "bool", text = "settings.gameplay.togglepeek_reset.title", desc = "settings.gameplay.togglepeek_reset.desc", convar = "togglepeek_reset", parentconvar = "mod_peek", requireconvar = "togglepeek" },
+        { sv = true, type = "bool", text = "settings.server.gameplay.mod_nearwall.title", desc = "settings.server.gameplay.mod_nearwall.desc", convar = "mod_nearwall" },
 
         { sv = true, type = "bool", text = "settings.server.aimassist.enable.title", desc = "settings.server.aimassist.enable.desc", convar = "aimassist" },
         { type = "bool", text = "settings.aimassist.enable.title", desc = "settings.aimassist.enable.desc", convar = "aimassist_cl", parentconvar = "aimassist" },
@@ -262,10 +279,6 @@ ARC9.SettingsTable = {
         { sv = true, type = "slider", text = "settings.server.aimassist.cone.title", desc = "settings.server.aimassist.cone.desc", convar = "aimassist_cone", min = 1, max = 15, parentconvar = "aimassist" },
 
         { sv = true, type = "bool", text = "settings.server.gameplay.manualbolt.title", desc = "settings.server.gameplay.manualbolt.desc", convar = "manualbolt" },
-
-        -- { sv = true, type = "bool", text = "settings.server.gameplay.lean.title", desc = "settings.server.gameplay.lean.desc", convar = "lean" },
-        -- { type = "bool", text = "settings.gameplay.autolean.title", desc = "settings.gameplay.autolean.desc", convar = "autolean", parentconvar = "lean" },
-        -- { type = "bool", text = "settings.gameplay.togglelean.title", desc = "settings.gameplay.togglelean.desc", convar = "togglelean", parentconvar = "lean" },
 
         { sv = true, type = "bool", text = "settings.server.gameplay.mod_freeaim.title", desc = "settings.server.gameplay.mod_freeaim.desc", convar = "mod_freeaim" },
         -- { sv = true, type = "bool", text = "settings.server.gameplay.mod_overheat.title", desc = "settings.server.gameplay.mod_overheat.desc", convar = "mod_overheat" }, -- already in modifiers near jams
@@ -325,6 +338,9 @@ ARC9.SettingsTable = {
         { sv = true, type = "bool", text = "settings.server.custmenu.atts_generateentities.title", desc = "settings.server.custmenu.atts_generateentities.desc", convar = "atts_generate_entities" },
 
         { type = "label", text = "settings.tabname.npc", desc = "settings.tabname.npc.desc" },
+        { sv = true, type = "button", text = "settings.server.npc.blacklist.title", desc = "settings.server.npc.blacklist.desc", content = "settings.server.custmenu.blacklist.open", func = function(self2)
+            RunConsoleCommand("arc9_blacklist_npc")
+        end},
         { sv = true, type = "bool", text = "settings.server.npc.npc_autoreplace.title", desc = "settings.server.npc.npc_autoreplace.desc", convar = "npc_autoreplace" },
         { sv = true, type = "bool", text = "settings.server.npc.npc_atts.title", desc = "settings.server.npc.npc_atts.desc", convar = "npc_atts", parentconvar = "npc_autoreplace" },
         { sv = true, type = "bool", text = "settings.server.npc.replace_spawned.title", desc = "settings.server.npc.replace_spawned.desc", convar = "replace_spawned" },
@@ -519,11 +535,19 @@ local function DrawSettings(bg, page)
                 end
 
                 if v2.parentconvar then
-                    local boolll = GetConVar("arc9_" .. v2.parentconvar)
-                    if v2.parentinvert then
-                        boolll = boolll:GetFloat() >= 0.001
-                    else
-                        boolll = boolll:GetFloat() < 0.001
+                    local cvarss = string.Split(v2.parentconvar, "+")
+                    local boolll = true
+
+                    for _, cvarr in ipairs(cvarss) do
+                        local cvarr = GetConVar("arc9_" .. cvarr)
+                        if !cvarr or cvarr:GetFloat() < 0.001 then
+                            boolll = false
+                            break
+                        end
+                    end
+
+                    if !v2.parentinvert then
+                        boolll = !boolll
                     end
 
                     if boolll then
@@ -569,6 +593,8 @@ local function DrawSettings(bg, page)
                     end
                 end
 
+                if ARC9.IntelGPUDetected and v2.text == "settings.blur.fx_adsblur.title" then v2.text = "settings.blur.fx_adsblur.intel" end
+                
                 txt = txt .. (ARC9:GetPhrase(v2.text) or ARC9:GetPhrase("settings" .. "." .. (v2.convar or "") .. ".title") or v2.text or "")
 
                 surface.SetFont("ARC9_12_Slim")

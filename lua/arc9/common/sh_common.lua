@@ -320,17 +320,20 @@ ARC9.IN_SWITCHSIGHTS = IN_RUN
 ARC9.DMG_CUST_AP = 4096
 
 ARC9.HL2Replacements = {
-    ["weapon_pistol"] = {ARC9.WEAPON_PISTOL},
-    ["weapon_357"] = {ARC9.WEAPON_PISTOL, ARC9.WEAPON_SNIPER},
-    ["weapon_smg1"] = {ARC9.WEAPON_SMG},
-    ["weapon_ar2"] = {ARC9.WEAPON_AR},
-    ["weapon_shotgun"] = {ARC9.WEAPON_SHOTGUN},
-    ["weapon_crossbow"] = {ARC9.WEAPON_SNIPER},
-    ["weapon_crowbar"] = {ARC9.WEAPON_MELEE},
-    ["weapon_rpg"] = {ARC9.WEAPON_RPG},
-    ["weapon_frag"] = {ARC9.WEAPON_FRAG},
-    ["weapon_alyxgun"] = {ARC9.WEAPON_SPECIAL},
-    ["weapon_annabelle"] = {ARC9.WEAPON_SPECIAL, ARC9.WEAPON_SHOTGUN}
+    ["weapon_pistol"] =     { ARC9.WEAPON_PISTOL },
+    ["weapon_357"] =        { ARC9.WEAPON_PISTOL },
+    ["weapon_smg1"] =       { ARC9.WEAPON_SMG },
+    ["weapon_ar2"] =        { ARC9.WEAPON_AR },
+    ["weapon_shotgun"] =    { ARC9.WEAPON_SHOTGUN },
+    ["weapon_crossbow"] =   { ARC9.WEAPON_SNIPER },
+    ["weapon_rpg"] =        { ARC9.WEAPON_RPG },
+    ["weapon_alyxgun"] =    { ARC9.WEAPON_SPECIAL },
+    ["weapon_annabelle"] =  { ARC9.WEAPON_SHOTGUN },
+    ["weapon_frag"] =       { false }, -- empty to keep only overrides to use those
+    ["weapon_slam"] =       { false },
+    ["weapon_crowbar"] =    { false },
+    ["weapon_bugbait"] =    { false },
+    ["weapon_stunstick"] =  { false },
 }
 
 do
@@ -468,11 +471,13 @@ end
 hook.Add("InitPostEntity", "ARC9_phystweak", function() -- stolen from tacrp
     if GetConVar("arc9_phystweak"):GetBool() then
         if !physenv or !physenv.GetPerformanceSettings then print("[ARC9] How the hell you don't have physenv???? wtf wrong with your game") return end
-        local v = physenv.GetPerformanceSettings().MaxVelocity or 10000
-        if v < 10000 then
-            physenv.SetPerformanceSettings({MaxVelocity = 10000})
-            print("[ARC9] Increasing MaxVelocity for projectiles to behave as intended! (" .. v .. "-> 10000)")
-            print("[ARC9] Disable this behavior with 'arc9_phystweak 0'.")
-        end
+        timer.Simple(0, function()
+            local v = physenv.GetPerformanceSettings().MaxVelocity or 10000
+            if v < 10000 then
+                physenv.SetPerformanceSettings({MaxVelocity = 10000})
+                print("[ARC9] Increasing MaxVelocity for physics objects to make sure bullet projectiles behave as intended! (" .. v .. "-> 10000)")
+                print("[ARC9] Disable this behavior with 'arc9_phystweak 0'.")
+            end
+        end)
     end
 end)

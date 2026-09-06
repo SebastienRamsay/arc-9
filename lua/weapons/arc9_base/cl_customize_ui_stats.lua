@@ -19,12 +19,17 @@ function SWEP:GetTrueRPM(base)
             end
 
             if self.ManualAction then
-                -- What is self.cycle .
-                local cyclelen = self:GetAnimationTime("cycle")
-                local cycleent = self:GetAnimationEntry("cycle")
-                cyclelen = cyclelen * (cycleent.Mult or 1)
-                cyclelen = cyclelen * (cycleent.MinProgress or 1)
-                delay = delay + (cyclelen * self.CycleTime)
+                local time = self:GetAnimationTime("cycle")
+                local entry = self:GetAnimationEntry("cycle")
+                -- Duplicated code for MinProgressTime :P
+                local mp_t = entry.MinProgressTime
+                if mp_t then
+                    time = mp_t
+                else
+                    time = time * (entry.MinProgress or 1)
+                end
+                time = time * (entry.Mult or 1)
+                delay = delay + (time * self.CycleTime)
             end
 
             if self:GetCurrentFiremode() > 1 then
@@ -58,11 +63,16 @@ function SWEP:GetTrueRPM(base)
             end
 
             if self:GetProcessedValue("ManualAction") then
-                local cyclelen = self:GetAnimationTime("cycle")
-                local cycleent = self:GetAnimationEntry("cycle")
-                cyclelen = cyclelen * (cycleent.Mult or 1)
-                cyclelen = cyclelen * (cycleent.MinProgress or 1)
-                delay = delay + (cyclelen * self:GetProcessedValue("CycleTime"))
+                local time = self:GetAnimationTime("cycle")
+                local entry = self:GetAnimationEntry("cycle")
+                local mp_t = entry.MinProgressTime
+                if mp_t then
+                    time = mp_t
+                else
+                    time = time * (entry.MinProgress or 1)
+                end
+                time = time * (entry.Mult or 1)
+                delay = delay + (time * self:GetProcessedValue("CycleTime"))
             end
 
             if self:GetCurrentFiremode() > 1 then
@@ -180,7 +190,7 @@ function SWEP:CreateHUD_Stats()
             stat = "ClipSize",
             fifty = 20,
             eval = function()
-                local a = self:GetProcessedValue("ClipSize") + self:GetProcessedValue("ChamberSize")
+                local a = math.Round(self:GetProcessedValue("ClipSize")) + self:GetProcessedValue("ChamberSize")
                 if self:GetProcessedValue("BottomlessClip", true) then
                     a = a + math.huge
                 end
@@ -197,7 +207,7 @@ function SWEP:CreateHUD_Stats()
                 return self:GetProcessedValue("PrimaryBash", true) or self:GetProcessedValue("Throwable", true)
             end,
             conv = function(a)
-                a = tostring(a)
+                a = tostring(math.Round(a))
 
                 if self:GetProcessedValue("ChamberSize") > 0 then
                     a = a .. "+" .. tostring(self:GetProcessedValue("ChamberSize"))
@@ -487,6 +497,18 @@ function SWEP:CreateHUD_Stats()
                 return !self:GetValue("EFTErgo")
             end,
             unit = ""
+        },
+        {
+            title = "autostat.EFTWeight",
+            desc = "EFTWeight.desc",
+            stat = "EFTWeight",
+            fifty = 50,
+            cond = function()
+                return !self:GetValue("EFTWeight")
+            end,
+            unit = "kg",
+            eval = function() return 0 end,
+            lowerisbetter = true
         },
     }
 

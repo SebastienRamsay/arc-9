@@ -4,7 +4,8 @@ local wwWorldToLocal = WorldToLocal
 local llLocalToWorld = LocalToWorld
 
 SWEP.AttPosCache = {}
--- SWEP.BonePosCache = {}
+
+local swepGetProcessedValue = SWEP.GetProcessedValue
 
 function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, customang, dupli)
     dupli = dupli or 0
@@ -15,20 +16,14 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
     if wm then
         if slottbl.WMBase then
             parentmdl = self:GetOwner()
-
-            if !IsValid(parentmdl) then
-                parentmdl = self
-            end
-
-            if custompos then
-                parentmdl = nil
-            end
+            if !IsValid(parentmdl) then parentmdl = self end
+            if custompos then parentmdl = nil end
         else
             if custompos then
                 parentmdl = self.CModel[1]
-                parentmdl:SetupBones()
+                if parentmdl then parentmdl:SetupBones() end
             else
-                parentmdl = self.WModel[1]
+                parentmdl = self.WModel and self.WModel[1]
             end
         end
     else
@@ -59,10 +54,6 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
 
     if slottbl.WMBase then
         bone = (self:ShouldTPIK() and self.TPIKParentToSpine4) and "ValveBiped.Bip01_Spine4" or "ValveBiped.Bip01_R_Hand"
-
-        -- if self:ShouldTPIK() then
-        --     bone = "ValveBiped.Bip01_Head1"
-        -- end
     end
 
     if slottbl.Installed then
@@ -76,48 +67,34 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
     local bpos, bang = v0, a0
 
     if dupli > 0 then
-        offset_pos = slottbl.DuplicateModels[dupli].Pos or offset_pos
-        offset_ang = slottbl.DuplicateModels[dupli].Ang or offset_ang
-
-        bone = slottbl.DuplicateModels[dupli].Bone or bone
+        local dupli_tbl = slottbl.DuplicateModels[dupli]
+        if dupli_tbl then
+            offset_pos = dupli_tbl.Pos or offset_pos
+            offset_ang = dupli_tbl.Ang or offset_ang
+            bone = dupli_tbl.Bone or bone
+        end
     end
 
-    local selfpos, selfang = self:GetPos(), self:GetAngles()
-
     if parentmdl and bone then
-        -- local bonecached = false 
+        local boneindex = parentmdl:LookupBone(bone)
 
-        -- local possiblebonecache = self.BonePosCache[bone] -- bone cache
-        -- if possiblebonecache then
-        --     if (possiblebonecache[3] or 0) > CurTime() then
-        --         bpos, bang = llLocalToWorld(possiblebonecache[1], possiblebonecache[2], selfpos, selfang)
-        --         bonecached = true
-        --     end
-        -- end
+        if !boneindex then return v0, a0, v0 end
 
-        -- if !bonecached then
-            local boneindex = parentmdl:LookupBone(bone)
+        if parentmdl == self:GetOwner() then
+            parentmdl:SetupBones()
+            parentmdl:InvalidateBoneCache()
+        end
 
-            if !boneindex then return v0, a0, v0 end
+        local bonemat = parentmdl:GetBoneMatrix(boneindex)
+        if bonemat then
+            bpos = bonemat:GetTranslation()
+            bang = bonemat:GetAngles()
+        end
 
-            if parentmdl == self:GetOwner() then
-                parentmdl:SetupBones()
-                parentmdl:InvalidateBoneCache()
-            end
-            local bonemat = parentmdl:GetBoneMatrix(boneindex)
-            if bonemat then
-                bpos = bonemat:GetTranslation()
-                bang = bonemat:GetAngles()
-            end
-
-            if !bang or !bpos then
-                bang = selfang
-                bpos = selfpos
-            end
-
-            -- local xpos, xang = wwWorldToLocal(bpos, bang, selfpos, selfang) -- bone cache
-            -- self.BonePosCache[bone] = {xpos, xang, CurTime() + 1}
-        -- end
+        if !bang or !bpos then
+            bang = self:GetAngles()
+            bpos = self:GetPos()
+        end
     elseif custompos then
         bpos = custompos
         bang = customang or a0
@@ -126,22 +103,24 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
     local cust = self:GetCustomize()
     local possiblecache = self.AttPosCache[slottbl.Address] -- att pos cache
     if !cust and possiblecache then
-        if (possiblecache[4] or 0) > CurTime() then
+        -- if (possiblecache[4] or 0) > CurTime() then
             local qpos, qang = llLocalToWorld(possiblecache[1], possiblecache[2], bpos, bang)
             return qpos, qang, possiblecache[3]
-        end
+        -- end
     end
 
     if slottbl.OriginalAddress then
         local eles = self:GetAttachmentElements()
 
         for _, ele in ipairs(eles) do
-            local mods = ele.AttPosMods or {}
-
-            if mods[slottbl.OriginalAddress] then
-                offset_pos = mods[slottbl.OriginalAddress].Pos or offset_pos
-                offset_ang = mods[slottbl.OriginalAddress].Ang or offset_ang
-                icon_offset = mods[slottbl.OriginalAddress].Icon_Offset or icon_offset
+            local mods = ele.AttPosMods
+            if mods then
+                local mod_data = mods[slottbl.OriginalAddress]
+                if mod_data then
+                    offset_pos = mod_data.Pos or offset_pos
+                    offset_ang = mod_data.Ang or offset_ang
+                    icon_offset = mod_data.Icon_Offset or icon_offset
+                end
             end
         end
     end
@@ -150,16 +129,7 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
         offset_pos = offset_pos * (self.WorldModelOffset.Scale or 1)
     end
 
-    local apos, aang
-
-    aang = Angle()
-    aang:Set(bang)
-
-    apos = bpos + aang:Forward() * offset_pos.x
-
-    apos = apos + aang:Right() * offset_pos.y
-
-    apos = apos + aang:Up() * offset_pos.z
+    local apos, aang = llLocalToWorld(Vector(offset_pos[1], -offset_pos[2], offset_pos[3]), bang, bpos, bang)
 
     if !nomodeloffset then
         offset_ang = offset_ang + (atttbl.ModelAngleOffset or a0)
@@ -175,27 +145,24 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
     aang:RotateAroundAxis(right, offset_ang.p)
     aang:RotateAroundAxis(up, offset_ang.y)
 
-    if !nomodeloffset then
-        local moffset = (atttbl.ModelOffset or v0) * (slottbl.Scale or 1)
+    if !nomodeloffset and atttbl.ModelOffset then
+        local moffset = atttbl.ModelOffset * (slottbl.Scale or 1)
         if wm then
             moffset = moffset * (self.WorldModelOffset.Scale or 1)
         end
 
-        apos = apos + aang:Forward() * moffset.x
-        apos = apos + aang:Right() * moffset.y
-        apos = apos + aang:Up() * moffset.z
+        -- apos = apos + forward * moffset.x + right * moffset.y + up * moffset.z
+        apos = apos + aang:Forward() * moffset.x + aang:Right() * moffset.y + aang:Up() * moffset.z
     end
 
-    if idle then
-        SafeRemoveEntity(parentmdl)
-    end
+    if idle then SafeRemoveEntity(parentmdl) end
 
-    local data = {
-        pos = apos,
-        ang = aang,
-        atttbl = atttbl,
-        slottbl = slottbl,
-    }
+    self.AttTempDataTbl = self.AttTempDataTbl or {}
+    local data = self.AttTempDataTbl
+    data.pos = apos
+    data.ang = aang
+    data.atttbl = atttbl
+    data.slottbl = slottbl
 
     data = self:RunHook("Hook_GetAttachmentPos", data) or data
 
@@ -204,13 +171,13 @@ function SWEP:GetAttachmentPos(slottbl, wm, idle, nomodeloffset, custompos, cust
 
     if slottbl.Address and !cust then -- att pos cache
         local ypos, yang = wwWorldToLocal(apos, aang, bpos, bang)
-        self.AttPosCache[slottbl.Address] = {ypos, yang, icon_offset, CurTime() + 5}
+        self.AttPosCache[slottbl.Address] = { ypos, yang, icon_offset } -- , CurTime() + 55}
     end
 
     return apos, aang, icon_offset
 end
 
-function SWEP:CreateAttachmentModel(wm, atttbl, slottbl, ignorescale, cm)
+function SWEP:CreateAttachmentModel(wm, atttbl, slottbl, ignorescale, cm, dupli, customCamoTexture, customCamoScale, customBlendFactor)
     ignorescale = ignorescale or false
 
     local model = atttbl.Model
@@ -245,12 +212,34 @@ function SWEP:CreateAttachmentModel(wm, atttbl, slottbl, ignorescale, cm)
     end
 
     if atttbl.ModelMaterial then
-        csmodel:SetMaterial(atttbl.ModelMaterial)
+        -- csmodel:SetMaterial(atttbl.ModelMaterial)
+        csmodel:SetSubMaterial(0, atttbl.ModelMaterial)
+        csmodel:SetSubMaterial(1, atttbl.ModelMaterial)
+        csmodel:SetSubMaterial(2, atttbl.ModelMaterial)
+        csmodel:SetSubMaterial(3, atttbl.ModelMaterial)
+        csmodel:SetSubMaterial(4, atttbl.ModelMaterial)
     end
 
-    csmodel.CustomCamoTexture = self:GetProcessedValue("CustomCamoTexture", true)
-    csmodel.CustomCamoScale = self:GetProcessedValue("CustomCamoScale", true)
-    csmodel.CustomBlendFactor = self:GetProcessedValue("CustomBlendFactor", true)
+    if atttbl.EnableModelSubMaterial then
+        -- csmodel:SetMaterial(atttbl.ModelMaterial)
+        if !csmodel.MaterialAmount then csmodel.MaterialAmount = table.Count(csmodel:GetMaterials() or {}) end
+
+        for ind = 0, csmodel.MaterialAmount do
+            local val = swepGetProcessedValue(self, "ModelSubMaterial" .. ind, true)
+            if val then
+                csmodel:SetSubMaterial(ind, val)
+            end
+        end
+    end
+    
+    if atttbl.RTScopeSubmatIndex then
+        csmodel:SetSubMaterial(atttbl.RTScopeSubmatIndex, wm and "vgui/black" or "effects/arc9/rt")
+    end
+
+    if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
+    csmodel.CustomCamoTexture = customCamoTexture or swepGetProcessedValue(self, "CustomCamoTexture", true)
+    csmodel.CustomCamoScale = customCamoScale or swepGetProcessedValue(self, "CustomCamoScale", true)
+    csmodel.CustomBlendFactor = customBlendFactor or swepGetProcessedValue(self, "CustomBlendFactor", true)
 
     if atttbl.CharmModel then
         local charmmodel = ClientsideModel(atttbl.CharmModel)
@@ -306,9 +295,25 @@ function SWEP:CreateAttachmentModel(wm, atttbl, slottbl, ignorescale, cm)
         }
     end
 
+    local scalee = atttbl.Scale or 1
+    
+    if slottbl.OriginalAddress then
+        local eles = self:GetAttachmentElements()
+
+        for _, ele in ipairs(eles) do
+            local mods = ele.AttPosMods
+            if mods then
+                local mod_data = mods[slottbl.OriginalAddress]
+                if mod_data and mod_data.Scale then
+                    scalee = mod_data.Scale * scalee
+                end
+            end
+        end
+    end
+
     if !ignorescale then
         local scale = Matrix()
-        local vec = Vector(1, 1, 1) * (atttbl.Scale or 1)
+        local vec = Vector(1, 1, 1) * scalee
         if wm then
             vec = vec * (self.WorldModelOffset.Scale or 1)
         end
@@ -375,6 +380,15 @@ function SWEP:SetupModel(wm, lod, cm)
     self.MuzzleDevice_Priority = -1000
     self.MuzzleDeviceUBGL_Priority = -1000
 
+    if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
+    local customCamoTexture = swepGetProcessedValue(self, "CustomCamoTexture", true)
+    local customBlendFactor, customCamoScale
+
+    if customCamoTexture then
+        customCamoScale = swepGetProcessedValue(self, "CustomCamoScale", true)
+        customBlendFactor = swepGetProcessedValue(self, "CustomBlendFactor", true)
+    end
+
     local basemodel = nil
 
     local mdl = {}
@@ -389,18 +403,6 @@ function SWEP:SetupModel(wm, lod, cm)
         if !owner.GetViewModel then return end -- safe check to fix random mp error
 
         basemodel = owner:GetViewModel()
-
-        -- local RenderOverrideFunction = function(self2)
-        --     if LocalPlayer():GetActiveWeapon() != self then LocalPlayer():GetViewModel().RenderOverride = nil return end
-        --     if !IsValid(self) then LocalPlayer():GetViewModel().RenderOverride = nil return end
-
-        --     self:SetFiremodePose()
-        --     self2:DrawModel()
-        -- end
-
-        -- local vm = self:GetVM()
-
-        -- vm.RenderOverride = RenderOverrideFunction
     else
         if cm then
             self.CModel = mdl
@@ -530,9 +532,9 @@ function SWEP:SetupModel(wm, lod, cm)
                 Version = self.ModelVersion
             }
 
-            csmodel.CustomCamoTexture = self:GetProcessedValue("CustomCamoTexture", true)
-            csmodel.CustomCamoScale = self:GetProcessedValue("CustomCamoScale", true)
-            csmodel.CustomBlendFactor = self:GetProcessedValue("CustomBlendFactor", true)
+            csmodel.CustomCamoTexture = customCamoTexture
+            csmodel.CustomCamoScale = customCamoScale
+            csmodel.CustomBlendFactor = customBlendFactor
 
             table.insert(ARC9.CSModelPile, tbl)
 
@@ -582,7 +584,10 @@ function SWEP:SetupModel(wm, lod, cm)
                 fakestickwithoutnocull:Recompute()
             end
             
-            stickermodel:SetMaterial(stickermat)
+            -- stickermodel:SetMaterial(stickermat)
+            stickermodel:SetSubMaterial(0, stickermat)
+            stickermodel:SetSubMaterial(1, stickermat)
+            stickermodel:SetSubMaterial(2, stickermat)
 
             local tbl = {
                 Model = stickermodel,
@@ -599,10 +604,11 @@ function SWEP:SetupModel(wm, lod, cm)
 
         local dupli = slottbl.DuplicateModels or {}
 
-        local duplicheck = self:GetProcessedValue("Akimbo",true) or self:GetProcessedValue("DuplicateAttachments",true)
+        if !swepGetProcessedValue then swepGetProcessedValue = self.GetProcessedValue end
+        local duplicheck = swepGetProcessedValue(self, "Akimbo",true) or swepGetProcessedValue(self, "DuplicateAttachments",true)
 
         for i = 0, #dupli do
-            local csmodel = self:CreateAttachmentModel(wm, atttbl, slottbl, false, cm, dupli)
+            local csmodel = self:CreateAttachmentModel(wm, atttbl, slottbl, false, cm, dupli, customCamoTexture, customCamoScale, customBlendFactor)
 
             if duplicheck  then
                 csmodel.Duplicate = i
@@ -615,10 +621,6 @@ function SWEP:SetupModel(wm, lod, cm)
             if csmodel.DrawFunc then
                 csmodel.DrawFunc(self, csmodel, wm)
             end
-
-            csmodel.CustomCamoTexture = self:GetProcessedValue("CustomCamoTexture", true)
-            csmodel.CustomCamoScale = self:GetProcessedValue("CustomCamoScale", true)
-            csmodel.CustomBlendFactor = self:GetProcessedValue("CustomBlendFactor", true)
 
             local proxmodel
 

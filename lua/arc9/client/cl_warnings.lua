@@ -22,13 +22,13 @@ ARC9.IncompatibleAddons = {
     -- VTools
     ["DisplayDistancePlane"] = "Scenebuilding related tool (most likely) installed through GarrysMod/garrysmod/addons/ folder breaks ARC9. Check that folder and delete the addon.",
     -- TFA's Tactical Lean
-    ["TacticalLean"] = "Mod is old, laggy and interferes with ARC9 lean. Use relaxtakesnotes's \"Leaning\" mod steamcommunity.com/sharedfiles/filedetails/?id=3138563659",
+    ["TacticalLean"] = "Mod is old and laggy. Use relaxtakesnotes's \"Leaning\" mod steamcommunity.com/sharedfiles/filedetails/?id=3138563659",
     -- fixed maybe     SLVBase 2  -- ["1516699044"] = "Causes black screen", -- Minecraft drops
     ["2879200766"] = "Teleports viewmodel to any dropped gun",
     -- Advanced color tool
     ["692778306"] = "Incompatible, breaks every addon in existence",
     -- TF2 Killstreak Weapon Sheen
-    ["973050319"] = "Fucks up model rendering and other shit",
+    -- ["973050319"] = "Fucks up model rendering and other shit",
     -- View Model Bump
     ["1308077613"] = "Causes broken ADS/Sights position.",
     -- Improved Air To Surface Missile
@@ -51,6 +51,12 @@ ARC9.IncompatibleAddons = {
     ["2757203958"] = "Causes errors each time sound is played. Can be fixed but it's an ancient addon with tons of reuploads. (getZINVProfiles() \"_ =\" is the culprit); Use NPC Daemon instead.",
     -- zinv +
     ["597017711"] = "Causes errors each time sound is played. Can be fixed but it's an ancient addon with tons of reuploads. (getZINVProfiles() \"_ =\" is the culprit); Use NPC Daemon instead.",
+    -- [ArcCW] Warhammer 40k - Content
+    ["3265879428"] = "Breaks scopes picture",    
+    -- Realistic VHS Effect2
+    ["3494727681"] = "Breaks scopes picture",
+    -- Sound Muffling Effect
+    ["3529402381"] = "Causes issues with gunfire audio.",
 }
 
 local ScreenScaleMulti = ARC9.ScreenScale
@@ -321,7 +327,7 @@ concommand.Add("arc9_dev_showwarnings", ARC9.DoCompatibilityCheck)
 
 hook.Add("InitPostEntity", "ARC9_CheckContent", function()
     for _, k in pairs(weapons.GetList()) do
-        if weapons.IsBasedOn(k.ClassName, "arc9_base") and k.ClassName != "arc9_base" and k.ClassName != "arc9_base_nade" then return end
+        if weapons.IsBasedOn(k.ClassName, "arc9_base") and k.ClassName != "arc9_base" and k.ClassName != "arc9_base_nade" and k.ClassName != "arc9_eft_base" then return end
     end
 
     chat.AddText(Color(255, 255, 255), "You have installed the ARC9 base but have no weapons installed. Search the workshop for some!")

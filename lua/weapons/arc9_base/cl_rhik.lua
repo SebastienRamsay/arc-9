@@ -18,7 +18,6 @@ function SWEP:DoRHIK(wm)
     vm:SetupBones()
     local lh_delta = 1
     local rh_delta = 1
-    -- local lhik_bf_d = self:GetBlindFireAmount() - (math.abs(self:GetBlindFireCornerAmount()))
     local hasonehandsprint = self:GetValue("OneHandedSprint")
     local hide_lh_d = 0
     local hide_rh_d = 0
@@ -404,11 +403,30 @@ function SWEP:GunControllerRHIK(pos, ang)
         end
 
         if anchor and bonp then
-            anchor = ( bonp + ( (bona:Forward() * anchor.x) + (bona:Right() * anchor.y) + (bona:Up() * anchor.z) ) )
+            local offsx, offsy, offsz = anchor.x, anchor.y, anchor.z
+            if atttbl.IKGunMotionAnchor then
+                offsx = offsx + atttbl.IKGunMotionAnchor.x
+                offsy = offsy + atttbl.IKGunMotionAnchor.y
+                offsz = offsz + atttbl.IKGunMotionAnchor.z
+            end
+
+            anchor = ( bonp + ( (bona:Forward() * offsx) + (bona:Right() * offsy) + (bona:Up() * offsz) ) )
+
+            if atttbl.IKGunMotionMultReal then
+                attpos:Mul(atttbl.IKGunMotionMultReal)
+            end
+
+            if atttbl.IKGunMotionAngleMultReal then
+                attang:Mul(atttbl.IKGunMotionAngleMultReal)
+            end
 
             local rap_pos, rap_ang = self:RotateAroundPoint2(pos, ang, anchor, attpos, attang)
+
             rap_pos:Sub(pos)
             rap_ang:Sub(ang)
+
+            self.IKGunMotionPos = rap_pos
+            self.IKGunMotionAng = rap_ang
 
             pos:Add(rap_pos)
             ang:Add(rap_ang)

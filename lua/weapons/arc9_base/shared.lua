@@ -25,7 +25,6 @@ SWEP.AdminOnly = false
 -- OddShot
 -- EvenReload
 -- OddReload
--- BlindFire
 -- Sights
 -- HipFire
 -- Hot (Scales with overheat)
@@ -106,14 +105,14 @@ SWEP.WorldModelOffset = nil
 --     Ang = Angle(0, 0, 0),
 --     TPIKPos = Vector(0, 0, 0), -- arc9_tpik 1, you can make cool poses with it
 --     TPIKAng = Angle(0, 0, 0),
--- 
+--
 --     TPIKPosSightOffset = Vector(0, 0, 0), -- ironsights offset, disable NoTPIKVMPos
 --     TPIKPosReloadOffset = Vector(0, 0, 0), -- reload offset if arms stretching too much during reloads
 --     TPIKAngReloadOffset = Angle(0, 0, 0),
 --     TPIKHolsterOffset = Angle(0, 0, 0), -- for passive/normal holdtype
 
 --     TPIKPosAlternative = Vector(0, 0, 0) -- enabled with SWEP/ATT.TPIKAlternativePos = true
--- 
+--
 --     Scale = 1
 -- }
 SWEP.NoTPIK = false
@@ -381,6 +380,7 @@ SWEP.DropMagazineQCA = nil -- QC Attachment drop mag from, would drop from shell
 SWEP.DropMagazinePos = Vector(0, 0, 0) -- offsets
 SWEP.DropMagazineAng = Angle(0, 0, 0)
 SWEP.DropMagazineVelocity = Vector(0, 0, 0) -- Put something here if your anim throws the mag with force
+SWEP.DropMagazineEffect = "arc9_magdropeffect"
 
 SWEP.BarrelLength = 0 -- Distance for nearwalling
 
@@ -507,13 +507,14 @@ SWEP.PenetrationUBGL = 5
 SWEP.DamageTypeUBGL = DMG_BULLET
 SWEP.ExplosionDamageUBGL = 0
 SWEP.ExplosionRadiusUBGL = 0
-SWEP.ExplosionEffectUBGL = false 
+SWEP.ExplosionEffectUBGL = false
 
 -------------------------- VISUAL RECOIL
 
 SWEP.UseVisualRecoil = false
 
 SWEP.PhysicalVisualRecoil = true -- Visual recoil actually affects your aim point.
+SWEP.PhysicalVisualRecoilForce = false -- set true to force no matter cvar (this should be better, but some packs rely too much on value above)
 
 SWEP.VisualRecoilUp = 0.01 -- Vertical tilt for visual recoil.F
 SWEP.VisualRecoilSide = 0.05 -- Horizontal tilt for visual recoil.
@@ -538,7 +539,7 @@ SWEP.VisualRecoilDampingConst = nil -- How spring will be visual recoil, 120 is 
 SWEP.VisualRecoilSpringMagnitude = 1
 SWEP.VisualRecoilSpringPunchDamping = nil -- ehh another val for "eft" recoil, 6 is default
 
-SWEP.VisualRecoilThinkFunc = nil -- wawa, override DampingConst, SpringMagnitude, SpringPunchDamping here 
+SWEP.VisualRecoilThinkFunc = nil -- wawa, override DampingConst, SpringMagnitude, SpringPunchDamping here
 -- function(springconstant, VisualRecoilSpringMagnitude, PUNCH_DAMPING, recamount)
 --     if recamount > 3 then
 --         return springconstant * 100, VisualRecoilSpringMagnitude * 1, PUNCH_DAMPING * 1
@@ -546,7 +547,7 @@ SWEP.VisualRecoilThinkFunc = nil -- wawa, override DampingConst, SpringMagnitude
 --     return springconstant, VisualRecoilSpringMagnitude, PUNCH_DAMPING
 -- end
 
-SWEP.VisualRecoilDoingFunc = nil -- wawa, override Up, Side, Roll here 
+SWEP.VisualRecoilDoingFunc = nil -- wawa, override Up, Side, Roll here
 -- function(up, side, roll, punch, recamount)
 --     if recamount > 2 then
 --         return up * 5, side * 1.5, roll, punch * 0.9
@@ -556,7 +557,9 @@ SWEP.VisualRecoilDoingFunc = nil -- wawa, override Up, Side, Roll here
 
 SWEP.RecoilKick = 1 -- Camera recoil
 SWEP.RecoilKickDamping = 70.151 -- Camera recoil damping
+SWEP.RecoilKickRoll = 1 -- Camera Roll Mult, affects fov recoil too
 SWEP.RecoilKickAffectPitch = nil -- thing for eft, set to true if you want camera go up (only visually) as recoil increases, SWEP.Recoil * SWEP.RecoilKick = effect of this
+SWEP.RecoilKickPitchMult = 1 -- If recoil kick affects pitch, how much will the effect of the RecoilKick stat apply to the pitch
 
 -- Additional subtle visual recoil, in case your gun doesn't have animated fire. Acts like a second spring added on top with limited duration
 -- SWEP.SubtleVisualRecoil = 1 -- multiplier, set to something to enable this thing
@@ -574,7 +577,6 @@ SWEP.SpreadAddMove = nil -- Applied when speed is equal to walking speed.
 SWEP.SpreadAddMidAir = nil -- Applied when not touching the ground.
 SWEP.SpreadAddHipFire = nil -- Applied when not sighted.
 SWEP.SpreadAddSighted = nil -- Applied when sighted. Can be negative.
-SWEP.SpreadAddBlindFire = nil -- Applied when blind firing.
 SWEP.SpreadAddCrouch = nil -- Applied when crouching.
 
 SWEP.SpreadAddRecoil = nil -- Applied per unit of recoil.
@@ -610,6 +612,9 @@ SWEP.OverheatTime = 1
 
 SWEP.ShootWhileSprint = false
 
+SWEP.QuickHolsterMult = 0.75 -- Mult used to speed up a weapon switching to a quicknade. Not a stat. Only used if the weapon doesn't have a "holster_quick".
+SWEP.QuickDrawMult = 0.75 -- Mult used to speed up a weapon returning from a quicknade. Not a stat. Only used if the weapon doesn't have a "draw_quick".
+
 SWEP.Speed = 1
 
 SWEP.SpeedMult = 1
@@ -617,7 +622,6 @@ SWEP.SpeedMultSights = 0.75
 SWEP.SpeedMultShooting = 0.9
 SWEP.SpeedMultMelee = 0.75
 SWEP.SpeedMultCrouch = 1
-SWEP.SpeedMultBlindFire = 1
 
 SWEP.NoInspect = nil -- Set to true if there are inspect animation present, but you do not want the ability to trigger them.
 
@@ -748,12 +752,14 @@ SWEP.MalfunctionMeanShotsToFail = 1000 -- The mean number of shots between malfu
 -- SWEP.Hook_GetShootEntData = function(self, table) return end -- Each function should add an entry to the table for shoot ents
 -- SWEP.HookP_NameChange = function(self, name) return name end
 -- SWEP.HookP_DescriptionChange = function(self, desc) return desc end
+-- SWEP.HookP_ClassChange = function(self, class) return class end
 -- SWEP.Hook_BlockAnimation = function(self, anim) return block end -- Return true to block animation from playing.
 -- SWEP.Hook_PrimaryAttack = function(self) return end -- Called when the primary attack is fired.
 -- SWEP.Hook_SwitchSight = function(self, newsight) return end -- Called when a sight is switched.
 -- SWEP.Hook_ToggleAtts = function(self) return end -- Called when attachments are toggled with F.
 -- SWEP.HookP_TranslateSound = function(self, data) return data end # data = {sound = "sound", name = "fire", volume = 1, pitch = 100, level = 100, channel = CHAN_AUTO, volume = 100, flags = SND_NOFLAGS, dsp = 0}
 -- SWEP.Hook_BulletImpact = function(self, data) return end # data = {tr, dmg, range, penleft, alreadypenned, dmgv}
+-- SWEP.Hook_PhysBulletImpact = function(self, data) return end # data = {tr = {}, bullet = {}} -- clientside only
 -- SWEP.Hook_LockOn = function(self, ent) return end -- Called when a lock on is made.
 -- SWEP.HookC_CanLockOn = function(self, ent) return true end -- Return true to allow lock on.
 -- SWEP.HookC_CannotLockOn = function(self, ent) return true end -- Return true to disallow lock on. Has priority over CanLockOn.
@@ -816,63 +822,6 @@ SWEP.MalfunctionMeanShotsToFail = 1000 -- The mean number of shots between malfu
 -- exitubgl
 -- lockon
 -- lockedon
-
--------------------------- LEAN
-
-SWEP.CanLean = true
-
--------------------------- BLIND FIRE
--- This feature has been removed pending rework, and these functions do not work.
-
-SWEP.CanBlindFire = true -- This weapon is capable of blind firing.
-SWEP.BlindFireLHIK = true -- Hide the left hand while blind firing forward.
-
-SWEP.BlindFireLeft = true
-SWEP.BlindFireRight = false -- This weapon can blind fire towards the right. Generally keep this off.
-
-SWEP.BlindFireOffset = Vector(0, 0, 32) -- The amount by which to offset the blind fire muzzle.
-SWEP.BlindFirePos = Vector(-6, -4, 12)
-SWEP.BlindFireAng = Angle(0, 0, -45)
-
-SWEP.BlindFireRightOffset = Vector(0, 24, 0) -- The amount by which to offset the blind fire muzzle.
-SWEP.BlindFireRightPos = Vector(-12, 12, 0)
-SWEP.BlindFireRightAng = Angle(-90, 0, 0)
-
-SWEP.BlindFireLeftOffset = Vector(0, 24, 0) -- The amount by which to offset the blind fire muzzle.
-SWEP.BlindFireLeftPos = Vector(12, 10, 0)
-SWEP.BlindFireLeftAng = Angle(90, 0, 0)
-
-SWEP.BlindFireBoneMods = {
-    ["ValveBiped.Bip01_R_UpperArm"] = {
-        ang = Angle(45, -90, 0),
-        pos = Vector(0, 0, 0)
-    },
-    ["ValveBiped.Bip01_R_Hand"] = {
-        ang = Angle(-90, 0, 0),
-        pos = Vector(0, 0, 0)
-    }
-}
-SWEP.BlindFireLeftBoneMods = {
-    ["ValveBiped.Bip01_R_UpperArm"] = {
-        ang = Angle(45, 0, 0),
-        pos = Vector(0, 0, 0)
-    },
-    ["ValveBiped.Bip01_R_Hand"] = {
-        ang = Angle(0, -75, 0),
-        pos = Vector(0, 0, 0)
-    }
-}
-
-SWEP.BlindFireRightBoneMods = {
-    ["ValveBiped.Bip01_R_UpperArm"] = {
-        ang = Angle(-45, 0, 0),
-        pos = Vector(0, 0, 0)
-    },
-    ["ValveBiped.Bip01_R_Hand"] = {
-        ang = Angle(0, 75, 0),
-        pos = Vector(0, 0, 0)
-    }
-}
 
 -------------------------- NPC
 
@@ -1090,10 +1039,12 @@ SWEP.IronSights = {
     FlatScopeCC = nil -- Color correction table, see default.lua
 }
 
-SWEP.SightMidPoint = { -- Where the gun should be at the middle of it's irons
-    Pos = Vector(-3, 15, -5),
-    Ang = Angle(0, 0, -45),
-}
+SWEP.DoFDepth = 0.07 -- Adjust if front sight getting blurred too
+
+-- SWEP.SightMidPoint = { -- Where the gun should be at the middle of it's irons -- not used anymore?
+--     Pos = Vector(-3, 15, -5),
+--     Ang = Angle(0, 0, -45),
+-- }
 
 SWEP.HasSights = true
 
@@ -1165,8 +1116,6 @@ SWEP.PeekPos = Vector(-1.5, 3, -4.5)
 SWEP.PeekAng = Angle(0, 0.4, -35)
 SWEP.NoPeekCrosshair = nil -- Not displays peek crosshair even if its enabled
 
-SWEP.HeightOverBore = 1
-
 -------------------------- HoldTypes
 
 SWEP.HoldType = "shotgun"
@@ -1174,7 +1123,6 @@ SWEP.HoldTypeSprint = "passive"
 SWEP.HoldTypeHolstered = nil
 SWEP.HoldTypeSights = "smg"
 SWEP.HoldTypeCustomize = "slam"
-SWEP.HoldTypeBlindfire = "pistol"
 SWEP.HoldTypeNPC = "ar2"
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
@@ -1400,9 +1348,6 @@ SWEP.Attachments = {
 -- _primed (Grenade primed)
 -- _iron (When sighted)
 -- _sights (Alternative to _iron)
--- _blindfire_left
--- _blindfire_right
--- _blindfire
 -- _bipod
 -- _sprint
 -- _walk
@@ -1436,8 +1381,6 @@ SWEP.Animations = {
     --     Reverse = false, -- Reverse the animation
     --     EjectAt = 0, -- Eject a shell at this time
     --     DropMagAt = 0, -- Drop magazine at this time
-    --     InstantIdle = false, -- For firing animations, do not delay idle. Use only for guns with long shoot animations
-    --     DelayedIdle = false, -- Idle immediately after playing this animation
     --     IKTimeLine = { -- t is in fraction of animation
     --         {
     --             t = 0.1,
@@ -1477,8 +1420,9 @@ SWEP.Animations = {
     --     },
     --     MagSwapTime = 0.5, -- in seconds, how long before the new magazine replaces the old one. For SWEP.BulletBones
     --     NoMagSwap = false, -- don't bother with above
-    --     MinProgress = 0.9, -- seconds that must pass before the reload is considered done
-    --     FireASAP = false, -- allowes to shoot right after clip anim was "done" with MinProgress; set to number if you want to control anim lock time while keeping minprogress same
+    --     MinProgress = 0.9, -- Percentage where certain actions are considered completed. Reloads fill the clip, deploy/holsters finish earlier, etc.
+    --     MinProgressTime = 0.3, -- Like MinProgress, but uses seconds into the animation instead of percentage.
+    --     FireASAP = false, -- For animations that lock the weapon, if the weapon can fire as soon as the animation is considered completed. Uses MinProgress, but can also be a number value (percentage-based) to not be linked.
     --     RestoreAmmo = 0, -- Restores ammunition to clip
     --     DumpAmmo = false, -- Dump clip on reload
     --     NoStatAffectors = false, -- do not adjust animation length based on stats (sprint to fire time, aim down sights time)
@@ -1554,102 +1498,98 @@ end
 autoinclude(searchdir)
 
 function SWEP:SetupDataTables()
-    self:NetworkVar("Float", 0, "RecoilAmount")
-    self:NetworkVar("Float", 1, "AnimLockTime")
-    self:NetworkVar("Float", 2, "NextIdle")
-    self:NetworkVar("Float", 3, "LastRecoilTime")
-    self:NetworkVar("Float", 4, "RecoilUp")
-    self:NetworkVar("Float", 5, "RecoilSide")
-    self:NetworkVar("Float", 6, "SprintAmount")
-    self:NetworkVar("Float", 7, "LastMeleeTime")
-    self:NetworkVar("Float", 8, "TriggerDelay")
-    self:NetworkVar("Float", 9, "ReloadTime")
-    self:NetworkVar("Float", 10, "ReloadFinishTime")
-    self:NetworkVar("Float", 11, "SightAmount")
-    self:NetworkVar("Float", 12, "HeatAmount")
-    self:NetworkVar("Float", 13, "MeleeAttackTime")
-    self:NetworkVar("Float", 14, "FinishFiremodeAnimTime")
-    self:NetworkVar("Float", 15, "IKTimeLineStart")
-    self:NetworkVar("Float", 16, "IKTime")
-    self:NetworkVar("Float", 17, "HolsterTime")
-    self:NetworkVar("Float", 18, "CycleFinishTime")
-    self:NetworkVar("Float", 19, "EnterBipodTime")
-    self:NetworkVar("Float", 20, "Breath")
-    self:NetworkVar("Float", 21, "SequenceCycle")
-    self:NetworkVar("Float", 22, "SequenceSpeed")
-    self:NetworkVar("Float", 23, "LastHolsterTime")
-    self:NetworkVar("Float", 24, "GrenadePrimedTime")
-    self:NetworkVar("Float", 25, "LockOnStartTime")
-    -- self:NetworkVar("Float", 26, "LeanAmount")
-    self:NetworkVar("Float", 27, "NearWallAmount")
-    self:NetworkVar("Float", 28, "ReadyTime")
+    self:NetworkVar("Float", "RecoilAmount")
+    self:NetworkVar("Float", "AnimLockTime")
+    self:NetworkVar("Float", "NextIdle")
+    self:NetworkVar("Float", "LastRecoilTime")
+    self:NetworkVar("Float", "RecoilUp")
+    self:NetworkVar("Float", "RecoilSide")
+    self:NetworkVar("Float", "SprintAmount")
+    self:NetworkVar("Float", "LastMeleeTime")
+    self:NetworkVar("Float", "TriggerDelay")
+    self:NetworkVar("Float", "RefillTime")
+    self:NetworkVar("Float", "ReloadFinishTime")
+    self:NetworkVar("Float", "SightAmount")
+    self:NetworkVar("Float", "HeatAmount")
+    self:NetworkVar("Float", "MeleeAttackTime")
+    self:NetworkVar("Float", "FinishFiremodeAnimTime")
+    self:NetworkVar("Float", "IKTimeLineStart")
+    self:NetworkVar("Float", "IKTime")
+    self:NetworkVar("Float", "HolsterTime")
+    self:NetworkVar("Float", "CycleFinishTime")
+    self:NetworkVar("Float", "EnterBipodTime")
+    self:NetworkVar("Float", "Breath")
+    self:NetworkVar("Float", "SequenceCycle")
+    self:NetworkVar("Float", "SequenceSpeed")
+    self:NetworkVar("Float", "LastHolsterTime")
+    self:NetworkVar("Float", "GrenadePrimedTime")
+    self:NetworkVar("Float", "LockOnStartTime")
+    self:NetworkVar("Float", "NearWallAmount")
+    self:NetworkVar("Float", "ReadyTime")
 
-    self:NetworkVar("Int", 0, "BurstCount")
-    self:NetworkVar("Int", 1, "NthShot")
-    self:NetworkVar("Int", 2, "LoadedRounds")
-    self:NetworkVar("Int", 3, "Firemode")
-    self:NetworkVar("Int", 4, "NthReload")
-    self:NetworkVar("Int", 5, "MultiSight")
-    self:NetworkVar("Int", 6, "SequenceProxy")
-    self:NetworkVar("Int", 7, "HideBoneIndex")
-    self:NetworkVar("Int", 8, "SequenceIndex")
-    -- self:NetworkVar("Int", 9, "LeanState")
-    self:NetworkVar("Int", 10, "LastLoadedRounds")
-    self:NetworkVar("Int", 11, "PoseParameterIndex")
-    self:NetworkVar("Int", 12, "ReloadAmount")
+    self:NetworkVar("Int", "BurstCount")
+    self:NetworkVar("Int", "NthShot")
+    self:NetworkVar("Int", "LoadedRounds")
+    self:NetworkVar("Int", "Firemode")
+    self:NetworkVar("Int", "NthReload")
+    self:NetworkVar("Int", "MultiSight")
+    self:NetworkVar("Int", "SequenceProxy")
+    self:NetworkVar("Int", "HideBoneIndex")
+    self:NetworkVar("Int", "SequenceIndex")
+    self:NetworkVar("Int", "LastLoadedRounds")
+    self:NetworkVar("Int", "PoseParameterIndex")
+    self:NetworkVar("Int", "RefillAmount")
 
-    self:NetworkVar("Bool", 0, "Customize")
-    self:NetworkVar("Bool", 1, "Reloading")
-    self:NetworkVar("Bool", 2, "EndReload")
-    self:NetworkVar("Bool", 3, "Safe")
-    self:NetworkVar("Bool", 4, "Jammed")
-    self:NetworkVar("Bool", 5, "Ready")
-    self:NetworkVar("Bool", 6, "TriggerDown")
-    self:NetworkVar("Bool", 7, "NeedTriggerPress")
-    self:NetworkVar("Bool", 8, "UBGL")
-    self:NetworkVar("Bool", 9, "EmptyReload")
-    self:NetworkVar("Bool", 10, "InSights")
-    self:NetworkVar("Bool", 11, "PrimedAttack")
-    self:NetworkVar("Bool", 12, "Bash2")
-    self:NetworkVar("Bool", 13, "NeedsCycle")
-    self:NetworkVar("Bool", 14, "Bipod")
-    self:NetworkVar("Bool", 15, "HeatLockout")
-    self:NetworkVar("Bool", 16, "LastWasSprinting")
-    self:NetworkVar("Bool", 17, "RequestReload")
-    self:NetworkVar("Bool", 18, "InMeleeAttack")
-    self:NetworkVar("Bool", 19, "OutOfBreath")
-    self:NetworkVar("Bool", 20, "Inspecting")
-    self:NetworkVar("Bool", 21, "AfterShot")
-    self:NetworkVar("Bool", 22, "GrenadePrimed")
-    self:NetworkVar("Bool", 23, "GrenadeTossing")
-    self:NetworkVar("Bool", 24, "GrenadeRecovering")
-    self:NetworkVar("Bool", 25, "LockedOn")
-    self:NetworkVar("Bool", 26, "Backstab")
-    self:NetworkVar("Bool", 27, "DoAFastDraw")
-    self:NetworkVar("Bool", 28, "NoPresets")
-    self:NetworkVar("Bool", 29, "IsStatue")
-    -- self:NetworkVar("Bool", 12, "BlindFire")
-    -- self:NetworkVar("Bool", 15, "TraversalSprint")
+    self:NetworkVar("Bool", "Customize")
+    self:NetworkVar("Bool", "Reloading")
+    self:NetworkVar("Bool", "EndReload")
+    self:NetworkVar("Bool", "Safe")
+    self:NetworkVar("Bool", "Jammed")
+    self:NetworkVar("Bool", "Ready")
+    self:NetworkVar("Bool", "TriggerDown")
+    self:NetworkVar("Bool", "NeedTriggerPress")
+    self:NetworkVar("Bool", "UBGL")
+    self:NetworkVar("Bool", "EmptyReload")
+    self:NetworkVar("Bool", "InSights")
+    self:NetworkVar("Bool", "PrimedAttack")
+    self:NetworkVar("Bool", "Bash2")
+    self:NetworkVar("Bool", "NeedsCycle")
+    self:NetworkVar("Bool", "Bipod")
+    self:NetworkVar("Bool", "HeatLockout")
+    self:NetworkVar("Bool", "LastWasSprinting")
+    self:NetworkVar("Bool", "RequestReload")
+    self:NetworkVar("Bool", "InMeleeAttack")
+    self:NetworkVar("Bool", "OutOfBreath")
+    self:NetworkVar("Bool", "Inspecting")
+    self:NetworkVar("Bool", "AfterShot")
+    self:NetworkVar("Bool", "GrenadePrimed")
+    self:NetworkVar("Bool", "GrenadeTossing")
+    self:NetworkVar("Bool", "GrenadeRecovering")
+    self:NetworkVar("Bool", "LockedOn")
+    self:NetworkVar("Bool", "Backstab")
+    self:NetworkVar("Bool", "DoAFastDraw")
+    self:NetworkVar("Bool", "NoPresets")
+    self:NetworkVar("Bool", "IsStatue")
 
-    self:NetworkVar("Angle", 0, "FreeAimAngle")
-    self:NetworkVar("Angle", 1, "LastAimAngle")
-    self:NetworkVar("Angle", 2, "BipodAng")
+    self:NetworkVar("Angle", "FreeAimAngle")
+    self:NetworkVar("Angle", "LastAimAngle")
+    self:NetworkVar("Angle", "BipodAng")
 
-    self:NetworkVar("Vector", 0, "VisualRecoilPos")
-    self:NetworkVar("Vector", 1, "VisualRecoilPosVel")
-    self:NetworkVar("Vector", 2, "VisualRecoilPosAcc")
-    self:NetworkVar("Vector", 3, "BipodPos")
-    self:NetworkVar("Vector", 4, "VisualRecoilAng")
-    self:NetworkVar("Vector", 5, "VisualRecoilVel")
-    self:NetworkVar("Vector", 6, "VisualRecoilAcc")
+    self:NetworkVar("Vector", "VisualRecoilPos")
+    self:NetworkVar("Vector", "VisualRecoilPosVel")
+    self:NetworkVar("Vector", "VisualRecoilPosAcc")
+    self:NetworkVar("Vector", "BipodPos")
+    self:NetworkVar("Vector", "VisualRecoilAng")
+    self:NetworkVar("Vector", "VisualRecoilVel")
+    self:NetworkVar("Vector", "VisualRecoilAcc")
 
-    self:NetworkVar("String", 0, "IKAnimation")
+    self:NetworkVar("String", "IKAnimation")
 
-    self:NetworkVar("Entity", 0, "Holster_Entity")
-    self:NetworkVar("Entity", 1, "LungeEntity")
-    self:NetworkVar("Entity", 2, "ShieldEntity")
-    self:NetworkVar("Entity", 3, "LockOnTarget")
-    self:NetworkVar("Entity", 4, "DetonatorEntity")
+    self:NetworkVar("Entity", "Holster_Entity")
+    self:NetworkVar("Entity", "LungeEntity")
+    self:NetworkVar("Entity", "ShieldEntity")
+    self:NetworkVar("Entity", "LockOnTarget")
+    self:NetworkVar("Entity", "DetonatorEntity")
 
     self:SetVisualRecoilAng(Vector(0, 0 ,0))
     self:SetVisualRecoilVel(Vector(0, 0, 0))
@@ -1687,16 +1627,20 @@ function SWEP:SetupDataTables()
     self:SetIKTimeLineStart(0)
     self:SetIKTime(0)
     self:SetHolsterTime(0)
-    -- self:SetBlindFireCornerAmount(0)
     self:SetEnterBipodTime(0)
     self:SetSequenceCycle(0)
     self:SetSequenceSpeed(0)
     self:SetLastHolsterTime(0)
     self:SetGrenadePrimedTime(0)
     self:SetLockOnStartTime(0)
-    -- self:SetLeanAmount(0)
     self:SetNearWallAmount(0)
     self:SetReadyTime(0)
+
+    -- backwards compatibility
+    self.GetReloadTime = self.GetRefillTime
+    self.GetReloadAmount = self.GetRefillAmount
+    self.SetReloadTime = self.SetRefillTime
+    self.SetReloadAmount = self.SetRefillAmount
 end
 
 function SWEP:SecondaryAttack()

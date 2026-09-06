@@ -1,4 +1,6 @@
 SWEP.CustomizeDelta = 0
+local sp = game.SinglePlayer()
+
 
 function SWEP:Attach(addr, att, silent)
     local slottbl = self:LocateSlotFromAddress(addr)
@@ -6,7 +8,7 @@ function SWEP:Attach(addr, att, silent)
         self.BottomBarAddress = nil
         self.BottomBarMode = 0
         self:CreateHUD_Bottom()
-        return false 
+        return false
     end
     if (slottbl.Installed == att) then return false end
     if !self:CanAttach(addr, att) then return false end
@@ -89,12 +91,20 @@ end
 SWEP.LastClipSize = 0
 SWEP.LastAmmo = ""
 
+local function updatehookp(self, base)
+    if IsValid(self) then
+        self.PrintName = self:RunHook("HookP_NameChange", base.PrintName)
+        self.Description = self:RunHook("HookP_DescriptionChange", base.Description)
+        self.Class = self:RunHook("HookP_ClassChange", base.Class)
+    end
+end
+
 function SWEP:PostModify(toggleonly)
     self:InvalidateCache()
 
     self.AffectorsCache = nil -- fixes printnames being late
     self.ElementsCache = nil
-    
+
     if !toggleonly then
         self.ScrollLevels = {} -- moved from invalidcache
         self:CancelReload()
@@ -121,19 +131,22 @@ function SWEP:PostModify(toggleonly)
     end
 
     self.Description = base.Description
-
-    self.PrintName = self:RunHook("HookP_NameChange", self.PrintName)
-    self.Description = self:RunHook("HookP_DescriptionChange", self.Description)
+    updatehookp(self, base)
+    timer.Simple(0.1, function() updatehookp(self, base) end)
 
     if CLIENT then
         -- self:PruneAttachments()
-        self:SendWeapon()
-        self:KillModel()
-        self:SetupModel(true)
-        self:SetupModel(false)
-        if !toggleonly then
+        if !toggleonly then -- bruh
+            self:SendWeapon()
+            self:KillModel()
+            self:SetupModel(true)
+            self:SetupModel(false)
             self:SavePreset()
+        else
+            timer.Simple(0, function() self:KillFlashlights() end)
+            self:CreateFlashlights()
         end
+
         self:BuildMultiSight()
         self.InvalidateSelectIcon = true
     else
@@ -143,17 +156,16 @@ function SWEP:PostModify(toggleonly)
             end
 
             timer.Simple(0, function() -- PostModify gets called after each att attached
-                if (self.LastAmmo != self:GetValue("Ammo") or self.LastClipSize != self:GetValue("ClipSize")) and self.AlreadyGaveAmmo then
-						self:Unload(self.LastAmmo)
+                if (self.LastAmmo != self:GetValue("Ammo") or self.LastClipSize != math.Round(self:GetValue("ClipSize"))) and self.AlreadyGaveAmmo then
+                        self:Unload(self.LastAmmo)
                         self:SetRequestReload(true)
-				elseif !self.AlreadyGaveAmmo then
-                        
-						self:SetClip1(self:GetProcessedValue("ClipSize"))
+                elseif !self.AlreadyGaveAmmo then
+                        self:SetClip1(math.Round(self:GetProcessedValue("ClipSize")))
                         self.AlreadyGaveAmmo = true
-				end
-				
+                end
+
                 self.LastAmmo = self:GetValue("Ammo")
-                self.LastClipSize = self:GetValue("ClipSize")
+                self.LastClipSize = math.Round(self:GetProcessedValue("ClipSize"))
             end)
 
 
@@ -187,7 +199,7 @@ function SWEP:PostModify(toggleonly)
         self:ToggleUBGL(false)
     end
 
-    if game.SinglePlayer() and validplayerowner then
+    if sp and validplayerowner then
         self:CallOnClient("RecalculateIKGunMotionOffset")
     end
 
@@ -200,21 +212,32 @@ function SWEP:PostModify(toggleonly)
     end
 end
 
-function SWEP:ThinkCustomize()
-    local owner = self:GetOwner()
+local mathApproach = math.Approach
+local FrameTime = FrameTime
+local IsFirstTimePredicted = IsFirstTimePredicted
+local ENTITY = FindMetaTable("Entity")
+local entityGetOwner = ENTITY.GetOwner
+local PLAYER = FindMetaTable("Player")
+local entityKeyPressed = PLAYER.KeyPressed
+local entityKeyDown = PLAYER.KeyDown
 
-    if owner:KeyPressed(ARC9.IN_CUSTOMIZE) and !owner:KeyDown(IN_USE) and !self:GetGrenadePrimed() then
-        self:ToggleCustomize(!self:GetCustomize())
+function SWEP:ThinkCustomize()
+    local owner = entityGetOwner(self)
+    local swepDt = self.dt
+
+    if entityKeyPressed(owner, ARC9.IN_CUSTOMIZE) and !entityKeyDown(owner, IN_USE) and !swepDt.GrenadePrimed then
+        self:ToggleCustomize(!swepDt.Customize)
     end
 
-    if game.SinglePlayer() or (CLIENT and IsFirstTimePredicted()) then
-        if self:GetCustomize() then
-            if self.CustomizeDelta < 1 then
-                self.CustomizeDelta = math.Approach(self.CustomizeDelta, 1, FrameTime() * 6.666666666666667)
+    if sp or (CLIENT and IsFirstTimePredicted()) then
+        local cd = self.CustomizeDelta
+        if swepDt.Customize then
+            if cd < 1 then
+                self.CustomizeDelta = mathApproach(cd, 1, FrameTime() * 6.666666666666667)
             end
         else
-            if self.CustomizeDelta > 0 then
-                self.CustomizeDelta = math.Approach(self.CustomizeDelta, 0, FrameTime() * 6.666666666666667)
+            if cd > 0 then
+                self.CustomizeDelta = mathApproach(cd, 0, FrameTime() * 6.666666666666667)
             end
         end
     end
@@ -520,7 +543,7 @@ local arc9_atts_nocustomize = GetConVar("arc9_atts_nocustomize")
 
 function SWEP:WouldConflict(att, atttbl)
     local eles = { [att] = true }
-    
+
     if atttbl.ActivateElements then
         for _, ele in pairs(atttbl.ActivateElements) do
             eles[ele] = true
@@ -537,7 +560,7 @@ function SWEP:WouldConflict(att, atttbl)
             local req = istable(group) and group or {group}
 
             local conflict = true
-            
+
             for _, ele in ipairs(req) do
                 if !eles[ele] then
                     conflict = false
@@ -706,7 +729,7 @@ function SWEP:ToggleStat(addr, val)
     val = val or 1
     local slottbl = self:LocateSlotFromAddress(addr)
 
-    if !slottbl.Installed then return end
+    if !slottbl or !slottbl.Installed then return end
 
     local atttbl = self:GetFinalAttTableFromAddress(addr)
 

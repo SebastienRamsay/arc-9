@@ -119,6 +119,7 @@ L["customize.stats.sprinttofire"] = "После бега"
 L["customize.stats.supplylimit"] = "Лимит магазинов"
 L["customize.stats.sway"] = "Стабильность"
 L["customize.stats.triggerdelay"] = "Задержка курка"
+-- L["customize.stats.fusetimer"] = "Fuse Timer"
 
 L["customize.hint.attach"] = "Установить"
 L["customize.hint.controller"] = "Режим контроллера включен."
@@ -171,18 +172,21 @@ L["customize.stats.explain.noise"] = "Насколько громким буде
 L["customize.stats.explain.sway"] = "Количество качания у этого оружия."
 L["customize.stats.explain.freeaim"] = "Максимальный угол свободного прицела. Меньше - лучше."
 L["customize.stats.explain.supplylimit"] = "Количество патронов которое можно взять из коробок ARC9."
+-- L["customize.stats.explain.fusetimer"] = "Time delay before the projectile detonates. The timer may start from pin pull or from release depending on the throwable."
 
 L["customize.bench.dummy"] = "БАЛЛИСТИЧЕСКАЯ МИШЕНЬ"
 L["customize.bench.effect"] = "ЭФФЕКТ НА ДАЛЬНОСТИ"
 L["customize.bench.ballistics"] = "ОЦЕНКА БАЛЛИСТИЧЕСКИХ ХАРАКТЕРИСТИК"
 L["customize.bench.precision"] = "ИСПЫТАНИЕ ТОЧНОСТИ"
 
+ -- not many space for those strings, be careful
 L["customize.bench.ttk"] = "TTK: " -- not many space for those strings, be careful
 L["customize.bench.ttk.instant"] = "0 сек"
 L["customize.bench.ttk.shots"] = "Выстрелов: "
 L["customize.bench.ttk.withoneheadshot"] = "С 1 хэдшотом:"
 
--- L["customize.camoslot"] = "Camo (%s)"
+-- L["customize.camoslot"] = "Camo Slot %s"
+-- L["customize.camoslot.none"] = "No Camo"
 -- L["customize.camoslot.canpaint"] = "\n\nThis attachment can be <color=255,224,86>individually camouflaged</color>."
 -- L["customize.camoslot.nosupport"] = "\n\nThis attachment can be <color=255,224,86>individually camouflaged</color>, but the weapon <color=255,106,0>lacks support for it</color>."
 -- L["customize.camoslot.eftextra"] = "\nUse the <color=114,255,86>Camo Support</color> attachment from <color=255,106,0>EFT Extras</color> to apply individual camouflages."
@@ -295,6 +299,9 @@ L["autostat.visualrecoilpunch"] = "Физ. толчок отдачи"
 L["autostat.visualrecoilroll"] = "Физ. угловая отдача"
 L["autostat.visualrecoilside"] = "Физ. горизонтальная отдача"
 L["autostat.visualrecoilup"] = "Физ. вертикальная отдача"
+L["autostat.rtscopemagnification"] = "Кратность прицела"
+L["autostat.rtscopenew_fpslock"] = "Частота кадров дисплея"
+L["autostat.rtscopenew_pixelation"] = "Разрешение дисплея"
 
 --[[
 Secondary autostats are now controlled by string.format.
@@ -431,6 +438,7 @@ L["tips.presets"] = "Экспортируй свои крутые пресеты
 L["tips.settings"] = "Ты можешь отключить эти советы, а также многое другое в настройках ARC9. Жми на кнопку слева сверху!"
 L["tips.tips"] = "У советов определенный порядок. Продолжай читать и ты увидишь их все."
 L["tips.tolerance"] = "Все оружейные базы работают вместе без проблем и у всех есть свои недостатки. Не стоит выставлять одну базу лучше другой."
+-- L["tips.togglehold"] = "If you have lots of lasers and flashlights, hold the toggle key to open a menu to adjust them all easily."
 
 ////////////////////// Other
 L["atts.favourites"] = "Избранное"
@@ -468,7 +476,6 @@ L["spawnmenu.supermod.selectmod"] = "Выбери тип модификатор�
 L["spawnmenu.supermod.selectspec"] = "Специальное условие, такое как при присяди"
 L["spawnmenu.supermod.selectval"] = "Напиши числовое значение, или \"true\" / \"false\""
 L["spawnmenu.supermod.result"] = "Результат появится здесь"
-
 L["spawnmenu.supermod.examples"] = [[
 Примеры:
 ∟ "Overheat" "true" чтобы отключить перегрев
@@ -478,452 +485,6 @@ L["spawnmenu.supermod.examples"] = [[
 ]]
 
 /////////////////////////////////////// Settings menu
-///////////////////////////////// Legacy
---[[
-These strings are from the old settings menu.
-If you wish to translate, these are to be removed, and only used as inspiration.
-]]--
-
-////////////////////// General
-L["settings.tabname.general"] = "Основное"
-
-L["settings.general.client"] = "Клиент"
-L["settings.quick.lang.title"] = "Язык"
-L["settings.quick.lang.desc"] = "Язык интерфейса ARC9."
-L["settings.truenames.title"] = "Настоящие названия оружия"
-L["settings.truenames.desc"] = "Будут ли оружия показывать настоящие или вымышленые названия сделанные разработчиком. (не все оружия поддерживают эту функцию)"
-L["settings.client.reset.title"] = "Сброс клиентских настроек"
-
-L["settings.general.server"] = "Сервер"
-L["settings.server.gameplay.truenames.title"] = "Наст. названия по умолч."
-L["settings.server.gameplay.truenames.desc"] = "Устанавливает режим настоящих названий оружия на сервере. Все игроки имеющее выбранным \"По умолчанию\" в настройках будут использовать это."
-L["settings.truenames_enforced.title"] = "Настоящие названия принудительно"
-L["settings.truenames_enforced.desc"] = "Все игроки будут иметь переменную как у сервера."
-
-L["settings.server.reset.title"] = "Сброс серверных настроек"
-
-L["settings.reset"] = "Сброс!"
-
-////////////////////// Performance
-L["settings.tabname.performance"] = "Производительность"
-
-L["settings.performance.important"] = "Важное"
-L["settings.gameplay.cheapscopes.title"] = "Производительные прицелы"
-L["settings.gameplay.cheapscopes.desc"] = "Более производельный вариант рендеринга прицелов путём приближения всей камеры, вместо рендеринга второй сцены. Сильно улучшает производительность на больших картах и не только."
-L["settings.tpik.title"] = "Включить TPIK"
-L["settings.tpik.desc"] = "TPIK (Инверсивная Кинематика для третьего лица) это система для анимации оружия и рук у игроков от третьего лица.\n\nВы можете настроить эту систему во вкладке Визуал."
-L["settings.effects.allflash.title"] = "Фонарики у всех игроков"
-L["settings.effects.allflash.desc"] = "Показывать фонарики у всех игроков на сервере.\n\nЗначительно снижает производительность на серверах."
-
-L["settings.tabname.blur"] = "Размытие"
-L["settings.blur.cust_blur.title"] = "Фон кастомизации"
-L["settings.blur.cust_blur.desc"] = "Размывает фон в меню кастомизации."
-L["settings.blur.fx_reloadblur.title"] = "Во время перезарядки"
-L["settings.blur.fx_reloadblur.desc"] = "Размытие мира во время перезарядки."
-L["settings.blur.fx_animblur.title"] = "При первом доставании"
-L["settings.blur.fx_animblur.desc"] = "Размытие мира при доставании нового оружия в первый раз."
-L["settings.blur.fx_rtblur.title"] = "В оптике"
-L["settings.blur.fx_rtblur.desc"] = "Размытие мира при использовании оптических прицелов."
-L["settings.blur.fx_adsblur.title"] = "В прицелах"
-L["settings.blur.fx_adsblur.desc"] = "Размытие части оружия при использовании любых прицелов."
-L["settings.gameplay.fx_rtvm.title"] = "Отображать оружие в прицелах"
-L["settings.gameplay.fx_rtvm.desc"] = "! ЭКСПЕРЕМЕНТАЛЬНАЯ ОПЦИЯ !\nРендерит модель оружия и обвесов в RT прицелах. Необходимо отключить \"Производительные прицелы\".\nЗначительно снижает производительность."
-L["settings.blur.fx_rtblur.title2"] = "Размытие за прицелами"
-
-L["settings.performance.shelleject.title"] = "Гильзы"
-L["settings.effects.eject_fx.title"] = "Эффект дыма"
-L["settings.effects.eject_fx.desc"] = "Производит эффект дыма от только что выпущенных гильз. (если возможно)"
-L["settings.effects.eject_time.title"] = "Доп. время"
-L["settings.effects.eject_time.desc"] = "Позволяет гильзам существовать дольше. Может снизить производительность."
-
-L["settings.tabname.effects"] = "Эффекты"
-L["settings.effects.muzzle_light.title"] = "Динам. свет от выстрелов"
-L["settings.effects.muzzle_light.desc"] = "Включает динамический свет от вспышек выстрелов."
-L["settings.effects.muzzle_others.title"] = "Эффекты от выстрелов у игроков"
-L["settings.effects.muzzle_others.desc"] = "Включает эффекты от выстрелов от пушек у других игроков на сервере."
-
-////////////////////// Optics
-L["settings.tabname.optics"] = "Оптика"
-
-L["settings.optics.control"] = "Управление"
-L["settings.gameplay.sensmult.title"] = "Чувствительность в прицеле"
-L["settings.gameplay.sensmult.desc"] = "Умножает чувствительность мыши при прицеливании\nЧем меньше значение - тем меньше чувствительность.\nПолезно на контроллерах или же если вы просто хотите чувствительность пониже."
-L["settings.gameplay.compensate_sens.title"] = "Компенсировать чувствительность"
-L["settings.gameplay.compensate_sens.desc"] = "Компенсировать чувствительность мыши в оптических прицелах."
-L["settings.gameplay.toggleads.title"] = "Прицеливание по нажатию"
-L["settings.gameplay.toggleads.desc"] = "Вместо удерживания кнопки прицеливания достаточно нажать один раз."
-
-L["settings.optics.color"] = "Цвет сетки"
-L["settings.gameplay.color.reflex.title"] = "Цвет сетки коллиматорных прицелов"
-L["settings.gameplay.color.reflex.desc"] = "Цвет сетки у коллиматорных/ голографических прицелов.\n\nНе все прицелы поддерживают смену цвета."
-L["settings.gameplay.color.scope.title"] = "Цвет сетки оптики"
-L["settings.gameplay.color.scope.desc"] = "Цвет сетки у оптических прицелов.\n\nНе все прицелы поддерживают смену цвета."
-
-////////////////////// Crosshair
-L["settings.tabname.crosshair"] = "Перекрестие"
-
-L["settings.crosshair.crosshair"] = "Перекрестие"
-L["settings.crosshair.cross_enable.title"] = "Включить перекрестие"
-L["settings.crosshair.cross_enable.desc"] = "Включить перекрестие. Заблокировано на некоторых оружиях."
-L["settings.crosshair.cross.title"] = "Цвет"
-L["settings.crosshair.cross.desc"] = "Цвет перекрестия."
-L["settings.crosshair.cross_size_mult.title"] = "Размер"
-L["settings.crosshair.cross_size_mult.desc"] = "Множитель размера перекрестия."
-L["settings.crosshair.cross_size_dot.title"] = "Размер точки"
-L["settings.crosshair.cross_size_dot.desc"] = "Множитель размера точки перекрестия."
-L["settings.crosshair.cross_size_prong.title"] = "Размер зубцов"
-L["settings.crosshair.cross_size_prong.desc"] = "Множитель размера зубцов у перекрестия."
-L["settings.crosshair.crosshair_static.title"] = "Статичный"
-L["settings.crosshair.crosshair_static.desc"] = "Включает полностью статичный прицел, который не двигается от стрельбы."
-L["settings.crosshair.crosshair_force.title"] = "Принудительно включить"
-L["settings.crosshair.crosshair_force.desc"] = "Принудительно включает перекрестие даже не пушках которые не позволяют это."
-L["settings.crosshair.crosshair_target.title"] = "Красный прицел на цели"
-L["settings.crosshair.crosshair_target.desc"] = "Делает прицел красным при наведении на цель.\nНаведение так же активирует аим-ассист (если включено)"
-L["settings.crosshair.crosshair_peeking.title"] = "Перекрестие при выглядивании"
-L["settings.crosshair.crosshair_peeking.desc"] = "Показывает перекрестие во время выглядывания из-за прицела."
-
-L["settings.crosshair.crosshair_sgstyle.title"] = "Перекрестие у дробовиков"
-L["settings.crosshair.crosshair_sgstyle.desc"] = "Меняет стиль перекрестия на оружии, которое стреляет несколькими снарядами за выстрел.\n\nПоследний пункт рисует столько точек, сколько снарядов у патрона."
-L["settings.crosshair.crosshair_sgstyle_fullcircle"] = "Закрытый круг"
-L["settings.crosshair.crosshair_sgstyle_four"] = "4 полукруга"
-L["settings.crosshair.crosshair_sgstyle_two"] = "2 полукруга"
-L["settings.crosshair.crosshair_sgstyle_dots"] = "Ориг. точки"
-L["settings.crosshair.crosshair_sgstyle_dots_accurate"] = "Точки дроби"
-
-////////////////////// Customization
-L["settings.tabname.arc9_hud"] = "Персонализация"
-
-L["settings.custmenu.hud"] = "HUD"
-L["settings.hud_game.hud_scale.title"] = "Масштаб"
-L["settings.hud_game.hud_scale.desc"] = "Множитель размера интерфейса ARC9."
-L["settings.hud_game.hud_deadzonex.title"] = "Гориз. мёртвая зона"
-L["settings.hud_game.hud_deadzonex.desc"] = "Горизонтальная \"мёртвая зона\" для меню кастомизации и HUD панели.\nПолезно на ультрашироких мониторах."
-L["settings.custmenu.hud_color.title"] = "Цвет интерфейса"
-L["settings.custmenu.hud_color.desc"] = "Главный цвет интерфейса, акцент."
-L["settings.custmenu.hud_holiday.title"] = "Праздничные темы"
-L["settings.custmenu.hud_holiday.desc"] = "Различные темы будут активироваться во время (реальных) праздников.\nПереназначит акцентный цвет интерфейса."
-L["settings.custmenu.hud_darkmode.title"] = "Темная тема"
-L["settings.custmenu.hud_darkmode.desc"] = "Включает темные цвета интерфейса вместо серого и отключает виньетку у фона."
-L["settings.custmenu.cust_light.title"] = "Включить подсветку"
-L["settings.custmenu.cust_light.desc"] = "Включает подсветку оружия в меню кастомизации.\n\nТо же самое, что и кнопка рядом с настройками."
-L["settings.custmenu.cust_light_brightness.title"] = "Яркость подсветки"
-L["settings.custmenu.cust_light_brightness.desc"] = "Яркость подсветки оружия.\n\nНе забудьте включить её сперва!"
-
-L["settings.custmenu.customization"] = "Кастомизация"
-L["settings.custmenu.cust_hints.title"] = "Подсказки"
-L["settings.custmenu.cust_hints.desc"] = "Включает подсказки в меню кастомизации."
-L["settings.custmenu.cust_tips.title"] = "Советы"
-L["settings.custmenu.cust_tips.desc"] = "Советы о базе около подсказок."
-L["settings.custmenu.cust_exit_reset_sel.title"] = "Сброс слота при выходе"
-L["settings.custmenu.cust_exit_reset_sel.desc"] = "Выход из меню кастомизации будет сбрасывать выбор активного слота."
-
-////////////////////// Game HUD
-L["settings.tabname.hud_game"] = "Игровой HUD"
-
-L["settings.hud_game.lcd"] = "LCD Панель"
-L["settings.hud_game.hud_arc9.title"] = "Включить HUD"
-L["settings.hud_game.hud_arc9.desc"] = "Включает HUD на ARC9 пушках."
-L["settings.hud_game.hud_always.title"] = "На всех оружиях"
-L["settings.hud_game.hud_always.desc"] = "Включает этот HUD на всех пушках."
-L["settings.hud_game.hud_compact.title"] = "Компактный режим"
-L["settings.hud_game.hud_compact.desc"] = "Компактный режим для панели HUD."
-L["settings.hud_game.nohints.title"] = "Отключить подсказки"
-L["settings.hud_game.nohints.desc"] = "Отключить подсказки вообще. Их не будет ни в 3D интерфейсе, ни в 2D."
-L["settings.hud_game.keephints.title"] = "Подсказки"
-L["settings.hud_game.keephints.desc"] = "Показывать подсказки по управлению оружием ARC9 наверху панели."
-L["settings.server.hud_game.hud_arc9.title"] = "Принудительно отключить HUD"
-L["settings.server.hud_game.hud_arc9.desc"] = "Принудительно отключает интерфейс для всех игроков на сервере. Не влияет на подсказки."
-
-L["settings.hud_game.killfeed"] = "Киллфид"
-L["settings.hud_game.killfeed_enable.title"] = "Иконки в киллфиде"
-L["settings.hud_game.killfeed_enable.desc"] = "Включает автогенерацию иконок ARC9 пушек."
-L["settings.hud_game.killfeed_dynamic.title"] = "Динамичное обновление"
-L["settings.hud_game.killfeed_dynamic.desc"] = "Иконки оружия в киллфиде будет обновлятся после каждого убийства.\n\nВыключи, если хочешь эти самые 0.1 фпс."
-L["settings.hud_game.killfeed_colour.title"] = "Цветные иконки"
-L["settings.hud_game.killfeed_colour.desc"] = "Динамически генерируемые иконки не будут залиты белым цветом (киллфид и хотбар)."
-
-L["settings.hud_game.breath"] = "Задержка дыхания"
-L["settings.centerhint.breath_hud.title"] = "Индикатор"
-L["settings.centerhint.breath_hud.desc"] = "Показывать, сколько вы можете ещё задерживать дыхание в прицелах в интерфейсе."
-L["settings.centerhint.breath_pp.title"] = "Пост-обработка"
-L["settings.centerhint.breath_pp.desc"] = "Задержка дыхания будет делать эффекты резкости на экране."
-L["settings.hud_game.breath_sfx.title"] = "Озвучка"
-L["settings.hud_game.breath_sfx.desc"] = "При задерживании дыхания будут воспроизводится соответствующие звуки."
-
-L["settings.tabname.centerhint"] = "Подсказки по центру экрана"
-L["settings.centerhint.reload.title"] = "Перезарядка"
-L["settings.centerhint.reload_percent.title"] = "Процент магазина"
-L["settings.centerhint.bipod.title"] = "Сошки"
-L["settings.centerhint.bipod.desc"] = "Подсказка по центру экрана о возможности установки сошек."
-L["settings.centerhint.jammed.title"] = "Клины"
-
-L["settings.centerhint.firemode.title"] = "Режим огня"
-
-L["settings.centerhint.overheat.title"] = "Перегрев"
-
-L["settings.hud_game.hud_glyph"] = "Тип глифов"
-
-L["settings.hud_game.hud_glyph_type_hud.title"] = "HUD"
-L["settings.hud_game.hud_glyph_type_hud.desc"] = "Меняет семейство глифов для использования в интерфейсе.\nЭто также затронет подсказки."
-
-L["settings.hud_game.hud_glyph_type_cust.title"] = "Меню кастомизации"
-L["settings.hud_game.hud_glyph_type_cust.desc"] = "CМеняет семейство глифов для использования в интерфейсе.\nИзменения применятся при следующем открытии меню."
-
-L["settings.hud_game.hud_glyph_light"] = "Светлая тема"
-L["settings.hud_game.hud_glyph_dark"] = "Темная тема"
-L["settings.hud_game.hud_glyph_knockout"] = "Knockout тема"
-
-////////////////////// NPCs
-L["settings.tabname.npc"] = "NPC"
-
-L["settings.npc.weapons"] = "Оружие NPC"
-L["settings.server.npc.npc_equality.title"] = "Одинаковый урон"
-L["settings.server.npc.npc_equality.desc"] = "NPC будут делать точно такой же урон как и игроки."
-L["settings.server.npc.npc_spread.title"] = "Разброс у NPC"
-L["settings.server.npc.npc_spread.desc"] = "Множитель неточности выстрелов ARC9 пушек у NPC."
-L["settings.server.npc.npc_atts.title"] = "Спавнить NPC с обвесами"
-L["settings.server.npc.npc_atts.desc"] = "NPC с ARC9 пушками будут с случайным набором обвесов."
-L["settings.server.npc.ground_atts.title"] = "Спавнить оружие на земле с обвесами"
-L["settings.server.npc.ground_atts.desc"] = "Заспавленные ARC9 пушки на земле будут с случайным набором обвесов."
-L["settings.server.npc.npc_autoreplace.title"] = "Заменить оружие у NPC"
-L["settings.server.npc.npc_autoreplace.desc"] = "Заменить оружие у NPC случайным ARC9 стволом."
-L["settings.server.npc.replace_spawned.title"] = "Заменять оружие на полу"
-L["settings.server.npc.replace_spawned.desc"] = "Заменяет заспавненные картой или вами HL2 оружие случайным ARC9 стволом."
-L["settings.server.npc.npc_give_weapons.title"] = "Игроки могут давать оружие"
-L["settings.server.npc.npc_give_weapons.desc"] = "Игроки могут нажать Е на NPC чтобы дать им своё оружие."
-
-////////////////////// Gameplay
-L["settings.tabname.gameplay"] = "Геймплей"
-
-L["settings.gameplay.controls"] = "Управление"
-L["settings.gameplay.toggleads.title"] = "Прицеливание по нажатию"
-L["settings.gameplay.toggleads.desc"] = "Вместо удерживания кнопки прицеливания достаточно нажать один раз."
-L["settings.gameplay.autolean.title"] = "Автонаклоны"
-L["settings.gameplay.autolean.desc"] = "Прицеливония возле угла стены будет автоматически наклонять игрока если возможно."
-L["settings.gameplay.autoreload.title"] = "Автоперезарядка"
-L["settings.gameplay.autoreload.desc"] = "Пустое оружие ARC9 будет перезаряжатся автоматически."
-L["settings.gameplay.togglelean.title"] = "Наклон по нажатию"
-L["settings.gameplay.togglelean.desc"] = "Вместо удерживания кнопки наклона достаточно нажать один раз."
-L["settings.gameplay.togglepeek.title"] = "Выглядывание по нажатию"
-L["settings.gameplay.togglepeek.desc"] = "Вместо удерживания кнопки выглядывания достаточно нажать один раз."
-L["settings.gameplay.togglepeek_reset.title"] = "Сброс выглядывания после прицел."
-L["settings.gameplay.togglepeek_reset.desc"] = "(Только если Выглядывание по нажатию включено)\nСостояние выглядывения будет сброшено после выхода из прицела."
-L["settings.gameplay.togglebreath.title"] = "Задержка дыхания по нажатию"
-L["settings.gameplay.togglebreath.desc"] = "Вместо удерживания кнопки задержки дыхания достаточно нажать один раз."
-
-L["settings.gameplay.mechanics"] = "Игровые механики"
-L["settings.server.gameplay.infinite_ammo.title"] = "Бесконечные патроны"
-L["settings.server.gameplay.infinite_ammo.desc"] = "Оружие будет иметь неограниченный боезапас."
-L["settings.server.gameplay.realrecoil.title"] = "Физическая отдача"
-L["settings.server.gameplay.realrecoil.desc"] = "Некоторое настроенное оружие будет иметь (полностью) физическую отдачу и всё с этим связанное, вместо обыкновенной отдачи. Очень важно для баланса некоторых оружейных паков."
-L["settings.server.gameplay.lean.title"] = "Наклоны"
-L["settings.server.gameplay.lean.desc"] = "Игрок сможет наклонять тело через бинды +alt1 и +alt2, а также автоматически (если включено)."
-L["settings.server.gameplay.mod_sway.title"] = "Качение оружия"
-L["settings.server.gameplay.mod_sway.desc"] = "Некоторые настроенные пушки будут качаться и быть нестабильными в прицелах (и без прицелов тоже)."
-L["settings.server.gameplay.mod_freeaim.title"] = "Свободный прицел"
-L["settings.server.gameplay.mod_freeaim.desc"] = "Пушки будет иметь свободный прицел, вместо фиксирования в центр экрана (Free aim)."
-L["settings.server.gameplay.mod_bodydamagecancel.title"] = "Выкл. множитель урона по игрокам"
-L["settings.server.gameplay.mod_bodydamagecancel.desc"] = "Выключает стандартный множитель урона по игрокам. Выключайте только если у вас есть аддон изменяющий множители урона в разные части тела."
-L["settings.server.gameplay.breath_slowmo.title"] = "Слоу-мо в задержке дыхания"
-L["settings.server.gameplay.breath_slowmo.desc"] = "Задерживание дыхания будет замедлять течение времени.\n\nТолько в одиночной игре."
-L["settings.server.gameplay.manualbolt.title"] = "Ручные болтовки"
-L["settings.server.gameplay.manualbolt.desc"] = "Вместо автоматического взвода затвора после отпускания кнопки стрельбы, болтовые оружия будет требовать нажатия R. \n\nПрямо как в FA:S 2.0"
-L["settings.server.gameplay.never_ready.title"] = "Отключить Ready анимации"
-L["settings.server.gameplay.never_ready.desc"] = "Никогда не проигрывать \"ready\" анимации при доставании любого оружия."
-L["settings.server.gameplay.recoilshake.title"] = "Тряска поля зрения от отдачи"
-L["settings.server.gameplay.recoilshake.desc"] = "Поле зрения дергается когда стреляешь"
-L["settings.server.gameplay.equipment_generate_ammo.title"] = "Уникальные типы патронов для снаряжения"
-L["settings.server.gameplay.equipment_generate_ammo.desc"] = "В игре есть лимит в 255 типов патронов, если у тебя установлено много аддонов, выключение этого пункта может помочь с некоторыми проблемами.\n\nТребуется перезапуск."
-
--- ??
-L["settings.server.gameplay.mult_defaultammo.title"] = "Запас патрон. по умолч."
-L["settings.server.gameplay.mult_defaultammo.desc"] = "Как много магазинов/гранат/снаряжения давать игроку когда он берёт оружие в руки первый раз?"
-L["settings.gameplay.nearwall.title"] = "Рядом со стеной"
-L["settings.gameplay.nearwall.desc"] = "Не позволяет стрелять стоя вплотную к стенке или к другому препятствию перед тобой."
-
-////////////////////// Visuals
-L["settings.tabname.visuals"] = "Визуал"
-
-L["settings.vm.vm_bobstyle.title"] = "Тип качения"
-L["settings.vm.vm_bobstyle.desc"] = "Выберете стиль качения оружия созднный разными разработчиками ARC9 (и valve!)."
-L["settings.vm.fov.desc"] = "Меняет поле зрения вьюмодели. Делает её больше или меньше. Используйте ответственно."
-L["settings.vm.vm_addx.title"] = "Смещение по X"
-L["settings.vm.vm_addx.desc"] = "Сместить вьюмодель налево или направо."
-L["settings.vm.vm_addy.title"] = "Смещение по Y"
-L["settings.vm.vm_addy.desc"] = "Сместить вьюмодель вперед или назад."
-L["settings.vm.vm_addz.title"] = "Смещение по Z"
-L["settings.vm.vm_addz.desc"] = "Сместить вьюмодель вверх или вниз."
-
-L["settings.visuals.cambob"] = "Тряска камеры"
-L["settings.vm.vm_cambob.title"] = "Тряска при беге"
-L["settings.vm.vm_cambob.desc"] = "При беге у камеры будет тряска."
-L["settings.vm.vm_cambobwalk.title"] = "Тряска при ходьбе"
-L["settings.vm.vm_cambobwalk.desc"] = "При обычный ходьбе у камеры тоже будет тряска (требует включенной тряски при беге)"
-L["settings.vm.vm_cambobintensity.title"] = "Интенсивность"
-L["settings.vm.vm_cambobintensity.desc"] = "Насколько сильная будет тряска"
-
-L["settings.tpik"] = "TPIK"
-L["settings.tpik.title"] = "Включить TPIK"
-L["settings.tpik.desc"] = "TPIK (Инверсивная Кинематика для третьего лица) это система для анимации оружия и рук у игроков от третьего лица."
-L["settings.tpik_others.title"] = "TPIK всех игроков"
-L["settings.tpik_others.desc"] = "Включить эту систему на игроках помимо вас. Понижает производительность."
-L["settings.tpik_framerate.title"] = "Частота TPIK"
-L["settings.tpik_framerate.desc"] = "Максимальная частота на которой TPIK работает. Ставь на 0 для снятия ограничения."
-
-////////////////////// Bullet Physics
-L["settings.tabname.bulletphysics"] = "Физика пуль"
-
-L["settings.bullets.bullets"] = "Физика пуль"
-L["settings.server.bulletphysics.bullet_physics.title"] = "Физические пули"
-L["settings.server.bulletphysics.bullet_physics.desc"] = "Физические пули имеют физику. Падение на расстоянии, требуется некоторое время до приземления и всё в этом роде. Некоторое оружие может не поддерживать такое."
-L["settings.server.bulletphysics.bullet_gravity.title"] = "Гравитация"
-L["settings.server.bulletphysics.bullet_gravity.desc"] = "Множитель гравитации пуль."
-L["settings.server.bulletphysics.bullet_drag.title"] = "Сопротивлен. воздуха"
-L["settings.server.bulletphysics.bullet_drag.desc"] = "Множитель сопротивления воздуха у пуль."
-L["settings.server.bulletphysics.ricochet.title"] = "Рикошеты"
-L["settings.server.bulletphysics.ricochet.desc"] = "Некоторые пули смогут отскакивать от поверхностей и наносить урон."
-L["settings.server.bulletphysics.mod_penetration.title"] = "Пробивание"
-L["settings.server.bulletphysics.mod_penetration.desc"] = "Некоторые пули смогут пробивать различные поверхности и наносить урон всему, что стоит за этой поверхностью."
-L["settings.server.bulletphysics.bullet_lifetime.title"] = "Время жизни"
-L["settings.server.bulletphysics.bullet_lifetime.desc"] = "Сколько пуля сможет просуществовать в свободном полете."
-L["settings.bullets.bullet_imaginary.title"] = "Воображаемые пули"
-L["settings.bullets.bullet_imaginary.desc"] = "Пули будут смогут преодолевать границы карты и \"существовать\" в скайбоксе."
-
-////////////////////// Attachments
-L["settings.tabname.attachments"] = "Обвесы"
-
-L["settings.tabname.customization"] = "Кастомизация"
-L["settings.server.custmenu.atts_nocustomize.title"] = "Отключить кастомизацию"
-L["settings.server.custmenu.atts_nocustomize.desc"] = "Отключить всю кастомизацию через меню."
-L["settings.server.custmenu.atts_max.title"] = "Макс. обвесов"
-L["settings.server.custmenu.atts_max.desc"] = "Максимальное число обвесов на одном оружии, включая косметические обвесы."
-L["settings.custmenu.autosave.title"] = "Автосохранение"
-L["settings.custmenu.autosave.desc"] = "Ваше последняя конфигурация оружия будет сохранена и автоматически установлена при следующем доставании."
-L["settings.server.custmenu.blacklist.title"] = "Чёрный список"
-L["settings.server.custmenu.blacklist.open"] = "Открыть"
-
-L["settings.attachments.inventory"] = "Инвентарь"
-L["settings.server.custmenu.free_atts.title"] = "Бесплатные обвесы"
-L["settings.server.custmenu.free_atts.desc"] = "Обвесы можно использовать на оружии без подбирания их."
-L["settings.server.custmenu.atts_lock.title"] = "Один для всего"
-L["settings.server.custmenu.atts_lock.desc"] = "Подбирание одного обвеса позволить использовать его неограниченное количество раз на любом оружии."
-L["settings.server.custmenu.atts_loseondie.title"] = "Терять после смерти"
-L["settings.server.custmenu.atts_loseondie.desc"] = "Все подобранные обвесы удалятся после вашей смерти."
-L["settings.server.custmenu.atts_generateentities.title"] = "Генерировать энтити"
-L["settings.server.custmenu.atts_generateentities.desc"] = "Генерировать энтити обвесов для их спавна и последующего использования (если бесплатные обвесы выключены).\n\nВозможно увеличит время запуска в игру."
-
-////////////////////// Modifiers
-L["settings.tabname.modifiers"] = "Модификаторы"
-
-L["settings.tabname.quickstat"] = "Быстрые модификаторы характеристик"
-L["settings.tabname.quickstat.desc"] = " "
-
-L["settings.server.quickstat.mod_damage.title"] = "Урон"
-L["settings.mod_spread.title"] = "Разброс"
-L["settings.mod_recoil.title"] = "Отдача"
-L["settings.mod_visualrecoil.title"] = "Физ. отдача"
-L["settings.mod_adstime.title"] = "Скорость прицеливания"
-L["settings.mod_sprinttime.title"] = "Возвращение после бега"
-L["settings.server.quickstat.mod_damagerand.title"] = "Вариация урона"
-L["settings.mod_muzzlevelocity.title"] = "Дульная скорость"
-L["settings.mod_rpm.title"] = "Скорострельность"
-L["settings.mod_headshotdamage.title"] = "Урон в голову"
-L["settings.server.quickstat.mod_malfunction.title"] = "Шанс неполадки"
-
-////////////////////// Controller
-L["settings.tabname.controller"] = "Контроллер"
-
-L["settings.controller.misc"] = "Прочее"
-L["settings.controller.misc.desc"] = "Здесь должна быть кнопка для вызова панели для продвинутой конфигурации контроллеров, но пока что она в спавнменю > Options > ARC9 > Controller."
-L["settings.controller.controller.title"] = "Символы контроллера"
-L["settings.controller.controller.desc"] = "Включает отображение символов для контроллеров, показывая кнопки контроллера вместо обычных клавиатурных кнопок."
-L["settings.controller.controller_config.title"] = "Продвинутый конфиг"
-L["settings.controller.controller_config.content"] = "Открыть панель"
-L["settings.controller.controller_config.desc"] = "Открывает панель для продвинутой конфигурации контроллеров."
-
-L["settings.controller.glyphs.title"] = "Тип глифов"
-L["settings.controller.glyphs.desc"] = "Меняет семейство глифов для использования в интерфейсе.\nНастрой глифы в \"спавнменю\" > Options > ARC9 > Controller."
-
-////////////////////// Aim Assist
-L["settings.tabname.aimassist"] = "Аим-ассист"
-L["settings.tabname.aimassist.desc"] = "Вы можете включить помощь в прицеливании (аим-ассист) если у вас проблемы с прицеливанием или если вам лень точно целиться."
-
-L["settings.server.aimassist.enable.desc"] = "Включает помощь в прицеливании. Понижает чувствительность мыши при наведении возле цели.\n\nТак же требует включения аим-ассиста на клиенте."
-
-L["settings.aimassist.enable_general.desc"] = "Включает помощь в прицеливании которая ведет мышь к ближайшему противнику.\n\nНастрой во вкладке \"Аим-ассист\"."
-
-L["settings.aimassist.enable_client.desc"] = "Включает помощь в прицеливании. Понижает чувствительность мыши при наведении возле цели.\n\nТтребует включения аим-ассиста со стороны сервера."
-
-L["settings.server.aimassist.intensity.title"] = "Интенсивность"
-L["settings.server.aimassist.intensity.desc"] = "На сколько интенсивна помощь в прицеливании."
-
-L["settings.server.aimassist.cone.title"] = "Угол помощи"
-L["settings.server.aimassist.cone.desc"] = "Насколько далеко или близко нужно смотреть возле цели чтобы аим-ассист начал работать."
-
-L["settings.server.aimassist.heads.title"] = "Фиксация на головах"
-L["settings.server.aimassist.heads.desc"] = "Должен ли аим-ассист целить вас на головы противников вместо торса?"
-
-L["settings.aimassist.sensmult.desc"] = "Множитель чувствительности мыши когда прицел на противнике.\nЧем ниже значение, тем ниже чувствительность."
-
-////////////////////// Asset Caching
-L["settings.tabname.caching"] = "Кэширование"
-L["settings.tabname.assetcache"] = "Кэширование ассетов"
-L["settings.tabname.assetcache.desc"] = "Вы можете кэшировать (сохранять в память без подгрузок во время игры) некоторые ассеты для предотвращения статтеров для более комфортной игры!\n\nТебе точно стоит включить что-нибудь если твой гмод установлен на жестком диске."
-
-L["settings.server.assetcache.precache_sounds_onfirsttake.title"] = "При первом взятии: Кэшировать звуки"
-L["settings.server.assetcache.precache_sounds_onfirsttake.desc"] = "Кэшировать звуки оружия которое вы только что подобрали (кроме звуков перезарядок).\n\nНе особо влияет на производительность, однако крайне полезно для предотвращения статтеров во время стрельбы."
-
-L["settings.server.assetcache.precache_attsmodels_onfirsttake.title"] = "При первом взятии: Кэш. все обвесы"
-L["settings.server.assetcache.precache_attsmodels_onfirsttake.desc"] = "Кэшировать все модельки ARC9 обвесов когда любая ARC9 пушка была взята в руки.\n\nВызывает достаточно большой фриз, особенно когда у вас установлено много оружия."
-L["settings.server.assetcache.precache_wepmodels_onfirsttake.title"] = "При первом взятии: Кэш. все модели оружия"
-L["settings.server.assetcache.precache_wepmodels_onfirsttake.desc"] = "Кэшировать все вьюмодели оружия ARC9 когда любая ARC9 пушка была взята в руки.\n\nВызывает ОЧЕНЬ БОЛЬШОЙ фриз, особенно когда у вас установлено много оружия."
-
-L["settings.server.assetcache.precache_allsounds_onstartup.title"] = "При старте игры: Кэш. все звуки оружия"
-L["settings.server.assetcache.precache_allsounds_onstartup.desc"] = "Кэшировать все звуки всего ARC9 оружия при старте сервера (кроме звуков перезарядок).\n\nНе особо влияет на производительность, но лучше просто использовать первую опцию здесь."
-L["settings.server.assetcache.precache_attsmodels_onstartup.title"] = "При старте игры: Кэш. все обвесы"
-L["settings.server.assetcache.precache_attsmodels_onstartup.desc"] = "Кэшировать все модельки ARC9 обвесов при старте сервера.\n\nДелает загрузку в игру немного дольше, особенно когда у вас установлено много оружия."
-L["settings.server.assetcache.precache_wepmodels_onstartup.title"] = "При старте игры: Кэш. все модели оружия"
-L["settings.server.assetcache.precache_wepmodels_onstartup.desc"] = "Кэшировать все вьюмодели оружия ARC9 при старте сервера.\n\nДелает загрузку в игру НАМНОГО дольше, особенно когда у вас установлено много оружия."
-
-L["settings.server.assetcache.precache_allsounds.title"] = "Все звуки оружия"
-L["settings.server.assetcache.precache_wepmodels.title"] = "Все модели оружия"
-L["settings.server.assetcache.precache_attsmodels.title"] = "Все модели обвесы"
-
-L["settings.server.assetcache"] = "Кэшировать"
-
-////////////////////// Developer
-L["settings.tabname.developer"] = "Для разработчиков"
-
-L["settings.tabname.developer.settings"] = "Настройки разработчика"
-L["settings.server.developer.dev_always_ready.title"] = "Всегда Ready"
-L["settings.server.developer.dev_always_ready.desc"] = "Всегда проигрывать анимацию \"ready\" при доставании оружия."
-L["settings.server.developer.dev_benchgun.title"] = "Benchgun"
-L["settings.server.developer.dev_benchgun.desc"] = "Оставить вьюмодель оружия там же, где оно и находится прямо сейчас."
-L["settings.server.developer.dev_crosshair.title"] = "Прицел разработчика"
-L["settings.server.developer.dev_crosshair.desc"] = "Покажет куда точно пойдут ваши пули и ещё пару интересных циферок.\n\nЭто серверная переменная только для админов."
-L["settings.server.developer.dev_show_shield.title"] = "Показывать щиты"
-L["settings.server.developer.dev_show_shield.desc"] = "Показывать модель щитов у игроков."
-L["settings.server.developer.dev_greenscreen.title"] = "Зеленый экран в кастомизации"
-L["settings.server.developer.dev_greenscreen.desc"] = "Показывает зеленый экран вместо фона в меню кастомизации для скриншотов.\n\nЕсли вы используете HDR, не забудьте поставить mat_bloom_scalefactor_scalar на 0!"
-L["settings.server.developer.reloadatts.title"] = "Обвесы"
-L["settings.server.developer.reloadlangs.title"] = "Языки"
-L["settings.server.printconsole.dev_listmyatts.title"] = "Список обвесов"
-L["settings.server.printconsole.dev_listanims.title"] = "Список анимаций"
-L["settings.server.printconsole.dev_listbones.title"] = "Список костей"
-L["settings.server.printconsole.dev_listbgs.title"] = "Список бодигрупп"
-L["settings.server.printconsole.dev_listatts.title"] = "Список QCAttachaments"
-L["settings.server.printconsole.dev_export.title"] = "Код экспорта"
-L["settings.server.printconsole.dev_getjson.title"] = "JSON оружия"
-
-L["settings.server.developer.presets_clear.title"] = "Очистить данные"
-L["settings.server.developer.presets_clear.desc"] = "Удалить все пресеты, иконки и дефолтный пресет для оружия, что вы сейчас держете в руках.\n\nВнимание: если у вас сейчас нет ARC9 пушки в руках, это удалит всю данные всех пушек!"
-
-L["settings.server.developer.clear"] = "Очистить"
-L["settings.server.printconsole"] = "В консоль"
-L["settings.server.developer.reload"] = "Перезагрузить"
-
--- End of Legacy
-
 ////////////////////// Universal
 -- Use this method to localize convars in settings menu:
 -- settings.convar.title = "Convar Title"
@@ -944,8 +505,8 @@ L["settings.server"] = ""
 L["settings.tabname.quick"] = "Быстрый доступ"
 L["settings.tabname.quick.desc"] = "Получите быстрый доступ к наиболее важным настройкам здесь."
 
-L["settings.quick.lang.title"] = "Язык ARC9"
-L["settings.quick.lang.desc"] = "Поменяйте язык интерфейса ARC9.\n\nПримечание: не все языки поддерживаются во всех паках оружия!"
+L["settings.quick.lang.title"] = "Язык"
+L["settings.quick.lang.desc"] = "Язык интерфейса ARC9."
 
 L["settings.hud_game.hud_arc9.desc2"] = "Настрой в \"Игровой HUD\"\n\n?"
 
@@ -963,24 +524,24 @@ L["settings.client.reset.desc"] = "Полностью сбрасывает вс�
 L["settings.server.reset.title"] = "Сброс серверных настроек"
 L["settings.server.reset.desc"] = "Полностью сбрасывает все серверные настройки назад к значениям по умолчанию.\n\nПредупреждение: нельзя отменить."
 
--- L["settings.reset"] = "RESET"
+L["settings.reset"] = "Сброс!"
 
 ////////////////////// Game HUD
--- L["settings.tabname.hud_game"] = "Game HUD"
+L["settings.tabname.hud_game"] = "Игровой HUD"
 
 ////////// ARC9 HUD
--- L["settings.server.hud_game.hud_arc9.title"] = "Globally Disable ARC9 HUD"
--- L["settings.server.hud_game.hud_arc9.desc"] = "Disables the ability for users to utilize the ARC9 HUD."
+L["settings.server.hud_game.hud_arc9.title"] = "Принудительно отключить HUD"
+L["settings.server.hud_game.hud_arc9.desc"] = "Принудительно отключает интерфейс для всех игроков на сервере. Не влияет на подсказки."
 
--- L["settings.tabname.arc9_hud"] = "ARC9 HUD"
+L["settings.tabname.arc9_hud"] = "Персонализация"
 -- L["settings.tabname.arc9_hud.desc"] = "Everything related to ARC9's custom HUD and its elements."
 
--- L["settings.hud_game.hud_arc9.title"] = "Enable ARC9 HUD"
--- L["settings.hud_game.hud_arc9.desc"] = "Enable a custom LCD display HUD when using ARC9 weapons."
--- L["settings.hud_game.hud_compact.title"] = "Compact mode"
--- L["settings.hud_game.hud_compact.desc"] = "Hides certain elements on the ARC9 HUD, providing a more compact look."
--- L["settings.hud_game.hud_always.title"] = "Display on non-ARC9 Weapons"
--- L["settings.hud_game.hud_always.desc"] = "Enable the custom HUD when using non-ARC9 weapons."
+L["settings.hud_game.hud_arc9.title"] = "Включить HUD"
+L["settings.hud_game.hud_arc9.desc"] = "Включает HUD на ARC9 пушках."
+L["settings.hud_game.hud_compact.title"] = "Компактный режим"
+L["settings.hud_game.hud_compact.desc"] = "Компактный режим для панели HUD."
+L["settings.hud_game.hud_always.title"] = "На всех оружиях"
+L["settings.hud_game.hud_always.desc"] = "Включает этот HUD на всех пушках."
 
 L["settings.hud_game.hints.title"] = "Поведение подсказок"
 L["settings.hud_game.hints.desc"] = "Выберете всегда показывать, плавно скрывать или полностью отключить подсказки."
@@ -989,18 +550,18 @@ L["settings.hud_game.hints.off"] = "Всегда выкл."
 L["settings.hud_game.hints.fade"] = "Плавно скрывать"
 L["settings.hud_game.hints.on"] = "Всегда вкл."
 
--- L["settings.hud_game.killfeed_enable.title"] = "Auto-Generate Killfeed Icons"
--- L["settings.hud_game.killfeed_enable.desc"] = "Generate killfeed icons automatically on ARC9 weapons."
--- L["settings.hud_game.killfeed_dynamic.title"] = "Dynamic Icons"
--- L["settings.hud_game.killfeed_dynamic.desc"] = "Dynamically generates icons when getting kills or altering attachments."
--- L["settings.hud_game.killfeed_colour.title"] = "Display in Color"
--- L["settings.hud_game.killfeed_colour.desc"] = "Generates icons in full color rather than black and white."
+L["settings.hud_game.killfeed_enable.title"] = "Иконки в киллфиде"
+L["settings.hud_game.killfeed_enable.desc"] = "Включает автогенерацию иконок ARC9 пушек."
+L["settings.hud_game.killfeed_dynamic.title"] = "Динамичное обновление"
+L["settings.hud_game.killfeed_dynamic.desc"] = "Иконки оружия в киллфиде будет обновлятся после каждого убийства.\n\nВыключи, если хочешь эти самые 0.1 фпс."
+L["settings.hud_game.killfeed_colour.title"] = "Цветные иконки"
+L["settings.hud_game.killfeed_colour.desc"] = "Динамически генерируемые иконки не будут залиты белым цветом (киллфид и хотбар)."
 
--- L["settings.hud_game.hud_scale.title"] = "HUD Scale"
--- L["settings.hud_game.hud_scale.desc"] = "Alter the size scale of the ARC9 HUD and the customization menu.\n\nNote: If set below 1, the ARC9 HUD will be disabled."
+L["settings.hud_game.hud_scale.title"] = "Масштаб"
+L["settings.hud_game.hud_scale.desc"] = "Множитель размера интерфейса ARC9."
 
--- L["settings.hud_game.hud_deadzonex.title"] = "HUD Horizontal Deadzone"
--- L["settings.hud_game.hud_deadzonex.desc"] = "Alters the horizontal deadzone of the HUD and customization menu. The higher the value, the more towards the center it is.\n\nUseful for ultrawide monitors."
+L["settings.hud_game.hud_deadzonex.title"] = "Гориз. мёртвая зона"
+L["settings.hud_game.hud_deadzonex.desc"] = "Горизонтальная \"мёртвая зона\" для меню кастомизации и HUD панели.\nПолезно на ультрашироких мониторах."
 
 ////////// Glyphs
 -- L["settings.tabname.glyphs"] = "Glyphs"
@@ -1016,85 +577,91 @@ L["settings.hud_game.hints.on"] = "Всегда вкл."
 -- L["settings.hud_glyph.knockout"] = "Knockout"
 
 ////////// Display Tooltips
--- L["settings.tabname.centerhint"] = "Display Tooltips"
+L["settings.tabname.centerhint"] = "Подсказки по центру экрана"
 -- L["settings.tabname.centerhint.desc"] = "Display tooltips on your HUD when certain criteria are met."
 
--- L["settings.centerhint.reload.title"] = "When Low on Ammo"
+L["settings.centerhint.reload.title"] = "Перезарядка"
 -- L["settings.centerhint.reload.desc"] = "Displays a tooltip when the magazine reaches a certain percentage value.\n\nAlso displays which button to press."
--- L["settings.centerhint.reload_percent.title"] = "Percentage"
+L["settings.centerhint.reload_percent.title"] = "Процент магазина"
 -- L["settings.centerhint.reload_percent.desc"] = "When, in percentage value, the tooltip should appear."
 
--- L["settings.centerhint.bipod.title"] = "When using Bipods"
--- L["settings.centerhint.bipod.desc"] = "Displays a tooltip when you can utilize the weapon's bipod.\n\nAlso displays which button to press."
+L["settings.centerhint.bipod.title"] = "Сошки"
+L["settings.centerhint.bipod.desc"] = "Подсказка по центру экрана о возможности установки сошек."
 
--- L["settings.centerhint.jammed.title"] = "When Jammed"
+L["settings.centerhint.jammed.title"] = "Клины"
 -- L["settings.centerhint.jammed.desc"] = "Displays a tooltip when the weapon is jammed.\n\nAlso displays which button to press."
 
--- L["settings.centerhint.firemode.title"] = "When Cycling Firing Modes"
+L["settings.centerhint.firemode.title"] = "Режим огня"
 -- L["settings.centerhint.firemode.desc"] = "Displays a tooltip when cycling firing modes."
 
 -- L["settings.centerhint.firemode_time.title"] = "Display Time"
 -- L["settings.centerhint.firemode_time.desc"] = "How long, in seconds, the tooltip should remain on screen."
 
--- L["settings.centerhint.overheat.title"] = "When Overheating"
+L["settings.centerhint.overheat.title"] = "Перегрев"
 -- L["settings.centerhint.overheat.desc"] = "Displays a tooltip when the weapon is about to overheat."
 
 ////////////////////// Visuals
--- L["settings.tabname.visuals"] = "Visuals"
+L["settings.tabname.visuals"] = "Визуал"
 
 ////////// TPIK
 L["settings.tabname.tpik"] = "TPIK - Инверсивная кинематика третьего лица"
--- L["settings.tabname.tpik.desc"] = "\"Third Person Inverse Kinematics\" is a system that allows most weapons to be displayed in third person using their first person animations and positions."
+-- L["settings.tabname.tpik.desc"] = "\"Third Person Inverse Kinematics\" is a system that allows most weapons to be displayed in third person using their first person animations and positions.\n\nOriginal code by AWholeCream, improved by uzelezz123, optimizations & smoothing by Onge.org."
 
--- L["settings.tpik.title"] = "Enable TPIK"
--- L["settings.tpik.desc"] = "Enables TPIK (Third Person Inverse Kinematics).\n\nImpacts performance."
+L["settings.tpik.title"] = "Включить TPIK"
+L["settings.tpik.desc"] = "TPIK (Инверсивная Кинематика для третьего лица) это система для анимации оружия и рук у игроков от третьего лица.\n\nВы можете настроить эту систему во вкладке Визуал."
 
--- L["settings.tpik_others.title"] = "Other Players' TPIK"
--- L["settings.tpik_others.desc"] = "Show other players' TPIK.\n\nImpacts performance."
+L["settings.tpik_others.title"] = "TPIK всех игроков"
+L["settings.tpik_others.desc"] = "Включить эту систему на игроках помимо вас. Понижает производительность."
 
--- L["settings.tpik_framerate.title"] = "TPIK Frame Rate"
--- L["settings.tpik_framerate.desc"] = "At which frame rate the TPIK runs at.\n\nSet to 0 for unlimited.\n\nUnlimited or higher values impact performance."
+L["settings.tpik_framerate.title"] = "Частота обновления TPIK для других игроков"
+L["settings.tpik_framerate.desc"] = "Частота обновления TPIK для всех игроков на сервере кроме вас.\n\nВысокие значения понижают производительность."
+
+L["settings.tpik_framerate_local.title"] = "Частота обновления TPIK для локал. игрока"
+L["settings.tpik_framerate_local.desc"] = "Частота обновления TPIK для локального игрока (вас).\n\nВысокие значения понижают производительность."
 
 ////////// Blur
--- L["settings.tabname.blur"] = "Blur"
+L["settings.tabname.blur"] = "Размытие"
 -- L["settings.tabname.blur.desc"] = "Applies a blur effect when certain criteria are met."
 
--- L["settings.blur.cust_blur.title"] = "Blur world when Customizing"
--- L["settings.blur.cust_blur.desc"] = "Blurs the background when the customization menu is open."
+L["settings.blur.cust_blur.title"] = "Фон кастомизации"
+L["settings.blur.cust_blur.desc"] = "Размывает фон в меню кастомизации."
 
--- L["settings.blur.fx_reloadblur.title"] = "Blur world when Reloading"
--- L["settings.blur.fx_reloadblur.desc"] = "Blurs the background when reloading."
+L["settings.blur.fx_reloadblur.title"] = "Во время перезарядки"
+L["settings.blur.fx_reloadblur.desc"] = "Размытие мира во время перезарядки."
 
--- L["settings.blur.fx_animblur.title"] = "Blur world when Readying"
--- L["settings.blur.fx_animblur.desc"] = "Blurs the background when pulling out a weapon."
+L["settings.blur.fx_animblur.title"] = "При первом доставании"
+L["settings.blur.fx_animblur.desc"] = "Размытие мира при доставании нового оружия в первый раз."
 
 -- L["settings.blur.fx_inspectblur.title"] = "Blur world when Inspecting"
 -- L["settings.blur.fx_inspectblur.desc"] = "Blurs the background when inspecting a weapon."
 
--- L["settings.blur.fx_rtblur.title"] = "Blur world when aiming RT scopes"
--- L["settings.blur.fx_rtblur.desc"] = "Blurs the background when aiming with any RT scope."
+L["settings.blur.fx_rtblur.title"] = "Размытие мира за прицелами"
+L["settings.blur.fx_rtblur.desc"] = "Размытие мира при использовании оптических прицелов."
 
--- L["settings.blur.fx_adsblur.title"] = "Blur weapon when aiming"
--- L["settings.blur.fx_adsblur.desc"] = "Applies a blur effect on the bottom of your screen when aiming.\n\nNot all weapons support this."
+L["settings.blur.fx_adsblur.title"] = "Глубина резкости при прицеливании"
+L["settings.blur.fx_adsblur.desc"] = "Применяет эффект глубины резкости поверх модели оружия, размывая целик и прицелы.\n\nИспользует размытие Poisson disk из github.com/spite/Wagner."
+
+L["settings.blur.fx_adsblur_always.title"] = "Глубина резкости всегда"
+L["settings.blur.fx_adsblur_always.desc"] = "Аналогично предыдущей опции, но и вне прицеливания, делая заднюю часть оружия вне фокуса."
 
 ////////// Effects
--- L["settings.tabname.effects"] = "Effects"
+L["settings.tabname.effects"] = "Эффекты"
 -- L["settings.tabname.effects.desc"] = "Adjust certain visual effects."
 
--- L["settings.effects.eject_fx.title"] = "Shell Eject Smoke"
--- L["settings.effects.eject_fx.desc"] = "Adds extra effects (sparks and smoke) to the shell ejection.\n\nHas minimal impact to performance."
+L["settings.effects.eject_fx.title"] = "Эффект дыма"
+L["settings.effects.eject_fx.desc"] = "Производит эффект дыма от только что выпущенных гильз. (если возможно)"
 
--- L["settings.effects.eject_time.title"] = "Shell Eject Life Time"
--- L["settings.effects.eject_time.desc"] = "How long, in seconds, the shells ejected from ARC9 guns should remain on the ground.\n\nSet to -1 to disable.\n\nDepending on the value, can have minimal to a slight impact to performance."
+L["settings.effects.eject_time.title"] = "Доп. время"
+L["settings.effects.eject_time.desc"] = "Позволяет гильзам существовать дольше. Может снизить производительность."
 
--- L["settings.effects.muzzle_light.title"] = "Muzzle Lights"
--- L["settings.effects.muzzle_light.desc"] = "Lights up the surrounding area when firing a weapon without a suppressor.\n\nHas minimal impact to performance."
+L["settings.effects.muzzle_light.title"] = "Динам. свет от выстрелов"
+L["settings.effects.muzzle_light.desc"] = "Включает динамический свет от вспышек выстрелов."
 
--- L["settings.effects.muzzle_others.title"] = "Other's Muzzle Effects"
--- L["settings.effects.muzzle_others.desc"] = "Display the muzzle effects from other player's ARC9 weapons.\n\nHas a slight impact to performance."
+L["settings.effects.muzzle_others.title"] = "Эффекты от выстрелов у игроков"
+L["settings.effects.muzzle_others.desc"] = "Включает эффекты от выстрелов от пушек у других игроков на сервере."
 
--- L["settings.effects.allflash.title"] = "Other's Flashlights"
--- L["settings.effects.allflash.desc"] = "Renders the flashlights from all players.\n\nImpacts performance."
+L["settings.effects.allflash.title"] = "Фонарики у всех игроков"
+L["settings.effects.allflash.desc"] = "Показывать фонарики у всех игроков на сервере.\n\nЗначительно снижает производительность на серверах."
 
 L["settings.effects.lod.title"] = "Дистанция LOD (Уровни детализации)"
 L["settings.effects.lod.desc"] = "Насколько далеко нужно находиться от оружия, чтобы оно поменяло модель на модель более низкого качества без обвесов.\n\nБолее низкие значения приводят к изменению моделей на меньших расстояниях и могут улучшить производительность.\n\nБолее высокие значения могут повлиять на производительность, но позволяют загружать модели самого высокого качества на больших расстояниях..\n\nЭта настройка также отвечает за дальность работы."
@@ -1102,33 +669,36 @@ L["settings.effects.lod.desc"] = "Насколько далеко нужно н�
 -- L["settings.effects.indoorsound.title"] = "Indoor Sound Quality"
 -- L["settings.effects.indoorsound.desc"] = "How detailed the indoor sound check should be.\n\nLower quality improves performance, but may cause indoor sounds to be inaccurate."
 
+-- L["settings.effects.drawprojectedlights.title"] = "Draw Projected Lights on Viewmodel"
+-- L["settings.effects.drawprojectedlights.desc"] = "! EXPERIMENTAL !\n\nDraws projected lights/flashlights/cascade shadows on attachments and viewmodel.\n\nMay impact performance.\n\nAuto enabled with \"Real CSM\" mod."
+
 ////////// Viewmodel Settings
 L["settings.tabname.vm"] = "Настройки Вьюмодели"
 -- L["settings.tabname.vm.desc"] = "Alter various settings related to the viewmodels."
 
--- L["settings.vm.vm_bobstyle.title"] = "Bob Style"
--- L["settings.vm.vm_bobstyle.desc"] = "Choose one of various viewmodel bobbing styles, graciously contributed by the ARC9 team (and Valve)."
+L["settings.vm.vm_bobstyle.title"] = "Тип качения"
+L["settings.vm.vm_bobstyle.desc"] = "Выберете стиль качения оружия созднный разными разработчиками ARC9 (и valve!)."
 
 L["settings.vm.fov.title"] = "Поле зрения"
--- L["settings.vm.fov.desc"] = "Add this value to the viewmodel's field of view.\n\nNote: Could cause visual glitches if set too high or low."
+L["settings.vm.fov.desc"] = "Меняет поле зрения вьюмодели. Делает её больше или меньше. Используйте ответственно."
 
--- L["settings.vm.vm_addx.title"] = "Viewmodel X-Axis"
--- L["settings.vm.vm_addx.desc"] = "Move the viewmodel left/right."
+L["settings.vm.vm_addx.title"] = "Смещение по X"
+L["settings.vm.vm_addx.desc"] = "Сместить вьюмодель налево или направо."
 
--- L["settings.vm.vm_addy.title"] = "Viewmodel Y-Axis"
--- L["settings.vm.vm_addy.desc"] = "Move the viewmodel up/down."
+L["settings.vm.vm_addy.title"] = "Смещение по Y"
+L["settings.vm.vm_addy.desc"] = "Сместить вьюмодель вперед или назад."
 
--- L["settings.vm.vm_addz.title"] = "Viewmodel Z-Axis"
--- L["settings.vm.vm_addz.desc"] = "Move the viewmodel forwards/backwards."
+L["settings.vm.vm_addz.title"] = "Смещение по Z"
+L["settings.vm.vm_addz.desc"] = "Сместить вьюмодель вверх или вниз."
 
--- L["settings.vm.vm_cambob.title"] = "Sprint View Bobbing"
--- L["settings.vm.vm_cambob.desc"] = "Makes the camera move when sprinting."
+L["settings.vm.vm_cambob.title"] = "Тряска при беге"
+L["settings.vm.vm_cambob.desc"] = "При беге у камеры будет тряска."
 
--- L["settings.vm.vm_cambobwalk.title"] = "Walk View Bobbing"
--- L["settings.vm.vm_cambobwalk.desc"] = "Makes the camera move when walking."
+L["settings.vm.vm_cambobwalk.title"] = "Тряска при ходьбе"
+L["settings.vm.vm_cambobwalk.desc"] = "При обычный ходьбе у камеры тоже будет тряска (требует включенной тряски при беге)"
 
--- L["settings.vm.vm_cambobintensity.title"] = "Intensity"
--- L["settings.vm.vm_cambobintensity.desc"] = "How intense the sprint and walk bobbing should be."
+L["settings.vm.vm_cambobintensity.title"] = "Интенсивность"
+L["settings.vm.vm_cambobintensity.desc"] = "Насколько сильная будет тряска"
 
 L["settings.vm.vm_camstrength.title"] = "Качение камеры"
 L["settings.vm.vm_camstrength.desc"] = "Меняет силу движения камеры во время анимаций оружия, таких как перезарядки или осмотр.\n\nМожет помочь в уменьшении (или увеличении) дискомфорта.\n\nПримечание: Может поломать некоторые паки оружия."
@@ -1141,203 +711,212 @@ L["settings.tabname.crosshairscopes"] = "Прицелы"
 L["settings.tabname.crosshairscopes.desc"] = "Настройте перекрестие и прицелы."
 
 ////////// Crosshair
--- L["settings.tabname.crosshair"] = "Crosshair"
+L["settings.tabname.crosshair"] = "Перекрестие"
 -- L["settings.tabname.crosshair.desc"] = "Adjust settings related to the crosshair."
 
--- L["settings.crosshair.cross_enable.title"] = "Enable Crosshair"
--- L["settings.crosshair.cross_enable.desc"] = "Enables the crosshair."
+L["settings.crosshair.cross_enable.title"] = "Включить перекрестие"
+L["settings.crosshair.cross_enable.desc"] = "Включить перекрестие. Заблокировано на некоторых оружиях."
 
--- L["settings.crosshair.crosshair_force.title"] = "Force-Enable Crosshair"
--- L["settings.crosshair.crosshair_force.desc"] = "Forces the crosshair to remain enabled, even on weapons which have it disabled."
+L["settings.crosshair.crosshair_force.title"] = "Принудительно включить"
+L["settings.crosshair.crosshair_force.desc"] = "Принудительно включает перекрестие даже не пушках которые не позволяют это."
 
--- L["settings.crosshair.crosshair_static.title"] = "Static Crosshair"
--- L["settings.crosshair.crosshair_static.desc"] = "Ensures that the crosshair does not move while firing.\n\nWarning: Will be inaccurate if used on weapons with non-centered crosshairs."
+L["settings.crosshair.crosshair_static.title"] = "Статичный"
+L["settings.crosshair.crosshair_static.desc"] = "Включает полностью статичный прицел, который не двигается от стрельбы."
 
--- L["settings.crosshair.crosshair_target.title"] = "Red Crosshair on Target"
--- L["settings.crosshair.crosshair_target.desc"] = "Changes the color of the crosshair to red when hovering over a player or NPC."
+L["settings.crosshair.crosshair_target.title"] = "Красный прицел на цели"
+L["settings.crosshair.crosshair_target.desc"] = "Делает прицел красным при наведении на цель.\nНаведение так же активирует аим-ассист (если включено)"
 
--- L["settings.crosshair.crosshair_peeking.title"] = "Crosshair when Peeking"
--- L["settings.crosshair.crosshair_peeking.desc"] = "Displays the crosshair when peeking."
+L["settings.crosshair.crosshair_peeking.title"] = "Перекрестие при выглядивании"
+L["settings.crosshair.crosshair_peeking.desc"] = "Показывает перекрестие во время выглядывания из-за прицела."
 
--- L["settings.crosshair.crosshair_sgstyle.title"] = "Shotgun Crosshair Style"
--- L["settings.crosshair.crosshair_sgstyle.desc"] = "Change the style of crosshair used when using weapons that fire two or more projectiles at once.\n\nThe last option draws the amount of dots equal to the amount of projectiles fired."
+L["settings.crosshair.crosshair_sgstyle.title"] = "Перекрестие у дробовиков"
+L["settings.crosshair.crosshair_sgstyle.desc"] = "Меняет стиль перекрестия на оружии, которое стреляет несколькими снарядами за выстрел.\n\nПоследний пункт рисует столько точек, сколько снарядов у патрона."
 
--- L["settings.crosshair.crosshair_sgstyle_fullcircle"] = "Enclosed Circle"
--- L["settings.crosshair.crosshair_sgstyle_four"] = "4 Half-Circles"
--- L["settings.crosshair.crosshair_sgstyle_two"] = "2 Half-Circles"
--- L["settings.crosshair.crosshair_sgstyle_dots"] = "Original Dots"
--- L["settings.crosshair.crosshair_sgstyle_dots_accurate"] = "Proj. Nr. Dots"
+L["settings.crosshair.crosshair_sgstyle_fullcircle"] = "Закрытый круг"
+L["settings.crosshair.crosshair_sgstyle_four"] = "4 полукруга"
+L["settings.crosshair.crosshair_sgstyle_two"] = "2 полукруга"
+L["settings.crosshair.crosshair_sgstyle_dots"] = "Ориг. точки"
+L["settings.crosshair.crosshair_sgstyle_dots_accurate"] = "Точки дроби"
 
--- L["settings.crosshair.cross.title"] = "Crosshair Color"
--- L["settings.crosshair.cross.desc"] = "Which color the crosshair should be."
+L["settings.crosshair.cross.title"] = "Цвет"
+L["settings.crosshair.cross.desc"] = "Цвет перекрестия."
 
--- L["settings.crosshair.cross_size_mult.title"] = "Crosshair Size"
--- L["settings.crosshair.cross_size_mult.desc"] = "Multiplies the size of the crosshair by this value."
+L["settings.crosshair.cross_size_mult.title"] = "Размер"
+L["settings.crosshair.cross_size_mult.desc"] = "Множитель размера перекрестия."
 
--- L["settings.crosshair.cross_size_dot.title"] = "Crosshair Dot Size"
--- L["settings.crosshair.cross_size_dot.desc"] = "Multiplies the size of the center dot in the crosshair by this value."
+L["settings.crosshair.cross_size_dot.title"] = "Размер точки"
+L["settings.crosshair.cross_size_dot.desc"] = "Множитель размера точки перекрестия."
 
--- L["settings.crosshair.cross_size_prong.title"] = "Crosshair Prong Width"
--- L["settings.crosshair.cross_size_prong.desc"] = "Multiplies the width of the crosshair prongs by this value."
+L["settings.crosshair.cross_size_prong.title"] = "Размер зубцов"
+L["settings.crosshair.cross_size_prong.desc"] = "Множитель размера зубцов у перекрестия."
 
 ////////// Optics
--- L["settings.tabname.optics"] = "Optics"
+L["settings.tabname.optics"] = "Оптика"
 -- L["settings.tabname.optics.desc"] = "Adjust settings related to optics and their functionality."
 
--- L["settings.gameplay.toggleads.title"] = "Toggle ADS"
--- L["settings.gameplay.toggleads.desc"] = "Pressing your aiming button toggles aiming."
+L["settings.gameplay.toggleads.title"] = "Прицеливание по нажатию"
+L["settings.gameplay.toggleads.desc"] = "Вместо удерживания кнопки прицеливания достаточно нажать один раз."
 
--- L["settings.gameplay.cheapscopes.title"] = "Cheap Scopes"
--- L["settings.gameplay.cheapscopes.desc"] = "Cheap RT scope implementation that zooms your whole view when aiming rather than rendering the world through the scope.\n\nCan improve performance depending on map size.\n\nNot compatible with \"Render Weapon Through RT\"."
+L["settings.gameplay.cheapscopes.title"] = "Производительные прицелы"
+L["settings.gameplay.cheapscopes.desc"] = "Более производельный вариант рендеринга прицелов путём приближения всей камеры, вместо рендеринга второй сцены. Сильно улучшает производительность на больших картах и не только."
 
--- L["settings.gameplay.fx_rtvm.title"] = "Render Weapon Through RT"
--- L["settings.gameplay.fx_rtvm.desc"] = "! EXPERIMENTAL !\n\nRenders the weapon, and its attachments, through RT scopes.\n\nGreatly impacts performance.\n\nNot compatible with \"Cheap Scopes\"."
+L["settings.gameplay.fx_rtvm.title"] = "Отображать оружие в прицелах"
+L["settings.gameplay.fx_rtvm.desc"] = "! ЭКСПЕРЕМЕНТАЛЬНАЯ ОПЦИЯ !\nРендерит модель оружия и обвесов в RT прицелах. Необходимо отключить \"Производительные прицелы\".\nЗначительно снижает производительность."
 
--- L["settings.gameplay.compensate_sens.title"] = "Dynamic ADS Sensitivity"
--- L["settings.gameplay.compensate_sens.desc"] = "Dynamically adjusts the aiming sensitivity depending on weapon zoom and magnification."
+L["settings.gameplay.compensate_sens.title"] = "Компенсировать чувствительность"
+L["settings.gameplay.compensate_sens.desc"] = "Компенсировать чувствительность мыши в оптических прицелах."
 
--- L["settings.gameplay.sensmult.title"] = "Multiply ADS Sensitivity"
--- L["settings.gameplay.sensmult.desc"] = "Multiplies the aiming sensitivity globally with this value.\n\nThe lower it is, the slower your sensitivity will be."
+L["settings.gameplay.sensmult.title"] = "Чувствительность в прицеле"
+L["settings.gameplay.sensmult.desc"] = "Умножает чувствительность мыши при прицеливании\nЧем меньше значение - тем меньше чувствительность.\nПолезно на контроллерах или же если вы просто хотите чувствительность пониже."
 
 L["settings.gameplay.gradualsens.title"] = "Плавная смена чувствительности в прицелах"
 L["settings.gameplay.gradualsens.desc"] = "Плавно меняет чувствительность мыши при входе или выходе из прицела."
 
--- L["settings.gameplay.color.reflex.title"] = "Reflex Sight Color"
--- L["settings.gameplay.color.reflex.desc"] = "Which color the reticle used on reflex or holographic sights should be.\n\nNot all optics support this."
+L["settings.gameplay.color.reflex.title"] = "Цвет сетки коллиматорных прицелов"
+L["settings.gameplay.color.reflex.desc"] = "Цвет сетки у коллиматорных/ голографических прицелов.\n\nНе все прицелы поддерживают смену цвета."
 
--- L["settings.gameplay.color.scope.title"] = "Scope Reticle Color"
--- L["settings.gameplay.color.scope.desc"] = "Which color the reticle used on RT scopes should be.\n\nNot all optics support this."
+L["settings.gameplay.color.scope.title"] = "Цвет сетки оптики"
+L["settings.gameplay.color.scope.desc"] = "Цвет сетки у оптических прицелов.\n\nНе все прицелы поддерживают смену цвета."
+
+L["settings.gameplay.fx_rt_alwaysdraw.title"] = "Отрисовка прицелов вне прицеливания"
+L["settings.gameplay.fx_rt_alwaysdraw.desc"] = "Прицелы будут отображать картинку с перекрестием при его повороте в сторону глаз (бесполезный прикол). \n\nНе особо влияет на производительность, так как использует Производительные прицелы под капотом."
+
+L["settings.gameplay.fx_rt_shader.title"] = "Красивый шейдер в прицелах"
+L["settings.gameplay.fx_rt_shader.desc"] = "Рисует хроматические абберации, искажение линз и эффекты параллакса внутри RT прицелов.\n\nБез понятия, влияет ли это на производительность или нет, это простой GPU шейдер.\n\nОснованный на shadertoy.com/view/WX2cRd от science6uru2."
+
+L["settings.gameplay.fx_rt_fxaa.title"] = "FXAA в прицелах"
+L["settings.gameplay.fx_rt_fxaa.desc"] = "Простое сглаживание (Fast approximate anti-aliasing) чтобы сделать вид в прицелах чуть мягче, потому что Сурсовский MSAA не работает на рендертаргетах (но работает в Производительных прицелах).\n\nПортировано Evgeny Akabenko, использовано с разрешением."
 
 ////////////////////// Gameplay
--- L["settings.tabname.gameplay"] = "Gameplay"
+L["settings.tabname.gameplay"] = "Геймплей"
 
 ////////// General
--- L["settings.tabname.general"] = "General"
+L["settings.tabname.general"] = "Основное"
 -- L["settings.tabname.general.desc"] = "Various general gameplay settings."
 
 L["settings.gameplay.dtap_sights.title"] = "Двойное нажатия USE для смены прицела"
 L["settings.gameplay.dtap_sights.desc"] = "Позволяет двойным нажатием кнопки +USE (Е) переключаться между прицелами."
 
--- L["settings.gameplay.autoreload.title"] = "Automatic Reload"
--- L["settings.gameplay.autoreload.desc"] = "Automatically reloads your weapon when it is empty."
+L["settings.gameplay.autoreload.title"] = "Автоперезарядка"
+L["settings.gameplay.autoreload.desc"] = "Пустое оружие ARC9 будет перезаряжатся автоматически."
 
--- L["settings.server.gameplay.recoilshake.title"] = "Enable Recoil FOV Shake"
--- L["settings.server.gameplay.recoilshake.desc"] = "Snaps the field of view when shooting."
+L["settings.server.gameplay.recoilshake.title"] = "Тряска поля зрения от отдачи"
+L["settings.server.gameplay.recoilshake.desc"] = "Поле зрения дергается когда стреляешь"
 
 ////////// Functionality
 L["settings.tabname.features"] = "Особенности"
 L["settings.tabname.features.desc"] = "Настройки связанные с всякими фишками ARC9."
 
--- L["settings.server.gameplay.mod_sway.title"] = "Enable Weapon Sway"
--- L["settings.server.gameplay.mod_sway.desc"] = "Enable weapon sway (if the weapon supports it).\n\nWeapons will move around, resulting in the viewmodel and crosshair to move away from the center of the screen."
+L["settings.server.gameplay.mod_sway.title"] = "Качение оружия"
+L["settings.server.gameplay.mod_sway.desc"] = "Некоторые настроенные пушки будут качаться и быть нестабильными в прицелах (и без прицелов тоже)."
 
--- L["settings.server.gameplay.breath_slowmo.title"] = "Enable Slow-Mo when Holding Breath (Singleplayer)"
--- L["settings.server.gameplay.breath_slowmo.desc"] = "! Singleplayer Only !\nHolding your breath slows down time."
+L["settings.server.gameplay.breath_slowmo.title"] = "Слоу-мо в задержке дыхания"
+L["settings.server.gameplay.breath_slowmo.desc"] = "Задерживание дыхания будет замедлять течение времени.\n\nТолько в одиночной игре."
 
--- L["settings.gameplay.togglebreath.title"] = "Toggle Holding Breath"
--- L["settings.gameplay.togglebreath.desc"] = "Pressing your sprint button toggles holding breath."
+L["settings.gameplay.togglebreath.title"] = "Задержка дыхания по нажатию"
+L["settings.gameplay.togglebreath.desc"] = "Вместо удерживания кнопки задержки дыхания достаточно нажать один раз."
 
--- L["settings.centerhint.breath_hud.title"] = "Hold Breath Tooltip"
--- L["settings.centerhint.breath_hud.desc"] = "Displays a bar with your remaining breath when holding your breath."
+L["settings.centerhint.breath_hud.title"] = "Индикатор"
+L["settings.centerhint.breath_hud.desc"] = "Показывать, сколько вы можете ещё задерживать дыхание в прицелах в интерфейсе."
 
--- L["settings.centerhint.breath_pp.title"] = "Hold Breath Post-Processing"
--- L["settings.centerhint.breath_pp.desc"] = "Also applies post-processing effects when holding your breath.\n\nRequires either Weapon Sway or Slow-Mo when Holding Breath."
+L["settings.centerhint.breath_pp.title"] = "Пост-обработка"
+L["settings.centerhint.breath_pp.desc"] = "Задержка дыхания будет делать эффекты резкости на экране."
 
 L["settings.server.gameplay.mod_peek.title"] = "Включить выглядывание"
 L["settings.server.gameplay.mod_peek.desc"] = "Включить выглядывание, если оружие его поддерживает.\n\nПозволяет пользователю опустить оружие во время прицеливания."
 
--- L["settings.gameplay.togglepeek.title"] = "Toggle Peek"
--- L["settings.gameplay.togglepeek.desc"] = "Pressing your peek button toggles peeking."
+L["settings.gameplay.togglepeek.title"] = "Выглядывание по нажатию"
+L["settings.gameplay.togglepeek.desc"] = "Вместо удерживания кнопки выглядывания достаточно нажать один раз."
 
--- L["settings.gameplay.togglepeek_reset.title"] = "Reset Peek After Aiming"
--- L["settings.gameplay.togglepeek_reset.desc"] = "Disables peek when you stop aiming."
+L["settings.gameplay.togglepeek_reset.title"] = "Сброс выглядывания после прицел."
+L["settings.gameplay.togglepeek_reset.desc"] = "(Только если Выглядывание по нажатию включено)\nСостояние выглядывения будет сброшено после выхода из прицела."
 
 L["settings.server.aimassist.enable.title"] = "Включить помощь в прицеливании (Сервер)"
--- L["settings.server.aimassist.enable.desc"] = "Enables the ability for users to utilize aiming assistance."
+L["settings.server.aimassist.enable.desc"] = "Включает помощь в прицеливании. Понижает чувствительность мыши при наведении возле цели.\n\nТак же требует включения аим-ассиста на клиенте."
 
 L["settings.aimassist.enable.title"] = "Включить помощь в прицеливании"
 -- L["settings.aimassist.enable.desc"] = "Enables aim assist, which moves your camera closer to valid targets if one is detected close to your crosshair."
 
--- L["settings.aimassist.sensmult.desc"] = "Multiplies the aiming sensitivity by this value when aiming close to valid targets if one is detected close to your crosshair."
+L["settings.aimassist.sensmult.desc"] = "Множитель чувствительности мыши когда прицел на противнике.\nЧем ниже значение, тем ниже чувствительность."
 
--- L["settings.server.aimassist.intensity.title"] = "Aim Assist Intensity"
--- L["settings.server.aimassist.intensity.desc"] = "How intense the aim assistance should be."
+L["settings.server.aimassist.intensity.title"] = "Интенсивность"
+L["settings.server.aimassist.intensity.desc"] = "На сколько интенсивна помощь в прицеливании."
 
--- L["settings.server.aimassist.cone.title"] = "Aim Assist Cone"
--- L["settings.server.aimassist.cone.desc"] = "How large of an area the aim assist should take affect in. The larger, the further away the valid targets can be."
+L["settings.server.aimassist.cone.title"] = "Угол помощи"
+L["settings.server.aimassist.cone.desc"] = "Насколько далеко или близко нужно смотреть возле цели чтобы аим-ассист начал работать."
 
--- L["settings.server.aimassist.heads.title"] = "Lock onto Heads"
--- L["settings.server.aimassist.heads.desc"] = "Enable if the aim assist should target the target's head rather than its chest."
+L["settings.server.aimassist.heads.title"] = "Фиксация на головах"
+L["settings.server.aimassist.heads.desc"] = "Должен ли аим-ассист целить вас на головы противников вместо торса?"
 
--- L["settings.server.gameplay.manualbolt.title"] = "Require Manual Cycling"
--- L["settings.server.gameplay.manualbolt.desc"] = "Enable if the user should manually cycle manual operated weapons by pressing their reload key."
+L["settings.server.gameplay.manualbolt.title"] = "Ручные болтовки"
+L["settings.server.gameplay.manualbolt.desc"] = "Вместо автоматического взвода затвора после отпускания кнопки стрельбы, болтовые оружия будет требовать нажатия R. \n\nПрямо как в FA:S 2.0"
 
--- L["settings.server.gameplay.lean.title"] = "Allow Leaning"
--- L["settings.server.gameplay.lean.desc"] = "Allows users to lean left or right. Also applies to Automatic Lean."
+L["settings.server.gameplay.lean.title"] = "Наклоны"
+L["settings.server.gameplay.lean.desc"] = "Игрок сможет наклонять тело через бинды +alt1 и +alt2, а также автоматически (если включено)."
 
--- L["settings.gameplay.autolean.title"] = "Automatic Lean"
--- L["settings.gameplay.autolean.desc"] = "Automatically tries to lean when near cover."
+L["settings.gameplay.autolean.title"] = "Автонаклоны"
+L["settings.gameplay.autolean.desc"] = "Прицеливония возле угла стены будет автоматически наклонять игрока если возможно."
 
--- L["settings.gameplay.togglelean.title"] = "Toggle Lean"
--- L["settings.gameplay.togglelean.desc"] = "Pressing your left or right lean button toggles leaning."
+L["settings.gameplay.togglelean.title"] = "Наклон по нажатию"
+L["settings.gameplay.togglelean.desc"] = "Вместо удерживания кнопки наклона достаточно нажать один раз."
 
--- L["settings.server.gameplay.mod_freeaim.title"] = "Enable Free Aim"
--- L["settings.server.gameplay.mod_freeaim.desc"] = "Enable free aim, if the weapon supports it.\n\nAllows the aiming point to be separate from the center of the screen."
+L["settings.server.gameplay.mod_freeaim.title"] = "Свободный прицел"
+L["settings.server.gameplay.mod_freeaim.desc"] = "Пушки будет иметь свободный прицел, вместо фиксирования в центр экрана (Free aim)."
 
--- L["settings.server.gameplay.never_ready.title"] = "Disable Readying Animations"
--- L["settings.server.gameplay.never_ready.desc"] = "Enable to disable weapon readying animations when you first pull out a weapon."
+L["settings.server.gameplay.never_ready.title"] = "Отключить Ready анимации"
+L["settings.server.gameplay.never_ready.desc"] = "Никогда не проигрывать \"ready\" анимации при доставании любого оружия."
 
--- L["settings.server.gameplay.infinite_ammo.title"] = "Enable Infinite Ammo"
--- L["settings.server.gameplay.infinite_ammo.desc"] = "Weapons no longer require ammunition when reloading."
+L["settings.server.gameplay.infinite_ammo.title"] = "Бесконечные патроны"
+L["settings.server.gameplay.infinite_ammo.desc"] = "Оружие будет иметь неограниченный боезапас."
 
--- L["settings.server.gameplay.mult_defaultammo.title"] = "Default Reserve Ammo"
--- L["settings.server.gameplay.mult_defaultammo.desc"] = "How many spare magazines or pieces of equipment the player gets when a weapon is spawned."
+L["settings.server.gameplay.mult_defaultammo.title"] = "Запас патрон. по умолч."
+L["settings.server.gameplay.mult_defaultammo.desc"] = "Как много магазинов/гранат/снаряжения давать игроку когда он берёт оружие в руки первый раз?"
 
--- L["settings.server.gameplay.equipment_generate_ammo.title"] = "Generate Unique Ammo for Equipment"
--- L["settings.server.gameplay.equipment_generate_ammo.desc"] = "The Source engine has a limit of 255 ammo types. Disabling this option could help fix errors if you have many addons installed.\n\nRequires restart."
+L["settings.server.gameplay.equipment_generate_ammo.title"] = "Уникальные типы патронов для снаряжения"
+L["settings.server.gameplay.equipment_generate_ammo.desc"] = "В игре есть лимит в 255 типов патронов, если у тебя установлено много аддонов, выключение этого пункта может помочь с некоторыми проблемами.\n\nТребуется перезапуск."
 
--- L["settings.server.gameplay.realrecoil.title"] = "Enable Physical Visual Recoil"
--- L["settings.server.gameplay.realrecoil.desc"] = "Various weapons are set up for physical muzzle rise, meaning that they will shoot where their viewmodel points rather than the center of the screen.\n\nVery important for some weapon packs' balancing schemes."
+L["settings.server.gameplay.realrecoil.title"] = "Физическая отдача"
+L["settings.server.gameplay.realrecoil.desc"] = "Некоторое настроенное оружие будет иметь (полностью) физическую отдачу и всё с этим связанное, вместо обыкновенной отдачи. Очень важно для баланса некоторых оружейных паков."
 
--- L["settings.server.gameplay.mod_bodydamagecancel.title"] = "Body Damage Cancel"
--- L["settings.server.gameplay.mod_bodydamagecancel.desc"] = "Cancel out the default body damage multiplier.\n\nDisable only if another mod provides this sort of functionality."
+L["settings.server.gameplay.mod_bodydamagecancel.title"] = "Выкл. множитель урона по игрокам"
+L["settings.server.gameplay.mod_bodydamagecancel.desc"] = "Выключает стандартный множитель урона по игрокам. Выключайте только если у вас есть аддон изменяющий множители урона в разные части тела."
 
 ////////////////////// Customization
--- L["settings.tabname.customization"] = "Customization"
+L["settings.tabname.customization"] = "Кастомизация"
 
 ////////// Customization Menu
 L["settings.tabname.custmenu"] = "Меню кастомизации"
 -- L["settings.tabname.custmenu.desc"] = "Adjust settings related to the customization menu."
 
--- L["settings.custmenu.hud_color.title"] = "Customization Menu Accent"
--- L["settings.custmenu.hud_color.desc"] = "Alter the accent color for the customization menu."
+L["settings.custmenu.hud_color.title"] = "Цвет интерфейса"
+L["settings.custmenu.hud_color.desc"] = "Главный цвет интерфейса, акцент."
 
 L["settings.custmenu.hud_lightmode.title"] = "Светлый режим"
 -- L["settings.custmenu.hud_lightmode.desc"] = "Changes the color scheme of the customization menu to a lighter one.\n\nThe original ARC9 color scheme."
 
--- L["settings.custmenu.hud_holiday.title"] = "Festive Mode"
--- L["settings.custmenu.hud_holiday.desc"] = "Changes the color scheme of the customization menu to match certain holidays.\n\nOverrides \"Customization Menu Accent\"."
+L["settings.custmenu.hud_holiday.title"] = "Праздничные темы"
+L["settings.custmenu.hud_holiday.desc"] = "Различные темы будут активироваться во время (реальных) праздников.\nПереназначит акцентный цвет интерфейса."
 
--- L["settings.custmenu.cust_light.title"] = "Enable Light"
--- L["settings.custmenu.cust_light.desc"] = "Enables a light that makes it easier to see your weapon."
+L["settings.custmenu.cust_light.title"] = "Включить подсветку"
+L["settings.custmenu.cust_light.desc"] = "Включает подсветку оружия в меню кастомизации.\n\nТо же самое, что и кнопка рядом с настройками."
 
--- L["settings.custmenu.cust_light_brightness.title"] = "Light Brightness"
--- L["settings.custmenu.cust_light_brightness.desc"] = "Adjust the brightness of the light."
+L["settings.custmenu.cust_light_brightness.title"] = "Яркость подсветки"
+L["settings.custmenu.cust_light_brightness.desc"] = "Яркость подсветки оружия.\n\nНе забудьте включить её сперва!"
 
--- L["settings.custmenu.cust_hints.title"] = "Enable Control Tips"
--- L["settings.custmenu.cust_hints.desc"] = "Displays control tips in the bottom right of the customization menu."
+L["settings.custmenu.cust_hints.title"] = "Подсказки"
+L["settings.custmenu.cust_hints.desc"] = "Включает подсказки в меню кастомизации."
 
--- L["settings.custmenu.cust_tips.title"] = "Enable General Hints"
--- L["settings.custmenu.cust_tips.desc"] = "Displays general hints in the bottom left of the customization menu."
+L["settings.custmenu.cust_tips.title"] = "Советы"
+L["settings.custmenu.cust_tips.desc"] = "Советы о базе около подсказок."
 
--- L["settings.custmenu.cust_exit_reset_sel.title"] = "Reset Active Slot on Close"
--- L["settings.custmenu.cust_exit_reset_sel.desc"] = "If enabled, the active customization slot will be reset when the menu is re-opened."
+L["settings.custmenu.cust_exit_reset_sel.title"] = "Сброс слота при выходе"
+L["settings.custmenu.cust_exit_reset_sel.desc"] = "Выход из меню кастомизации будет сбрасывать выбор активного слота."
 
--- L["settings.custmenu.autosave.title"] = "Auto-Save Attachments"
--- L["settings.custmenu.autosave.desc"] = "Automatically saves equipped attachments when you exit the customization menu. Reloads them automatically when you respawn the weapon."
+L["settings.custmenu.autosave.title"] = "Автосохранение"
+L["settings.custmenu.autosave.desc"] = "Ваше последняя конфигурация оружия будет сохранена и автоматически установлена при следующем доставании."
 
--- L["settings.server.gameplay.truenames.title"] = "Enable True Names"
--- L["settings.server.gameplay.truenames.desc"] = "Enable to have weapons that utilize fictional names to display their real ones instead.\n\nNot all weapons support this."
+L["settings.server.gameplay.truenames.title"] = "Наст. названия по умолч."
+L["settings.server.gameplay.truenames.desc"] = "Устанавливает режим настоящих названий оружия на сервере. Все игроки имеющее выбранным \"По умолчанию\" в настройках будут использовать это."
 
 L["settings.fancyspawnmenu.title"] = "Включить крутое спавнменю"
 L["settings.fancyspawnmenu.desc"] = "Включает обновленное, красивое спавнменю для всех ARC9 оружий.\n\nТребует перезагрузки спавнменю через консоль (команда: \"spawnmenu_reload\")"
@@ -1362,90 +941,94 @@ L["settings.tabname.attachmentsnpcs"] = "Обвесы и NPC"
 ////////// Customization
 -- L["settings.tabname.customization.desc"] = "Adjust settings related to weapon customizing."
 
--- L["settings.server.custmenu.atts_nocustomize.title"] = "Disable Customizing"
--- L["settings.server.custmenu.atts_nocustomize.desc"] = "Disables the ability for users to open the customization menu.\n\nDoes not affect admins."
+L["settings.server.custmenu.atts_nocustomize.title"] = "Отключить кастомизацию"
+L["settings.server.custmenu.atts_nocustomize.desc"] = "Отключить всю кастомизацию через меню."
 
--- L["settings.server.custmenu.blacklist.title"] = "Blacklist Menu"
+L["settings.server.custmenu.blacklist.title"] = "Чёрный список"
 -- L["settings.server.custmenu.blacklist.desc"] = "Opens a menu that allows certain attachments to be completely disabled."
--- L["settings.server.custmenu.blacklist.open"] = "OPEN MENU"
+L["settings.server.custmenu.blacklist.open"] = "Открыть"
 
--- L["settings.server.custmenu.atts_max.title"] = "Max Attachments"
--- L["settings.server.custmenu.atts_max.desc"] = "The maximum number of attachments a user can equip onto a weapon, including cosmetic ones."
+L["settings.server.custmenu.atts_max.title"] = "Макс. обвесов"
+L["settings.server.custmenu.atts_max.desc"] = "Максимальное число обвесов на одном оружии, включая косметические обвесы."
 
--- L["settings.server.custmenu.free_atts.title"] = "Free Attachments"
--- L["settings.server.custmenu.free_atts.desc"] = "Attachments can be used without the need of picking them up first."
+L["settings.server.custmenu.free_atts.title"] = "Бесплатные обвесы"
+L["settings.server.custmenu.free_atts.desc"] = "Обвесы можно использовать на оружии без подбирания их."
 
--- L["settings.server.custmenu.atts_lock.title"] = "Unlimited Attachment Units"
--- L["settings.server.custmenu.atts_lock.desc"] = "If disabled, the user has an attachment and has it equipped onto a weapon, they cannot put it onto another weapon unless they have more than one of that attachment."
+L["settings.server.custmenu.atts_lock.title"] = "Один для всего"
+L["settings.server.custmenu.atts_lock.desc"] = "Подбирание одного обвеса позволить использовать его неограниченное количество раз на любом оружии."
 
--- L["settings.server.custmenu.atts_loseondie.title"] = "Lose Attachments on Death"
--- L["settings.server.custmenu.atts_loseondie.desc"] = "If the user dies, they'll lose all of their attachments."
+L["settings.server.custmenu.atts_loseondie.title"] = "Терять после смерти"
+L["settings.server.custmenu.atts_loseondie.desc"] = "Все подобранные обвесы удалятся после вашей смерти."
 
--- L["settings.server.custmenu.atts_generateentities.title"] = "Generate Attachment Entities"
--- L["settings.server.custmenu.atts_generateentities.desc"] = "Generate entities that can be spawned via the Spawnmenu, allowing you to pick up attachments when \"Free Attachments\" is disabled.\n\nIncreases loading times."
+L["settings.server.custmenu.atts_generateentities.title"] = "Генерировать энтити"
+L["settings.server.custmenu.atts_generateentities.desc"] = "Генерировать энтити обвесов для их спавна и последующего использования (если бесплатные обвесы выключены).\n\nВозможно увеличит время запуска в игру."
 
 ////////// NPC Settings
--- L["settings.tabname.npc"] = "NPC Settings"
+L["settings.tabname.npc"] = "NPC"
 -- L["settings.tabname.npc.desc"] = "Adjust settings for interaction with NPC's."
 
--- L["settings.server.npc.npc_autoreplace.title"] = "Replace NPC Weapons"
--- L["settings.server.npc.npc_autoreplace.desc"] = "NPC's that spawn with HL2 weapons will have them be replaced with ARC9 weapons."
+L["settings.server.npc.npc_autoreplace.title"] = "Заменить оружие у NPC"
+L["settings.server.npc.npc_autoreplace.desc"] = "Заменить оружие у NPC случайным ARC9 стволом."
 
--- L["settings.server.npc.npc_atts.title"] = "Give NPC Weapons Random Attachments"
--- L["settings.server.npc.npc_atts.desc"] = "NPC's with ARC9 weapons will receive a random set of attachments"
+L["settings.server.npc.npc_atts.title"] = "Спавнить NPC с обвесами"
+L["settings.server.npc.npc_atts.desc"] = "NPC с ARC9 пушками будут с случайным набором обвесов."
 
--- L["settings.server.npc.replace_spawned.title"] = "Replace Ground Weapons"
--- L["settings.server.npc.replace_spawned.desc"] = "Replace map or spawned HL2 weapons with randomly chosen ARC9 weapons"
+L["settings.server.npc.replace_spawned.title"] = "Заменять оружие на полу"
+L["settings.server.npc.replace_spawned.desc"] = "Заменяет заспавненные картой или вами HL2 оружие случайным ARC9 стволом."
 
--- L["settings.server.npc.ground_atts.title"] = "Give Ground Weapons Random Attachments"
--- L["settings.server.npc.ground_atts.desc"] = "Weapons spawned on the ground will receive a random set of attachments."
+L["settings.server.npc.ground_atts.title"] = "Спавнить оружие на земле с обвесами"
+L["settings.server.npc.ground_atts.desc"] = "Заспавленные ARC9 пушки на земле будут с случайным набором обвесов."
 
--- L["settings.server.npc.npc_give_weapons.title"] = "Allow Weapon Swapping between Players & NPCs"
--- L["settings.server.npc.npc_give_weapons.desc"] = "Allow the players to press their USE key on NPC's to give them or swap their ARC9 weapons."
+L["settings.server.npc.npc_give_weapons.title"] = "Игроки могут давать оружие"
+L["settings.server.npc.npc_give_weapons.desc"] = "Игроки могут нажать Е на NPC чтобы дать им своё оружие."
 
--- L["settings.server.npc.npc_equality.title"] = "Enable NPC Damage Equality"
--- L["settings.server.npc.npc_equality.desc"] = "NPC's do equal damage with ARC9 weapons as players do."
+L["settings.server.npc.npc_equality.title"] = "Одинаковый урон"
+L["settings.server.npc.npc_equality.desc"] = "NPC будут делать точно такой же урон как и игроки."
 
--- L["settings.server.npc.npc_spread.title"] = "NPC Spread"
--- L["settings.server.npc.npc_spread.desc"] = "Multiply the accuracy for weapons when NPC's are shooting them."
+L["settings.server.npc.npc_spread.title"] = "Разброс у NPC"
+L["settings.server.npc.npc_spread.desc"] = "Множитель неточности выстрелов ARC9 пушек у NPC."
 
 ////////////////////// Bullet Physics
--- L["settings.tabname.bulletphysics"] = "Bullet Physics"
+L["settings.tabname.bulletphysics"] = "Физика пуль"
 
 ////////// Bullet Physics
 -- L["settings.tabname.bulletphysics.desc"] = "Adjust settings related to physical bullets."
 
--- L["settings.server.bulletphysics.bullet_physics.title"] = "Enable Physical Bullets"
--- L["settings.server.bulletphysics.bullet_physics.desc"] = "Weapons that support this shoot physical projectiles which are affected by bullet drop, drag and travel time."
+L["settings.server.bulletphysics.bullet_physics.title"] = "Физические пули"
+L["settings.server.bulletphysics.bullet_physics.desc"] = "Физические пули имеют физику. Падение на расстоянии, требуется некоторое время до приземления и всё в этом роде. Некоторое оружие может не поддерживать такое."
 
--- L["settings.server.bulletphysics.bullet_gravity.title"] = "Bullet Gravity"
--- L["settings.server.bulletphysics.bullet_gravity.desc"] = "How much physical bullets are affected by gravity."
+L["settings.server.bulletphysics.bullet_gravity.title"] = "Гравитация"
+L["settings.server.bulletphysics.bullet_gravity.desc"] = "Множитель гравитации пуль."
 
--- L["settings.server.bulletphysics.bullet_drag.title"] = "Bullet Drag"
--- L["settings.server.bulletphysics.bullet_drag.desc"] = "How much air resistance physical bullets will have."
+L["settings.server.bulletphysics.bullet_drag.title"] = "Сопротивлен. воздуха"
+L["settings.server.bulletphysics.bullet_drag.desc"] = "Множитель сопротивления воздуха у пуль."
 
--- L["settings.server.bulletphysics.bullet_lifetime.title"] = "Bullet Life Time"
--- L["settings.server.bulletphysics.bullet_lifetime.desc"] = "How long, in seconds, it takes for a physical bullet to be removed from existence."
+L["settings.server.bulletphysics.bullet_lifetime.title"] = "Время жизни"
+L["settings.server.bulletphysics.bullet_lifetime.desc"] = "Сколько пуля сможет просуществовать в свободном полете."
 
--- L["settings.server.bulletphysics.ricochet.title"] = "Enable Bullet Ricochet"
--- L["settings.server.bulletphysics.ricochet.desc"] = "Allows bullets to bounce off of hard surfaces, potentially striking unsuspecting foes.\n\nEffectiveness depends on the weapon."
+-- L["settings.server.bulletphysics.bullet_physics_shotguns.title"] = "Physical bullets for Shotguns"
+-- L["settings.server.bulletphysics.bullet_physics_shotguns.desc"] = "Use physical bullets for shotguns too, otherwise they will use hitscan."
 
--- L["settings.server.bulletphysics.mod_penetration.title"] = "Enable Bullet Penetration"
--- L["settings.server.bulletphysics.mod_penetration.desc"] = "Allows bullets to pierce cover, potentially striking foes hiding behind it.\n\nEffectiveness depends on the weapon."
+L["settings.server.bulletphysics.ricochet.title"] = "Рикошеты"
+L["settings.server.bulletphysics.ricochet.desc"] = "Некоторые пули смогут отскакивать от поверхностей и наносить урон."
+
+L["settings.server.bulletphysics.mod_penetration.title"] = "Пробивание"
+L["settings.server.bulletphysics.mod_penetration.desc"] = "Некоторые пули смогут пробивать различные поверхности и наносить урон всему, что стоит за этой поверхностью."
 
 ////////////////////// Modifiers
--- L["settings.tabname.modifiers"] = "Modifiers"
+L["settings.tabname.modifiers"] = "Модификаторы"
 
 ////////// Quick Stat Modifiers
--- L["settings.tabname.quickstat"] = "Quick Stat Modifiers"
--- L["settings.tabname.quickstat.desc"] = "Quickly adjust specific weapon modifiers."
+L["settings.tabname.quickstat"] = "Быстрые модификаторы характеристик"
+L["settings.tabname.quickstat.desc"] = " "
 
--- L["settings.server.quickstat.mod_damage.title"] = "Damage"
+L["settings.server.quickstat.mod_damage.title"] = "Урон"
 
--- L["settings.server.quickstat.mod_malfunction.title"] = "Malfunction Chance"
+L["settings.server.quickstat.mod_malfunction.title"] = "Шанс неполадки"
 
 -- L["settings.server.quickstat.mod_damage.desc"] = "Multiply how much damage weapons deal."
 -- L["settings.server.quickstat.mod_spread.desc"] = "Multiply how much spread the weapons have."
+-- L["settings.server.quickstat.mod_dispersionspread.desc"] = "Multiply how much dispersion spread the shotguns have."
 -- L["settings.server.quickstat.mod_recoil.desc"] = "Multiply how much recoil the weapon has."
 -- L["settings.server.quickstat.mod_visualrecoil.desc"] = "Multiply how much visual recoil the weapon has."
 -- L["settings.server.quickstat.mod_adstime.desc"] = "Multiply how quickly the weapon goes in and out of ADS."
@@ -1463,105 +1046,108 @@ L["settings.server.gameplay.supermod.title"] = "Супер-модификато�
 L["settings.server.gameplay.supermod.desc"] = "Откройте отдельное меню, которое позволяет применить любой модификатор ко всему оружию.\n\nПредупреждение: при неправильном использовании оружие может перестать функционировать."
 
 ////////////////////// Developer
--- L["settings.tabname.developer"] = "Developer"
+L["settings.tabname.developer"] = "Для разработчиков"
 
 ////////// Developer Settings
--- L["settings.tabname.developer.settings"] = "Developer Settings"
+L["settings.tabname.developer.settings"] = "Настройки разработчика"
 -- L["settings.tabname.developer.settings.desc"] = "General settings for developers."
 
--- L["settings.server.developer.reloadlangs.title"] = "Reload Languages"
+L["settings.server.developer.reloadlangs.title"] = "Языки"
 -- L["settings.server.developer.reloadlangs.desc"] = "Reloads all ARC9 language files."
 
--- L["settings.server.developer.reloadatts.title"] = "Reload Attachments"
+L["settings.server.developer.reloadatts.title"] = "Обвесы"
 -- L["settings.server.developer.reloadatts.desc"] = "Reloads all ARC9 attachments."
 
--- L["settings.server.developer.dev_always_ready.title"] = "Always Ready"
--- L["settings.server.developer.dev_always_ready.desc"] = "When enabled, weapons will always play their \"ready\" animation."
+L["settings.server.developer.dev_always_ready.title"] = "Всегда Ready"
+L["settings.server.developer.dev_always_ready.desc"] = "Всегда проигрывать анимацию \"ready\" при доставании оружия."
 
--- L["settings.server.developer.dev_benchgun.title"] = "Benchgun"
--- L["settings.server.developer.dev_benchgun.desc"] = "When enabled, the viewmodel will remain in place, independant from where you are standing."
+L["settings.server.developer.dev_benchgun.title"] = "Benchgun"
+L["settings.server.developer.dev_benchgun.desc"] = "Оставить вьюмодель оружия там же, где оно и находится прямо сейчас."
 
--- L["settings.server.developer.dev_crosshair.title"] = "Developer Crosshair"
--- L["settings.server.developer.dev_crosshair.desc"] = "A funky looking crosshair showing the exact point of aim and some useful variables.\n\nOnly works for administrators; don't even try to get cheaty with this."
+L["settings.server.developer.dev_crosshair.title"] = "Прицел разработчика"
+L["settings.server.developer.dev_crosshair.desc"] = "Покажет куда точно пойдут ваши пули и ещё пару интересных циферок.\n\nЭто серверная переменная только для админов."
 
 -- L["settings.server.developer.dev_show_affectors.title"] = "Display Affectors"
 -- L["settings.server.developer.dev_show_affectors.desc"] = "On the \"Developer Crosshair\", displays which current affectors are applied."
 
--- L["settings.server.developer.dev_show_shield.title"] = "Show Shield"
--- L["settings.server.developer.dev_show_shield.desc"] = "Show the protecting model of the player's shield."
+L["settings.server.developer.dev_show_shield.title"] = "Показывать щиты"
+L["settings.server.developer.dev_show_shield.desc"] = "Показывать модель щитов у игроков."
 
--- L["settings.server.developer.dev_greenscreen.title"] = "Green Screen"
--- L["settings.server.developer.dev_greenscreen.desc"] = "Applies a green screen background when in the customization menu.\n\nUseful for screenshots.\n\nIf you use HDR, don't forget to set \"mat_bloom_scalefactor_scalar\" to 0!"
+L["settings.server.developer.dev_greenscreen.title"] = "Зеленый экран в кастомизации"
+L["settings.server.developer.dev_greenscreen.desc"] = "Показывает зеленый экран вместо фона в меню кастомизации для скриншотов.\n\nЕсли вы используете HDR, не забудьте поставить mat_bloom_scalefactor_scalar на 0!"
 
--- L["settings.server.developer.presets_clear.title"] = "Clear Weapon Data"
--- L["settings.server.developer.presets_clear.desc"] = "Clears presets, icons and default presets for the weapon you are currently holding.\n\nWarning: If used without an ARC9 weapon equipped, it will clear the presets, icons and default presets for all ARC9 weapons."
+L["settings.server.developer.presets_clear.title"] = "Очистить данные"
+L["settings.server.developer.presets_clear.desc"] = "Удалить все пресеты, иконки и дефолтный пресет для оружия, что вы сейчас держете в руках.\n\nВнимание: если у вас сейчас нет ARC9 пушки в руках, это удалит всю данные всех пушек!"
 
--- L["settings.server.developer.reload"] = "RELOAD"
--- L["settings.server.developer.clear"] = "CLEAR"
+L["settings.server.developer.reload"] = "Перезагрузить"
+L["settings.server.developer.clear"] = "Очистить"
+
+-- L["settings.developer.ignore_dx.title"] = "Ignore DirectX warning"
+-- L["settings.developer.ignore_dx.desc"] = "Ignore the warning about current DirectX warning not being 9, useful on linux or something."
 
 ////////// Asset Caching
--- L["settings.tabname.assetcache"] = "Asset Caching"
--- L["settings.tabname.assetcache.desc"] = "Caching certain assets can prevent stutters for more comfortable gameplay.\n\nIf running on an HDD, or with a lot of addons, these options will improve initial loading times."
+L["settings.tabname.assetcache"] = "Кэширование ассетов"
+L["settings.tabname.assetcache.desc"] = "Вы можете кэшировать (сохранять в память без подгрузок во время игры) некоторые ассеты для предотвращения статтеров для более комфортной игры!\n\nТебе точно стоит включить что-нибудь если твой гмод установлен на жестком диске."
 
--- L["settings.server.assetcache.precache_sounds_onfirsttake.title"] = "On Weapon Equip: Cache Sounds"
--- L["settings.server.assetcache.precache_sounds_onfirsttake.desc"] = "Caches the firing sounds for the ARC9 weapon you equip.\n\nCan cause a small game freeze when equipping weapons for the first time."
+L["settings.server.assetcache.precache_sounds_onfirsttake.title"] = "При первом взятии: Кэшировать звуки"
+L["settings.server.assetcache.precache_sounds_onfirsttake.desc"] = "Кэшировать звуки оружия которое вы только что подобрали (кроме звуков перезарядок).\n\nНе особо влияет на производительность, однако крайне полезно для предотвращения статтеров во время стрельбы."
 
--- L["settings.server.assetcache.precache_attsmodels_onfirsttake.title"] = "On Weapon Equip: Cache Attachments"
--- L["settings.server.assetcache.precache_attsmodels_onfirsttake.desc"] = "Caches all ARC9 attachment models when any ARC9 weapon is equipped.\n\nCan cause a long game freeze, depending on how many ARC9 weapons you have."
+L["settings.server.assetcache.precache_attsmodels_onfirsttake.title"] = "При первом взятии: Кэш. все обвесы"
+L["settings.server.assetcache.precache_attsmodels_onfirsttake.desc"] = "Кэшировать все модельки ARC9 обвесов когда любая ARC9 пушка была взята в руки.\n\nВызывает достаточно большой фриз, особенно когда у вас установлено много оружия."
 
--- L["settings.server.assetcache.precache_wepmodels_onfirsttake.title"] = "On Weapon Equip: Cache Weapon Models"
--- L["settings.server.assetcache.precache_wepmodels_onfirsttake.desc"] = "Caches all ARC9 viewmodels when any ARC9 weapon is equipped.\n\nCan cause a very long game freeze, depending on how many ARC9 weapons you have."
+L["settings.server.assetcache.precache_wepmodels_onfirsttake.title"] = "При первом взятии: Кэш. все модели оружия"
+L["settings.server.assetcache.precache_wepmodels_onfirsttake.desc"] = "Кэшировать все вьюмодели оружия ARC9 когда любая ARC9 пушка была взята в руки.\n\nВызывает ОЧЕНЬ БОЛЬШОЙ фриз, особенно когда у вас установлено много оружия."
 
--- L["settings.server.assetcache.precache_allsounds_onstartup.title"] = "On Game Start: Cache Sounds"
--- L["settings.server.assetcache.precache_allsounds_onstartup.desc"] = "Caches all firing sounds for all ARC9 weapons when the server starts up.\n\nCan cause a temporary game freeze."
+L["settings.server.assetcache.precache_allsounds_onstartup.title"] = "При старте игры: Кэш. все звуки оружия"
+L["settings.server.assetcache.precache_allsounds_onstartup.desc"] = "Кэшировать все звуки всего ARC9 оружия при старте сервера (кроме звуков перезарядок).\n\nНе особо влияет на производительность, но лучше просто использовать первую опцию здесь."
 
--- L["settings.server.assetcache.precache_attsmodels_onstartup.title"] = "On Game Start: Cache Attachments"
--- L["settings.server.assetcache.precache_attsmodels_onstartup.desc"] = "Caches all ARC9 attachment models when the server starts up.\n\nCan cause a long game freeze, depending on how many ARC9 weapons you have."
+L["settings.server.assetcache.precache_attsmodels_onstartup.title"] = "При старте игры: Кэш. все обвесы"
+L["settings.server.assetcache.precache_attsmodels_onstartup.desc"] = "Кэшировать все модельки ARC9 обвесов при старте сервера.\n\nДелает загрузку в игру немного дольше, особенно когда у вас установлено много оружия."
 
--- L["settings.server.assetcache.precache_wepmodels_onstartup.title"] = "On Game Start: Cache Weapon Models"
--- L["settings.server.assetcache.precache_wepmodels_onstartup.desc"] = "Caches all ARC9 viewmodels when the server starts up.\n\nCan cause a very long game freeze, depending on how many ARC9 weapons you have."
+L["settings.server.assetcache.precache_wepmodels_onstartup.title"] = "При старте игры: Кэш. все модели оружия"
+L["settings.server.assetcache.precache_wepmodels_onstartup.desc"] = "Кэшировать все вьюмодели оружия ARC9 при старте сервера.\n\nДелает загрузку в игру НАМНОГО дольше, особенно когда у вас установлено много оружия."
 
--- L["settings.server.assetcache.precache_allsounds.title"] = "Cache All Sounds"
+L["settings.server.assetcache.precache_allsounds.title"] = "Все звуки оружия"
 -- L["settings.server.assetcache.precache_allsounds.desc"] = "Caches all firing sounds on all ARC9 weapons.\n\nCan cause a temporary game freeze."
 
--- L["settings.server.assetcache.precache_attsmodels.title"] = "Cache All Attachment Models"
+L["settings.server.assetcache.precache_attsmodels.title"] = "Все модели обвесы"
 -- L["settings.server.assetcache.precache_attsmodels.desc"] = "Caches all ARC9 attachment models.\n\nCan cause a long game freeze, depending on how many ARC9 weapons you have."
 
--- L["settings.server.assetcache.precache_wepmodels.title"] = "Cache All Weapon Models"
+L["settings.server.assetcache.precache_wepmodels.title"] = "Все модели оружия"
 -- L["settings.server.assetcache.precache_wepmodels.desc"] = "Caches all ARC9 viewmodels.\n\nCan cause a very long game freeze, depending on how many ARC9 weapons you have."
 
--- L["settings.server.assetcache"] = "CACHE"
+L["settings.server.assetcache"] = "Кэшировать"
 -- L["settings.server.assetcache.all"] = "CACHE ALL"
 
 ////////// Print to Console
 -- L["settings.tabname.printconsole"] = "Print to Console"
 -- L["settings.tabname.printconsole.desc"] = "Press \"Print\" on any of these and they will print what is requested into your developer console."
 
--- L["settings.server.printconsole.dev_listmyatts.title"] = "Print My Attachments"
+L["settings.server.printconsole.dev_listmyatts.title"] = "Список обвесов"
 -- L["settings.server.printconsole.dev_listmyatts.desc"] = "Prints the internal names of all currently equipped attachments."
 
--- L["settings.server.printconsole.dev_listanims.title"] = "Print Animation List"
+L["settings.server.printconsole.dev_listanims.title"] = "Список анимаций"
 -- L["settings.server.printconsole.dev_listanims.desc"] = "Prints the full internal animation list, including their animation length."
 
--- L["settings.server.printconsole.dev_listbones.title"] = "Print Bone List"
+L["settings.server.printconsole.dev_listbones.title"] = "Список костей"
 -- L["settings.server.printconsole.dev_listbones.desc"] = "Prints the full list of bones from the viewmodel skeleton."
 
--- L["settings.server.printconsole.dev_listbgs.title"] = "Print Bodygroups"
+L["settings.server.printconsole.dev_listbgs.title"] = "Список бодигрупп"
 -- L["settings.server.printconsole.dev_listbgs.desc"] = "Prints the full list of bodygroups for the viewmodel."
 
--- L["settings.server.printconsole.dev_listatts.title"] = "Print QCAttachments"
+L["settings.server.printconsole.dev_listatts.title"] = "Список QCAttachaments"
 -- L["settings.server.printconsole.dev_listatts.desc"] = "Prints all of the QCAttachments for the viewmodel."
 
 -- L["settings.server.printconsole.dev_listmats.title"] = "Print Materials List"
 -- L["settings.server.printconsole.dev_listmats.desc"] = "Prints all of the materials used on the viewmodel."
 
--- L["settings.server.printconsole.dev_export.title"] = "Print Export Code"
+L["settings.server.printconsole.dev_export.title"] = "Код экспорта"
 -- L["settings.server.printconsole.dev_export.desc"] = "Prints an export code for the weapon's currently equipped attachments.\n\nCan be stored or shared with other users to quickly load a list of attachments."
 
--- L["settings.server.printconsole.dev_getjson.title"] = "Print Weapon JSON"
+L["settings.server.printconsole.dev_getjson.title"] = "JSON оружия"
 -- L["settings.server.printconsole.dev_getjson.desc"] = "Prints a JSON entry for the weapon."
 
--- L["settings.server.printconsole"] = "PRINT"
+L["settings.server.printconsole"] = "В консоль"
 
 ////////////////////// ARC9 Premium
 L["premium.title"] = "ARC9 Premium"
@@ -1638,8 +1224,8 @@ L["premium.payment.month.desc"] = [[
 Приобретите ARC9 Premium на <color=255,106,0>1 месяц</color>.
 ]]
 
-L["premium.payment.6mon.title"] = "ARC9 Premium (3 месяца)"
-L["premium.payment.6mon.desc"] = [[
+L["premium.payment.3mon.title"] = "ARC9 Premium (3 месяца)"
+L["premium.payment.3mon.desc"] = [[
 Цена: <color=100,255,100>1,300₽</color>
 
 Приобретите ARC9 Premium на <color=255,106,0>3 месяца</color>.

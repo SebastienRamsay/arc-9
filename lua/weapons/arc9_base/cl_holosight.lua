@@ -11,7 +11,7 @@ function SWEP:DoHolosight(mdl, atttbl)
     if owner != LocalPlayer() or owner.ARC9NoScopes then return end
     self.RenderingHolosight = true 
     
-    local ref = 56
+    local ref = (atttbl.ID or 56) % 63
 
     -- render.ClearDepth()
 
@@ -27,7 +27,7 @@ function SWEP:DoHolosight(mdl, atttbl)
 
     render.SetBlend(0)
 
-    render.SetStencilReferenceValue(ref)
+    render.SetStencilReferenceValue(bit.bor(ref, 64))
 
     -- render.OverrideDepthEnable(true, true)
     mdl:DrawModel()
@@ -53,7 +53,8 @@ function SWEP:DoHolosight(mdl, atttbl)
     -- render.SetColorMaterial()
     -- render.DrawScreenQuad()
 
-    local reticle = self:GetSight().Reticle or atttbl.HoloSightReticle
+    local sight = self:GetSight()
+    local reticle = sight.Reticle or atttbl.HoloSightReticle
 
     -- local eyedist = WorldToLocal(mdl:GetPos(), mdl:GetAngles(), EyePos(), EyeAngles()).x
 
@@ -65,11 +66,14 @@ function SWEP:DoHolosight(mdl, atttbl)
 
     if reticle then
         local pos = self:GetOwner():EyePos()
-        
+        local angg = mdl:GetAngles()
+
         if mdl.FakeHolosightAngleOffset then
-            pos = pos + (mdl:GetAngles() + mdl.FakeHolosightAngleOffset):Forward() * 9000
+            pos = pos + (angg + mdl.FakeHolosightAngleOffset):Forward() * 9000
+            -- angg.z = angg.z + mdl.FakeHolosightAngleOffset.z
+            angg.z = angg.z - sight.Ang.z
         else
-            pos = pos + mdl:GetAngles():Forward() * 9000
+            pos = pos + angg:Forward() * 9000
         end
 
         -- cam.Start3D()
@@ -88,8 +92,8 @@ function SWEP:DoHolosight(mdl, atttbl)
 
         render.SetMaterial(reticle)
 
-        local up = mdl:GetAngles():Up()
-        local right = mdl:GetAngles():Right()
+        local up = angg:Up()
+        local right = angg:Right()
 
         local v1 = pos + (up * s / 2) - (right * s / 2)
         local v2 = pos + (up * s / 2) + (right * s / 2)
@@ -97,13 +101,17 @@ function SWEP:DoHolosight(mdl, atttbl)
         local v4 = pos - (up * s / 2) - (right * s / 2)
 
 
-        -- render.DrawQuadEasy(pos, -mdl:GetAngles():Forward(), s, s, atttbl.HoloSightColor or Color(255, 255, 255))
+        -- render.DrawQuadEasy(pos, -angg:Forward(), s, s, atttbl.HoloSightColor or Color(255, 255, 255))
 
         -- cam.Start3D(nil, nil, self.ViewModelFOV, nil, nil, nil, nil, 1, 10000 )
         render.DrawQuad(v1, v2, v3, v4, col or whitecolo)
 
         if atttbl.HoloSightFunc then
             atttbl.HoloSightFunc(self, pos, mdl)
+        end
+
+        if atttbl.HoloSightEzFunc then
+            atttbl.HoloSightEzFunc(self, v1, v2, v3, v4, col or whitecolo)
         end
         -- cam.End3D()
 
@@ -137,6 +145,8 @@ function SWEP:DoHolosight(mdl, atttbl)
 
     render.DepthRange(0, 1)
 
+    render.SetStencilWriteMask(255)
+    render.SetStencilTestMask(255)
     render.SetStencilEnable(false)
 
     -- mdl:DrawModel()
@@ -145,6 +155,6 @@ end
 function SWEP:SetHoloSightRenderDepth(mdl, depthadj)
     local eyedist = WorldToLocal(mdl:GetPos(), mdl:GetAngles(), EyePos(), EyeAngles()).x
     local canum = 0.1 + (depthadj or -0.005) + (0.0005 * eyedist / 20)
-    render.DepthRange(0, canum)
+    render.DepthRange(canum-0.0001, canum)
     -- render.DepthRange(0, (eyedist + 77.99) / 10000)
 end

@@ -451,6 +451,11 @@ function ARC9:ProgressPhysBullet(bullet, timestep)
                     end
                     SafeRemoveEntityDelayed(bullet.ClientModel, t)
                 end
+
+                if IsValid(weapon) then
+                    weapon:RunHook("Hook_PhysBulletImpact", {tr = tr, bullet = bullet})
+                end
+
                 bullet.Dead = true
             elseif SERVER then
                 bullet.Damaged[eid] = true
@@ -603,11 +608,10 @@ local tracer = Material("arc9/tracer")
 
 local col = Color(255, 225, 200)
 
-function ARC9.DrawPhysBullets()
+function ARC9.DrawPhysBullets(inrt)
     cam.Start3D()
     for _, i in ipairs(ARC9.PhysBullets) do
         if i.Invisible then continue end
-        if i.Travelled <= (i.ModelIndex == 0 and 512 or 64) then continue end
 
         local pos = i.Pos
 
@@ -629,6 +633,7 @@ function ARC9.DrawPhysBullets()
         end
 
         if !shoulddraw then continue end
+        if i.Travelled <= (i.ModelIndex == 0 and 512 or 64) then continue end
 
         if i.ModelIndex != 0 then
             if IsValid(i.ClientModel) then
@@ -640,33 +645,23 @@ function ARC9.DrawPhysBullets()
         end
 
         local size = 1
-
-        size = size * math.log(EyePos():DistToSqr(pos) - math.pow(512, 2))
-
+        size = size * math.log(EyePos():DistToSqr(pos) - (inrt and 400000 or 200000))
         size = math.Clamp(size, 0, math.huge)
-
         size = size * i.Size
 
         local headsize = size
-
         headsize = headsize * math.min(EyePos():DistToSqr(pos) / math.pow(2500, 2), 1)
 
         local vel = i.Vel - LocalPlayer():GetVelocity()
-
         local dot = EyeAngles():Forward():Dot(vel:GetNormalized())
-
         dot = math.abs(dot)
-
         dot = math.Clamp(((dot * dot) - 0.5) * 5, 0, 1)
 
         headsize = headsize * dot * 2
         -- size = size * (1 - dot)
-
         -- cam.Start3D()
 
         local col = i.Color or col
-        -- local col = Color(255, 225, 200)
-
         render.SetMaterial(head)
         render.DrawSprite(pos, headsize, headsize, col)
 
@@ -676,9 +671,7 @@ function ARC9.DrawPhysBullets()
         t:Mul(math.min(vel:Length() * 0.5, math.min(512, i.Travelled - 64)))
 
         local tail = t
-
         render.DrawBeam(pos, pos - tail, size * 0.75, 1, 0, col)
-
         -- cam.End3D()
     end
     cam.End3D()
